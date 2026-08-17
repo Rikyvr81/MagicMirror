@@ -64,7 +64,7 @@
 
 .family-calendar-frame {
   width: 1380px;
-  height: 695px;
+  height: 660px;
   overflow: hidden;
   border-radius: 14px;
   background: #ffffff;
@@ -165,6 +165,10 @@
 	width: 100%;
 }
 
+.region.bottom.left {
+    width: 1400px;
+}
+
 /* Meteo attuale */
 
 .weather-current-box .large {
@@ -172,15 +176,20 @@
 }
 
 .weather-current-box {
-  width: 300px;
-  text-align: center;
+    width: 500px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
 }
 
 /* Previsioni */
 
 .weather-forecast-box {
-  width: 300px;
-  text-align: center;
+    width: 500px;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 80px;
+    text-align: center;
 }
 
 .weather-current-box header,
@@ -198,7 +207,7 @@
 /* Riduce temperatura troppo grande */
 
 .weather-current-box .large {
-  font-size: 56px;
+  font-size: 42px;
 }
 
 /* ==========================================
