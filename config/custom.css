@@ -23,6 +23,28 @@
 }
 
 /* ==========================================
+   SFONDO
+   ========================================== */
+
+body {
+  background-image: url("https://www.bing.com/th?id=OHR.WallpaperOfTheDay_1920x1080.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+body::before {
+  content: "";
+
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,.35);
+
+  z-index: -1;
+}
+
+/* ==========================================
    CALENDARIO
    ========================================== */
 
@@ -274,7 +296,7 @@
   border-bottom: 1px solid #666 !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
-  margin-top: -83px !important;
+  margin-top: -82px !important;
 }
 
 .weather-forecast-box header {
@@ -292,7 +314,7 @@
 .weather-current-box {
   font-size: 20px !important;
   padding-left: 15px !important;
-  margin-top: -83px !important;
+  margin-top: -82px !important;
 }
 
 .weather-forecast-box {
