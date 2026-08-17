@@ -27,9 +27,9 @@
    ========================================== */
 
 .region.top.left {
-  width: 1500px !important;
+  width: 2000px !important;
   text-align: center !important;
-  left: 30px !important;
+  left: -30px !important;
 }
 
 /* Titolo mese */
