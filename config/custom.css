@@ -29,7 +29,7 @@
 .region.top.left {
   width: 1400px !important;
   text-align: center !important;
-  left: 10px !important;
+  left: 0px !important;
 }
 
 /* Titolo mese */
@@ -61,7 +61,7 @@
 
 .family-calendar-frame {
   width: 1380px !important;
-  height: 600px !important;
+  height: 650px !important;
   overflow: hidden !important;
 
   border-radius: 14px !important;
@@ -72,7 +72,7 @@
 
 .family-calendar-frame iframe {
   width: 1380px !important;
-  height: 600px !important;
+  height: 700px !important;
   border: none !important;
 }
 
