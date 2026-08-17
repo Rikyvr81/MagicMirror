@@ -183,7 +183,7 @@
 
 .weather-current-box {
   width: 700px !important;
-  text-align: left !important;
+  text-align: center !important;
   margin-left: 10px !important;
   
 }
@@ -197,8 +197,8 @@
 
 .weather-forecast-box {
   width: 700px !important;
-  text-align: right !important;
-  margin-right: 10px !important;
+  text-align: center !important;
+  margin-right: -10px !important;
 }
 .weather-forecast-box .large {
   font-size: 46px !important;
