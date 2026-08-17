@@ -53,17 +53,17 @@ body::before {
 .second-calendar-month-title,
 .family-message-title {
 
-    font-family: "Roboto Condensed", sans-serif !important;
+    font-family: inherit !important;
 
     font-size: 18px !important;
 
-    font-weight: 300 !important;
-
-    text-transform: uppercase !important;
+    font-weight: normal !important;
 
     letter-spacing: 1px !important;
 
-    color: #ffffff !important;
+    text-transform: uppercase !important;
+
+    color: white !important;
 
     text-shadow: none !important;
 }
