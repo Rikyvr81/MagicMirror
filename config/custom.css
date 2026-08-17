@@ -137,6 +137,11 @@
   left: 60px !important;
 }
 
+.region.bottom.right {
+  width: 1380px !important;
+  left: -200px !important;
+}
+
 /* Meteo attuale */
 
 .weather-current-box {
