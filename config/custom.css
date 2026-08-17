@@ -217,12 +217,29 @@
    METEO SOTTO IL CALENDARIO
    ========================================== */
 
-/* Meteo attuale */
+/* Posizionamento regioni */
+
+.region.bottom.left {
+  width: 650px !important;
+  left: 0px !important;
+  bottom: 80px !important;
+}
+
+.region.bottom.center {
+  width: 650px !important;
+  left: 900px !important;
+  bottom: 80px !important;
+  transform: none !important;
+}
+
+/* ==========================================
+   METEO ATTUALE
+   ========================================== */
 
 .weather-current-box {
-  width: 700px !important;
+  width: 650px !important;
   text-align: left !important;
-  margin-left: 15px !important;
+  margin: 0 !important;
 }
 
 .weather-current-box .large {
@@ -230,27 +247,56 @@
   line-height: 48px !important;
 }
 
-/* Previsioni */
+/* ==========================================
+   PREVISIONI
+   ========================================== */
 
 .weather-forecast-box {
-  width: 700px !important;
+  width: 650px !important;
   text-align: right !important;
-  margin-right: 15px !important;
+  margin: 0 !important;
 }
+
 .weather-forecast-box .large {
   font-size: 46px !important;
   line-height: 48px !important;
 }
 
-/* Intestazioni */
+/* ==========================================
+   INTESTAZIONI
+   ========================================== */
 
-.weather-current-box header,
+.weather-current-box header {
+  color: white !important;
+  font-size: 18px !important;
+
+  width: 650px !important;
+
+  text-align: left !important;
+
+  border-bottom: 1px solid #666 !important;
+
+  padding-bottom: 6px !important;
+  margin-bottom: 10px !important;
+}
+
 .weather-forecast-box header {
   color: white !important;
   font-size: 18px !important;
 
+  width: 650px !important;
+
+  text-align: right !important;
+
   border-bottom: 1px solid #666 !important;
 
-  padding-bottom: 5px !important;
-  margin-bottom: 8px !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 10px !important;
+}
+
+/* Testo */
+
+.weather-current-box,
+.weather-forecast-box {
+  font-size: 20px !important;
 }
