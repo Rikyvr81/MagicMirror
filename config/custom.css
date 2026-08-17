@@ -179,16 +179,16 @@
    METEO SOTTO IL CALENDARIO
    ========================================== */
 
+/* Meteo attuale */
+
 .region.bottom.left {
   width: 1380px !important;
   left: 70px !important;
 }
 
-/* Meteo attuale */
-
 .weather-current-box {
   width: 600px !important;
-  text-align: left !important;
+  text-align: center !important;
   
 }
 
@@ -199,9 +199,14 @@
 
 /* Previsioni */
 
+.region.bottom.center {
+  width: 1380px !important;
+  left: 70px !important;
+}
+
 .weather-forecast-box {
   width: 600px !important;
-  text-align: right !important;
+  text-align: center !important;
 }
 .weather-forecast-box .large {
   font-size: 46px !important;
