@@ -71,8 +71,8 @@ let config = {
 			config: {
 				weatherProvider: "openmeteo",
 				type: "current",
-				lat: 40.776676,
-				lon: -73.971321
+				lat: 45.3526,
+				lon: 10.8445
 			}
 		},
 		{
