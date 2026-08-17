@@ -227,7 +227,7 @@
 
 .region.bottom.center {
   width: 600px !important;
-  left: 690px !important;
+  left: 800px !important;
   bottom: 110px !important;
   transform: none !important;
 }
@@ -284,6 +284,7 @@
   border-bottom: 1px solid #666 !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
+  padding-right: 15px !important;
 }
 
 /* Testo */
