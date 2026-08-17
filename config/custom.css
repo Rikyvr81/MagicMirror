@@ -8,8 +8,8 @@
   --color-text-bright: #FFFFFF;
   --color-background: #000000;
 
-  --font-primary: "Roboto Condensed";
-  --font-secondary: "Roboto";
+  --font-primary: "Roboto Condensed", "Roboto", sans-serif;
+  --font-secondary: "Roboto", sans-serif;
 
   --font-size: 22px;
   --font-size-small: 18px;
@@ -20,6 +20,10 @@
   --gap-body-left: 20px;
 
   --gap-modules: 15px;
+
+  /* Colonna destra: unica sorgente di verita' per larghezza e distanza dal bordo */
+  --right-col-width: 400px;
+  --right-col-offset: 40px;
 }
 
 /* ==========================================
@@ -40,25 +44,32 @@ body::before {
   position: fixed;
   inset: 0;
 
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
 
   pointer-events: none;
 
   z-index: 0;
 }
+
+/* I moduli devono stare sopra il velo scuro */
+.region {
+  z-index: 1;
+}
+
 /* ==========================================
    Titoli dashboard
    ========================================== */
 
 .second-calendar-month-title,
-.family-message-title {
-    font-family: var(--font-primary) !important;
-    font-size: 18px !important;
-    font-weight: 400 !important;
-    letter-spacing: 1px !important;
-    text-transform: uppercase !important;
-    color: rgba(255,255,255,.90) !important;
-    text-shadow: none !important;
+.family-message-title,
+.todo-list header {
+  font-family: var(--font-primary) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: rgba(255, 255, 255, .90) !important;
+  text-shadow: none !important;
 }
 
 /* ==========================================
@@ -104,8 +115,8 @@ body::before {
   overflow: hidden !important;
   border-radius: 14px !important;
   background: transparent !important;
+  -webkit-backdrop-filter: blur(10px) !important;
   backdrop-filter: blur(10px) !important;
-  webkit-backdrop-filter: blur(10px) !important;
   border: none !important;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35) !important;
 }
@@ -118,12 +129,120 @@ body::before {
 }
 
 /* ==========================================
+   COLONNA DESTRA - ALLINEAMENTO GLOBALE
+   ========================================== */
+
+.region.top.right {
+  width: var(--right-col-width) !important;
+  right: var(--right-col-offset) !important;
+}
+
+/* Tutti i moduli e i loro contenitori seguono la larghezza della colonna */
+.region.top.right .module,
+.main-clock,
+.todo-list,
+.todo-list header,
+.family-message-box,
+.family-message,
+.family-message-title,
+.second-calendar-month-title,
+.second-google-calendar,
+.second-family-calendar-frame {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Orologio */
+
+.main-clock {
+  margin-bottom: 35px !important;
+  text-align: center !important;
+}
+
+.main-clock .date {
+  font-size: 28px;
+  line-height: 32px;
+}
+
+.main-clock .time {
+  font-size: 82px;
+  line-height: 84px;
+}
+
+/* ==========================================
+   TO DO LIST
+   ========================================== */
+
+.todo-list {
+  text-align: left !important;
+}
+
+.todo-list header {
+  text-align: center !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.todo-list .title {
+  font-family: var(--font-primary) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, .90) !important;
+}
+
+.todo-list .time {
+  font-family: var(--font-primary) !important;
+  font-size: 16px !important;
+  color: rgba(255, 255, 255, .60) !important;
+}
+
+.todo-list table,
+.todo-list .calendar,
+.todo-list .module-content {
+  width: 100% !important;
+  text-align: left !important;
+}
+
+/* ==========================================
+   COMUNICAZIONI FAMIGLIA
+   ========================================== */
+
+.family-message {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+}
+
+.family-message-title {
+  text-align: center !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.family-message p {
+  font-size: 15px !important;
+  line-height: 22px !important;
+  color: #ffffff !important;
+  margin-top: 0 !important;
+  margin-bottom: 10px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .9) !important;
+}
+
+/* ==========================================
    CALENDARIO SECONDARIO
    ========================================== */
-/* Titolo mese */
 
 .second-calendar-month-title {
-  width: 430px !important;
   text-align: center !important;
   margin-bottom: 0px !important;
 }
@@ -141,138 +260,22 @@ body::before {
   letter-spacing: 4px !important;
 }
 
-/* Calendario Google */
-
-.second-google-calendar {
-  margin-left: 0px !important;
-}
-
 .second-family-calendar-frame {
-  width: 430px !important;
   height: 280px !important;
   overflow: hidden !important;
   border-radius: 14px !important;
   background: transparent !important;
+  -webkit-backdrop-filter: blur(14px) !important;
   backdrop-filter: blur(14px) !important;
-  webkit-backdrop-filter: blur(14px) !important;
-
   border: none !important;
-
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
 }
 
 .second-family-calendar-frame iframe {
-  width: 430px !important;
-  height: 300px !important;
+  width: 100% !important;
+  height: 300px !important;   /* piu' alto del contenitore per nascondere la barra in basso */
   border: none !important;
   opacity: 1.00 !important;
-}
-
-/* ==========================================
-   COLONNA DESTRA (TO DO - NOTE)
-   ========================================== */
-
-.region.top.right {
-  width: 420px !important;
-}
-
-
-/* Orologio */
-
-.main-clock {
-  margin-bottom: 35px;
-  text-align: center !important;
-}
-
-.main-clock .date {
-  font-size: 28px;
-  line-height: 32px;
-}
-
-.main-clock .time {
-  font-size: 82px;
-  line-height: 84px;
-
-}
-
-.todo-list {
-  width: 430px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  text-align: left !important;
-}
-
-.todo-list header {
-  font-family: var(--font-primary) !important;
-  font-size: 18px !important;
-  font-weight: 400 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 1px !important;
-  color: rgba(255,255,255,.90) !important;
-  text-align: center !important;
-  border-bottom: 1px solid rgba(255,255,255,.35) !important;
-  width: 430px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-bottom: 8px !important;
-  margin-bottom: 12px !important;
-}
-
-.todo-list .title {
-  font-family: var(--font-primary) !important;
-  font-size: 18px !important;
-  font-weight: 400 !important;
-  color: rgba(255,255,255,.90) !important;
-}
-
-.todo-list .time {
-  font-family: var(--font-primary) !important;
-  font-size: 16px !important;
-  color: rgba(255,255,255,.60) !important;
-}
-
-.todo-list table,
-.todo-list .calendar,
-.todo-list .module-content {
-  text-align: left !important;
-}
-
-/* ==========================================
-   COMUNICAZIONI FAMIGLIA
-   ========================================== */
-
-.family-message-box {
-  width: 430px !important;
-  max-width: 430px !important;
-}
-
-.family-message {
-  width: 430px !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  text-align: left !important;
-  color: #ffffff !important;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
-}
-
-.family-message-title {
-  text-align: center !important;
-  border-bottom: 1px solid rgba(255,255,255,.35) !important;
-  padding-bottom: 8px !important;
-  margin-bottom: 12px !important;
-}
-
-.family-message p {
-
-  font-size: 15px !important;
-  line-height: 22px !important;
-  color: #ffffff !important;
-  margin-top: 0 !important;
-  margin-bottom: 10px !important;
-  text-shadow: 0 2px 8px rgba(0,0,0,.9) !important;
 }
 
 /* ==========================================
@@ -295,71 +298,49 @@ body::before {
 }
 
 /* ==========================================
-   METEO ATTUALE
+   METEO ATTUALE / PREVISIONI
    ========================================== */
 
-.weather-current-box {
-  width: 600px !important;
-  text-align: left !important;
-  margin: 0 !important;
-}
-
-.weather-current-box .large {
-  font-size: 46px !important;
-  line-height: 48px !important;
-}
-
-/* ==========================================
-   PREVISIONI
-   ========================================== */
-
+.weather-current-box,
 .weather-forecast-box {
   width: 600px !important;
-  text-align: right !important;
   margin: 0 !important;
+  font-size: 20px !important;
 }
 
+.weather-current-box {
+  text-align: left !important;
+}
+
+.weather-forecast-box {
+  text-align: right !important;
+}
+
+.weather-current-box .large,
 .weather-forecast-box .large {
   font-size: 46px !important;
   line-height: 48px !important;
 }
 
 /* ==========================================
-   INTESTAZIONI
+   INTESTAZIONI METEO
    ========================================== */
 
-.weather-current-box header {
-  color: white !important;
-  font-size: 18px !important;
-  width: 600px !important;
-  text-align: left !important;
-  border-bottom: 2px solid rgba(255,255,255,.40) !important;
-  padding-bottom: 6px !important;
-  margin-bottom: 10px !important;
- /*  margin-top: -82px !important;*/
-  letter-spacing: 1px;
-  
-}
-
+.weather-current-box header,
 .weather-forecast-box header {
   color: white !important;
   font-size: 18px !important;
   width: 600px !important;
-  text-align: right !important;
-  border-bottom: 2px solid rgba(255,255,255,.40) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, .40) !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
   letter-spacing: 1px;
 }
 
-/* Testo */
-
-.weather-current-box {
-  font-size: 20px !important;
- /* padding-left: 15px !important;
-   margin-top: -82px !important;*/
+.weather-current-box header {
+  text-align: left !important;
 }
 
-.weather-forecast-box {
-  font-size: 20px !important;
+.weather-forecast-box header {
+  text-align: right !important;
 }
