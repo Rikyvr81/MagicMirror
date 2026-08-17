@@ -72,7 +72,7 @@ let config = {
 			position: "top_left",
 			classes: "main-google-calendar",
 			config: {
-				text: "<div class="family-calendar-frame"><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe></div>"
+				text: "<div class='family-calendar-frame'><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe></div>"
 			}
 		},
 		{
