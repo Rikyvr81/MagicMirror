@@ -105,7 +105,7 @@ body::before {
   height: 700px !important;
   border: none !important;
 
-  opacity: 0.82 !important;
+  opacity: 0.50 !important;
 }
 
 /* ==========================================
@@ -159,7 +159,7 @@ body::before {
   height: 300px !important;
   border: none !important;
 
-  opacity: 0.82 !important;
+  opacity: 0.50 !important;
 }
 
 /* ==========================================
