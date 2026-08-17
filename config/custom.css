@@ -83,12 +83,12 @@
 /* Calendario Google */
 
 .second-google-calendar {
-  margin-left: 15px !important;
+  margin-left: 0px !important;
 }
 
 .second-family-calendar-frame {
   width: 380px !important;
-  height: 165px !important;
+  height: 200px !important;
   overflow: hidden !important;
 
   border-radius: 14px !important;
@@ -99,7 +99,7 @@
 
 .second-family-calendar-frame iframe {
   width: 380px !important;
-  height: 200px !important;
+  height: 250px !important;
   border: none !important;
 }
 
@@ -166,7 +166,7 @@
 
 .region.bottom.center {
   width: 1380px !important;
-  left: 250px !important;
+  left: 500px !important;
 }
 
 /* Meteo attuale */
