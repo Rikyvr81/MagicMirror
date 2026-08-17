@@ -90,15 +90,22 @@ body::before {
   overflow: hidden !important;
 
   border-radius: 14px !important;
-  background: white !important;
 
-  box-shadow: 0 0 20px rgba(255,255,255,0.12) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35) !important;
 }
 
 .family-calendar-frame iframe {
   width: 1380px !important;
   height: 700px !important;
   border: none !important;
+
+  opacity: 0.94 !important;
 }
 
 /* ==========================================
@@ -137,16 +144,22 @@ body::before {
   overflow: hidden !important;
 
   border-radius: 14px !important;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: blur(12px);
 
-  box-shadow: 0 0 20px rgba(255,255,255,0.12) !important;
+  background: rgba(255, 255, 255, 0.30) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
 }
 
 .second-family-calendar-frame iframe {
   width: 450px !important;
   height: 300px !important;
   border: none !important;
+
+  opacity: 0.88 !important;
 }
 
 /* ==========================================
@@ -208,37 +221,44 @@ body::before {
 
 .family-message {
   width: 420px !important;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: blur(12px);
-  color: #1f2933;
 
-  border-radius: 12px;
-  padding: 12px;
+  background: rgba(255, 255, 255, 0.28) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
 
-  text-align: left;
+  color: #ffffff !important;
 
-  box-shadow: 0 0 12px rgba(0,0,0,0.25);
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+
+  padding: 12px !important;
+  text-align: left !important;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
 }
 
 .family-message-title {
-  font-size: 20px;
-  font-weight: 300;
-  margin-bottom: 10px;
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  margin-bottom: 10px !important;
 
-  text-align: center;
+  text-align: center !important;
 
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 8px;
+  color: #ffffff !important;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35) !important;
+  padding-bottom: 8px !important;
 }
 
 .family-message p {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 14px !important;
+  line-height: 18px !important;
 
-  margin-top: 0;
-  margin-bottom: 6px;
+  color: #ffffff !important;
+
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
 }
-``
 
 /* ==========================================
    METEO SOTTO IL CALENDARIO
