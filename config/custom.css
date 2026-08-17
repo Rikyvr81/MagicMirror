@@ -47,8 +47,8 @@ body::before {
   z-index: 0;
 }
 /* ==========================================
-      Titoli dashboard
-========================================== */
+   Titoli dashboard
+   ========================================== */
 
 .calendar-month-title .date,
 .second-calendar-month-title,
@@ -56,9 +56,9 @@ body::before {
 
     font-family: "Roboto Condensed", sans-serif !important;
 
-    font-size: 20px !important;
+    font-size: 18px !important;
 
-    font-weight: 600 !important;
+    font-weight: 300 !important;
 
     text-transform: uppercase !important;
 
@@ -127,7 +127,7 @@ body::before {
   height: 700px !important;
   border: none !important;
 
-  opacity: 0.90 !important;
+  opacity: 1.00 !important;
 }
 
 /* ==========================================
@@ -181,7 +181,7 @@ body::before {
   height: 300px !important;
   border: none !important;
 
-  opacity: 0.90 !important;
+  opacity: 1.00 !important;
 }
 
 /* ==========================================
