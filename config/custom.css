@@ -227,7 +227,7 @@
 
 .region.bottom.center {
   width: 600px !important;
-  left: 800px !important;
+  left: 750px !important;
   bottom: 110px !important;
   transform: none !important;
 }
@@ -290,7 +290,12 @@
 
 /* Testo */
 
-.weather-current-box,
+.weather-current-box {
+  font-size: 20px !important;
+  padding-left: 15px !important;
+}
+
 .weather-forecast-box {
   font-size: 20px !important;
+  padding-right: 15px !important;
 }
