@@ -50,7 +50,6 @@ body::before {
    Titoli dashboard
    ========================================== */
 
-.calendar-month-title .date,
 .second-calendar-month-title,
 .family-message-title {
 
@@ -62,11 +61,11 @@ body::before {
 
     text-transform: uppercase !important;
 
-    letter-spacing: 2px !important;
+    letter-spacing: 1px !important;
 
     color: #ffffff !important;
 
-    text-shadow: 0 2px 8px rgba(0,0,0,.8) !important;
+    text-shadow: none !important;
 }
 
 /* ==========================================
