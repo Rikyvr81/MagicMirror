@@ -27,8 +27,8 @@
    ========================================== */
 
 .region.top.left {
-  width: 1380px;
-  text-align: center;
+  width: 1450px;
+  text-align: left;
 }
 
 /* Titolo mese */
@@ -36,6 +36,8 @@
 .calendar-month-title {
   margin-bottom: 10px;
   text-align: center;
+  width: 1380px;
+  margin-left: -80px;
 }
 
 .calendar-month-title .time {
@@ -50,29 +52,32 @@
   text-transform: uppercase;
   letter-spacing: 4px;
   line-height: 46px;
-  margin-left: -60px;
+}
+
+/* Modulo calendario Google */
+
+.main-google-calendar {
+  margin-left: -80px;
 }
 
 /* Frame calendario Google */
 
 .family-calendar-frame {
-  width: 1350px;
+  width: 1380px;
   height: 695px;
   overflow: hidden;
   border-radius: 14px;
   background: #ffffff;
   box-shadow: 0 0 20px rgba(255,255,255,0.12);
-  margin-left: -60px;
 }
 
 /* iframe calendario */
 
 .family-calendar-frame iframe {
   display: block;
-  width: 1350px;
+  width: 1380px;
   height: 760px;
   border: none;
-  margin-left: -60px;
 }
 
 /* ==========================================
