@@ -37,7 +37,7 @@
   margin-bottom: 10px;
   text-align: center;
   width: 1380px;
-  margin-left: -80px;
+  margin-left: -20px;
 }
 
 .calendar-month-title .time {
@@ -57,7 +57,7 @@
 /* Modulo calendario Google */
 
 .main-google-calendar {
-  margin-left: -80px;
+  margin-left: -20px;
 }
 
 /* Frame calendario Google */
