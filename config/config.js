@@ -98,6 +98,16 @@ let config = {
 			}
 		},
 		{
+			module: "clock",
+			position: "bottom_right",
+			classes: "second-calendar-month-title",
+			config: {
+				showDate: true,
+				dateFormat: "MMMM YYYY",
+				displaySeconds: false
+			}
+		},
+		{
 			module: "helloworld",
 			position: "bottom_right", 
 			classes: "second-google-calendar",
