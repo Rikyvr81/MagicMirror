@@ -27,10 +27,11 @@
    ========================================== */
 
 body {
-  background-image: url("https://www.bing.com/th?id=OHR.WallpaperOfTheDay_1920x1080.jpg");
+  background-image: url("https://picsum.photos/1920/1080");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 body::before {
@@ -39,9 +40,19 @@ body::before {
   position: fixed;
   inset: 0;
 
-  background: rgba(0,0,0,.60);
+  background: rgba(0,0,0,0.55);
 
-  z-index: -1;
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+/* Tutti i moduli davanti all'overlay */
+
+.region,
+.module {
+  position: relative;
+  z-index: 1;
 }
 
 /* ==========================================
@@ -219,7 +230,7 @@ body::before {
 
 .family-message-title {
   font-size: 20px;
-  font-weight: 300
+  font-weight: 300;
   margin-bottom: 10px;
 
   text-align: center;
