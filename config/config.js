@@ -97,6 +97,32 @@ let config = {
 				]
 			}
 		},
+		
+		{
+			module: "helloworld",
+			position: "bottom_right",
+			classes: "family-message-box",
+			config: {
+				text: `
+					<div class="family-message">
+						<div class="family-message-title">
+							COMUNICAZIONI FAMIGLIA
+						</div>
+		
+						<p>
+							Ricordarsi di verificare il materiale scolastico prima dell'inizio delle lezioni
+							e controllare eventuali comunicazioni ricevute dalla scuola durante la settimana.
+						</p>
+		
+						<p>
+							Questa settimana è prevista la visita medica annuale.
+							Verificare che tutta la documentazione necessaria sia disponibile e aggiornata.
+						</p>
+					</div>
+				`
+			}
+		},
+		
 		{
 			module: "helloworld",
 			position: "bottom_right",
