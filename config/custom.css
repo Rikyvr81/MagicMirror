@@ -123,7 +123,7 @@ body::before {
 /* Titolo mese */
 
 .second-calendar-month-title {
-  width: 450px !important;
+  width: 440px !important;
   text-align: center !important;
   margin-bottom: 0px !important;
 }
@@ -148,7 +148,7 @@ body::before {
 }
 
 .second-family-calendar-frame {
-  width: 450px !important;
+  width: 440px !important;
   height: 280px !important;
   overflow: hidden !important;
   border-radius: 14px !important;
@@ -162,7 +162,7 @@ body::before {
 }
 
 .second-family-calendar-frame iframe {
-  width: 450px !important;
+  width: 440px !important;
   height: 300px !important;
   border: none !important;
   opacity: 1.00 !important;
@@ -196,7 +196,7 @@ body::before {
 }
 
 .todo-list {
-  width: 450px !important;
+  width: 440px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   text-align: left !important;
@@ -211,7 +211,7 @@ body::before {
   color: rgba(255,255,255,.90) !important;
   text-align: center !important;
   border-bottom: 1px solid rgba(255,255,255,.35) !important;
-  width: 450px !important;
+  width: 440px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding-bottom: 8px !important;
@@ -242,12 +242,12 @@ body::before {
    ========================================== */
 
 .family-message-box {
-  width: 450px !important;
-  max-width: 450px !important;
+  width: 440px !important;
+  max-width: 440px !important;
 }
 
 .family-message {
-  width: 450px !important;
+  width: 440px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
