@@ -1,12 +1,6 @@
-/* Custom CSS Sample
- *
- * Change color and fonts here.
- *
- * Beware that properties cannot be unitless, so for example write '--gap-body: 0px;' instead of just '--gap-body: 0;'
- */
-
-/* Uncomment and adjust accordingly if you want to import another font from the google-fonts-api: */
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap'); */
+/* ==========================================
+   FAMILY HUB - RICCARDO SANTORO
+   ========================================== */
 
 :root {
   --color-text: #FFFFFF;
@@ -20,62 +14,195 @@
   --font-size: 22px;
   --font-size-small: 18px;
 
-  --gap-body-top: 20px;
+  --gap-body-top: 15px;
   --gap-body-right: 20px;
-  --gap-body-bottom: 20px;
+  --gap-body-bottom: 15px;
   --gap-body-left: 20px;
 
-  --gap-modules: 20px;
+  --gap-modules: 15px;
 }
 
-/* Orologio */
+/* ==========================================
+   CALENDARIO (LATO SINISTRO)
+   ========================================== */
 
-.clock .time {
-  font-size: 80px;
-  line-height: 80px;
+.region.top.left {
+  width: 1250px;
+  text-align: center;
 }
 
-.clock .date {
-  font-size: 30px;
+/* Titolo mese */
+
+.calendar-month-title {
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-/* Meteo */
+.calendar-month-title .time {
+  display: none;
+}
 
-.weather {
+.calendar-month-title .date {
+  display: block;
+  font-size: 42px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  line-height: 46px;
+}
+
+/* Frame calendario Google */
+
+.family-calendar-frame {
+  width: 1220px;
+  height: 695px;
+  overflow: hidden;
+
+  border-radius: 14px;
+  background: #ffffff;
+
+  box-shadow: 0 0 20px rgba(255,255,255,0.12);
+}
+
+/* iframe calendario */
+
+.family-calendar-frame iframe {
+  display: block;
+
+  width: 1220px;
+  height: 760px;
+
+  border: none;
+}
+
+/* ==========================================
+   COLONNA DESTRA
+   ========================================== */
+
+.region.top.right {
+  width: 420px;
+  text-align: right;
+}
+
+/* ==========================================
+   OROLOGIO
+   ========================================== */
+
+.main-clock {
+  margin-bottom: 35px;
+}
+
+.main-clock .date {
+  font-size: 28px;
+  line-height: 32px;
+}
+
+.main-clock .time {
+  font-size: 82px;
+  line-height: 84px;
+}
+
+/* ==========================================
+   TODO LIST
+   ========================================== */
+
+.todo-list {
+  width: 380px;
+  text-align: left;
+  display: inline-block;
+}
+
+.todo-list header {
+  color: #ffffff;
+  font-size: 20px;
+
+  border-bottom: 1px solid #666;
+
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.todo-list .title {
   font-size: 24px;
 }
 
-/* TO DO */
-
-.calendar {
-  font-size: 26px;
+.todo-list .time {
+  font-size: 18px;
+  color: #aaaaaa;
 }
 
-/* Calendario Google */
+.todo-list .calendar {
+  font-size: 24px;
+}
+
+/* ==========================================
+   METEO IN BASSO CENTRALE
+   ========================================== */
+
+.region.bottom.center {
+  width: 1000px;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  gap: 120px;
+
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Meteo attuale */
+
+.weather-current-box {
+  width: 420px;
+  text-align: center;
+}
+
+/* Previsioni */
+
+.weather-forecast-box {
+  width: 420px;
+  text-align: center;
+}
+
+.weather-current-box header,
+.weather-forecast-box header {
+  color: #ffffff;
+
+  font-size: 18px;
+
+  border-bottom: 1px solid #666;
+
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+}
+
+/* Riduce temperatura troppo grande */
+
+.weather-current-box .large {
+  font-size: 56px;
+}
+
+/* ==========================================
+   STILE GENERALE
+   ========================================== */
+
+.weather {
+  font-size: 22px;
+}
+
+.calendar {
+  font-size: 24px;
+}
 
 iframe {
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.10);
 }
 
-/* Titolo mese sopra il calendario */
-.calendar-month-title {
-	margin-bottom: 8px;
-	text-align: center;
-}
+/* Nasconde eventuali scrollbar */
 
-/* Nasconde l'ora del secondo clock */
-.calendar-month-title .time {
-	display: none;
-}
-
-/* Mostra solo il mese/anno */
-.calendar-month-title .date {
-	display: block;
-	font-size: 34px;
-	font-weight: 700;
-	color: #ffffff;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	line-height: 40px;
+::-webkit-scrollbar {
+  display: none;
 }
