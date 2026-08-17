@@ -275,7 +275,7 @@
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
   padding-left: 10px !important;
-  margin-top: -100px !important;
+  margin-top: -80px !important;
 }
 
 .weather-forecast-box header {
@@ -292,8 +292,6 @@
 
 .weather-current-box {
   font-size: 20px !important;
-  padding-left: 10px !important;
-  margin-top: -100px !important;
 }
 
 .weather-forecast-box {
