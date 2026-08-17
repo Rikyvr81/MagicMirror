@@ -44,10 +44,21 @@ let config = {
 			}
 		},
 		{
-			module: "helloworld",
-			position: "bottom_bar",
+			module: "calendar",
+			position: "bottom_bar", // Lo posiziona in basso, sotto il tablone mensile
+			header: "📋 TO DO LIST",
 			config: {
-				text: "<iframe src='https://calendar.google.com/calendar/u/0/r/tasks?pli=1' style='border:0; width:100%; height:300px; filter:invert(90%) hue-rotate(180deg);' frameborder='0' scrolling='no'></iframe>"
+				language: "it",
+				timeFormat: "absolute",
+				maximumEntries: 5, 
+				displaySymbol: true,
+				calendars: [
+					{
+						url: "https://calendar.google.com/calendar/ical/6bb24c0fb7ed698a938c7a81d953e53f82e361c0f061bf25daaff1616cb8fe2d%40group.calendar.google.com/private-0fd6a3516912f9807cdf5c47c1deccd0/basic.ics",
+						symbol: "check-square",
+						title: "To-Do"
+					}
+				]
 			}
 		},
 		{
