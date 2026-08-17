@@ -174,13 +174,13 @@ body::before {
 
 .region.top.right {
   width: 420px !important;
-  text-align: right !important;
 }
 
 /* Orologio */
 
 .main-clock {
   margin-bottom: 35px;
+  text-align: center !important;
 }
 
 .main-clock .date {
@@ -191,13 +191,14 @@ body::before {
 .main-clock .time {
   font-size: 82px;
   line-height: 84px;
+
 }
 
 .todo-list {
   width: 420px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  text-align: center !important;
+  text-align: left !important;
 }
 
 .todo-list header {
