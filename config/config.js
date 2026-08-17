@@ -51,14 +51,17 @@ let config = {
 		},
 		{
 			module: "calendar",
-			header: "US Holidays",
 			position: "top_left",
+			header: "Impegni Famiglia",
 			config: {
+				language: "it",
+				timeFormat: "absolute",
+				urgency: 0,
 				calendars: [
 					{
-						fetchInterval: 7 * 24 * 60 * 60 * 1000,
+						url: "https://calendar.google.com/calendar/ical/rikyvr81%40gmail.com/public/basic.ics",
 						symbol: "calendar-check",
-						url: "https://ics.calendarlabs.com/76/mm3137/US_Holidays.ics"
+						title: "Casa"
 					}
 				]
 			}
