@@ -33,7 +33,7 @@ let config = {
 
 		{
 			module: "weather",
-			position: "bottom_left",
+			position: "bottom_right",
 			classes: "weather-current-box",
 			header: "Meteo",
 			config: {
