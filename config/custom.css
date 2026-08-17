@@ -196,7 +196,7 @@ body::before {
 }
 
 .todo-list {
-  width: 420px !important;
+  width: 450px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   text-align: left !important;
@@ -211,7 +211,7 @@ body::before {
   color: rgba(255,255,255,.90) !important;
   text-align: center !important;
   border-bottom: 1px solid rgba(255,255,255,.35) !important;
-  width: 360px !important;
+  width: 450px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding-bottom: 8px !important;
@@ -237,19 +237,17 @@ body::before {
   text-align: left !important;
 }
 
-/*.todo-list .calendar*/
-
 /* ==========================================
    COMUNICAZIONI FAMIGLIA
    ========================================== */
 
 .family-message-box {
-  width: 420px !important;
-  max-width: 420px !important;
+  width: 450px !important;
+  max-width: 450px !important;
 }
 
 .family-message {
-  width: 420px !important;
+  width: 450px !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
