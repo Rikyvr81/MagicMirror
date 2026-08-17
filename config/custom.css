@@ -27,7 +27,7 @@
    ========================================== */
 
 .region.top.left {
-  width: 1250px;
+  width: 1380px;
   text-align: center;
 }
 
@@ -50,30 +50,29 @@
   text-transform: uppercase;
   letter-spacing: 4px;
   line-height: 46px;
+  margin-left: -60px;
 }
 
 /* Frame calendario Google */
 
 .family-calendar-frame {
-  width: 1220px;
+  width: 1350px;
   height: 695px;
   overflow: hidden;
-
   border-radius: 14px;
   background: #ffffff;
-
   box-shadow: 0 0 20px rgba(255,255,255,0.12);
+  margin-left: -60px;
 }
 
 /* iframe calendario */
 
 .family-calendar-frame iframe {
   display: block;
-
-  width: 1220px;
+  width: 1350px;
   height: 760px;
-
   border: none;
+  margin-left: -60px;
 }
 
 /* ==========================================
@@ -153,17 +152,29 @@
   transform: translateX(-50%);
 }
 
+.region.bottom.bar {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 120px;
+	width: 100%;
+}
+
 /* Meteo attuale */
 
+.weather-current-box .large {
+	font-size: 42px !important;
+}
+
 .weather-current-box {
-  width: 420px;
+  width: 300px;
   text-align: center;
 }
 
 /* Previsioni */
 
 .weather-forecast-box {
-  width: 420px;
+  width: 300px;
   text-align: center;
 }
 
