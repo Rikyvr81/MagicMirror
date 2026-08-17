@@ -46,7 +46,7 @@ let config = {
 
 		{
 			module: "weather",
-			position: "bottom_right",
+			position: "bottom_left",
 			classes: "weather-forecast-box",
 			header: "Previsioni",
 			config: {
