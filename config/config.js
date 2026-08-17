@@ -125,14 +125,45 @@ let config = {
 		},
 		{
 			module: "helloworld",
-			position: "bottom_right", 
+			position: "bottom_right",
 			classes: "second-google-calendar",
 			config: {
-				updateInterval: 300000,
-				text: "<div class='second-family-calendar-frame'><iframe  src='https://calendar.google.com/calendar/embed?src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&mode=MONTH&dates=20260901%2F20260930&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width:'450' height:'350' frameborder='0' scrolling='no'></iframe></div>",
+				text: (() => {
+
+					const oggi = new Date();
+
+					let meseSuccessivo = oggi.getMonth() + 1;
+					let anno = oggi.getFullYear();
+
+					if (meseSuccessivo > 11) {
+						meseSuccessivo = 0;
+						anno++;
+					}
+
+					const primoGiorno = new Date(anno, meseSuccessivo, 1);
+					const ultimoGiorno = new Date(anno, meseSuccessivo + 1, 0);
+
+					const yyyymmdd = (data) => {
+						const yyyy = data.getFullYear();
+						const mm = String(data.getMonth() + 1).padStart(2, "0");
+						const dd = String(data.getDate()).padStart(2, "0");
+						return `${yyyy}${mm}${dd}`;
+					};
+
+					const startDate = yyyymmdd(primoGiorno);
+					const endDate = yyyymmdd(ultimoGiorno);
+
+					const calendarUrl =
+						'https://calendar.google.com/calendar/embed?src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&mode=MONTH
+						`&dates=${startDate}%2F${endDate}` +
+						'&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width:'450' height:'350' frameborder='0' scrolling='no''>
+
+					return `
+						<div class="second-family-calendar-frame"><iframe src='${calendarUrl}'</iframe></div>",
+					`;
+				})()
 			}
-		},		
-		
+		},
 	]
 };
 
