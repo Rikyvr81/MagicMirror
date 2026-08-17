@@ -47,14 +47,6 @@ body::before {
   z-index: 0;
 }
 
-/* Tutti i moduli davanti all'overlay */
-
-.region,
-.module {
-  position: relative;
-  z-index: 1;
-}
-
 /* ==========================================
    CALENDARIO
    ========================================== */
