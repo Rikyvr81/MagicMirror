@@ -231,3 +231,6 @@ iframe {
 ::-webkit-scrollbar {
   display: none;
 }
+body {
+  background: red !important;
+}
