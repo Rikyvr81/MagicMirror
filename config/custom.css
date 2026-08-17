@@ -57,3 +57,25 @@ iframe {
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(255,255,255,0.10);
 }
+
+/* Titolo mese sopra il calendario */
+.calendar-month-title {
+	margin-bottom: 8px;
+	text-align: center;
+}
+
+/* Nasconde l'ora del secondo clock */
+.calendar-month-title .time {
+	display: none;
+}
+
+/* Mostra solo il mese/anno */
+.calendar-month-title .date {
+	display: block;
+	font-size: 34px;
+	font-weight: 700;
+	color: #ffffff;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	line-height: 40px;
+}
