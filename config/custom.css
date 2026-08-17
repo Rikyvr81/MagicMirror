@@ -88,7 +88,7 @@
 
 .second-family-calendar-frame {
   width: 450px !important;
-  height: 250px !important;
+  height: 300px !important;
   overflow: hidden !important;
 
   border-radius: 14px !important;
@@ -99,7 +99,7 @@
 
 .second-family-calendar-frame iframe {
   width: 450px !important;
-  height: 300px !important;
+  height: 350px !important;
   border: none !important;
 }
 
