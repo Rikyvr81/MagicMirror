@@ -195,10 +195,9 @@ body::before {
 
 .todo-list {
   width: 420px !important;
-  display: block !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  text-align: left !important;
+  text-align: center !important;
 }
 
 .todo-list header {
@@ -215,7 +214,6 @@ body::before {
   margin-bottom: 12px !important;
 }
 
-
 .todo-list .title {
   font-family: var(--font-primary) !important;
   font-size: 18px !important;
@@ -228,6 +226,13 @@ body::before {
   font-size: 16px !important;
   color: rgba(255,255,255,.60) !important;
 }
+
+.todo-list table,
+.todo-list .calendar,
+.todo-list .module-content {
+  text-align: left !important;
+}
+
 /*.todo-list .calendar*/
 
 /* ==========================================
