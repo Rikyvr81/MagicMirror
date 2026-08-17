@@ -183,12 +183,12 @@
 
 .region.bottom.left {
   width: 1380px !important;
-  left: 70px !important;
+  left: 150px !important;
 }
 
 .weather-current-box {
   width: 600px !important;
-  text-align: center !important;
+  text-align: left !important;
   
 }
 
@@ -199,14 +199,9 @@
 
 /* Previsioni */
 
-.region.bottom.center {
-  width: 1380px !important;
-  left: 70px !important;
-}
-
 .weather-forecast-box {
   width: 600px !important;
-  text-align: center !important;
+  text-align: right !important;
 }
 .weather-forecast-box .large {
   font-size: 46px !important;
