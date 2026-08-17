@@ -22,7 +22,8 @@ let config = {
 
 		{
 			module: "clock",
-			position: "top_left",
+			position: "top_right",
+			classes: "main-clock",
 			config: {
 				displaySeconds: true,
 				showDate: true,
@@ -32,7 +33,8 @@ let config = {
 
 		{
 			module: "weather",
-			position: "top_right",
+			position: "bottom_center",
+			classes: "weather-current-box",
 			header: "Meteo",
 			config: {
 				weatherProvider: "openmeteo",
@@ -44,7 +46,8 @@ let config = {
 
 		{
 			module: "weather",
-			position: "bottom_right",
+			position: "bottom_center",
+			classes: "weather-forecast-box",
 			header: "Previsioni",
 			config: {
 				weatherProvider: "openmeteo",
@@ -56,7 +59,7 @@ let config = {
 		},
 		{
 			module: "clock",
-			position: "middle_center",
+			position: "top_left",
 			classes: "calendar-month-title",
 			config: {
 				showDate: true,
@@ -66,20 +69,23 @@ let config = {
 		},
 		{
 			module: "helloworld",
-			position: "middle_center",
+			position: "top_left",
+			classes: "main-google-calendar",
 			config: {
 				text: "<iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
 			}
 		},
 		{
 			module: "calendar",
-			position: "bottom_left",
+			position: "top_right",
+			classes: "todo-list",
 			header: "📋 TO DO LIST",
 			config: {
 				language: "it",
 				timeFormat: "absolute",
-				maximumEntries: 5, 
+				maximumEntries: 6, 
 				displaySymbol: true,
+				fade: false,
 				calendars: [
 					{
 						url: "https://calendar.google.com/calendar/ical/6bb24c0fb7ed698a938c7a81d953e53f82e361c0f061bf25daaff1616cb8fe2d%40group.calendar.google.com/private-0fd6a3516912f9807cdf5c47c1deccd0/basic.ics",
