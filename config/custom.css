@@ -1,0 +1,59 @@
+/* Custom CSS Sample
+ *
+ * Change color and fonts here.
+ *
+ * Beware that properties cannot be unitless, so for example write '--gap-body: 0px;' instead of just '--gap-body: 0;'
+ */
+
+/* Uncomment and adjust accordingly if you want to import another font from the google-fonts-api: */
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap'); */
+
+:root {
+  --color-text: #FFFFFF;
+  --color-text-dimmed: #BBBBBB;
+  --color-text-bright: #FFFFFF;
+  --color-background: #000000;
+
+  --font-primary: "Roboto Condensed";
+  --font-secondary: "Roboto";
+
+  --font-size: 22px;
+  --font-size-small: 18px;
+
+  --gap-body-top: 20px;
+  --gap-body-right: 20px;
+  --gap-body-bottom: 20px;
+  --gap-body-left: 20px;
+
+  --gap-modules: 20px;
+}
+
+/* Orologio */
+
+.clock .time {
+  font-size: 80px;
+  line-height: 80px;
+}
+
+.clock .date {
+  font-size: 30px;
+}
+
+/* Meteo */
+
+.weather {
+  font-size: 24px;
+}
+
+/* TO DO */
+
+.calendar {
+  font-size: 26px;
+}
+
+/* Calendario Google */
+
+iframe {
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.10);
+}
