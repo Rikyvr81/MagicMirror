@@ -50,20 +50,10 @@ let config = {
 			position: "top_left"
 		},
 		{
-			module: "calendar",
-			position: "top_left",
-			header: "Impegni Famiglia",
+			module: "helloworld",
+			position: "top_bar",
 			config: {
-				language: "it",
-				timeFormat: "absolute",
-				urgency: 0,
-				calendars: [
-					{
-						url: "https://calendar.google.com/calendar/ical/rikyvr81%40gmail.com/private-091b2d1fdfaa0054cd0a15f4363f00bf/basic.ics",
-						symbol: "calendar-check",
-						title: "Casa"
-					}
-				]
+				text: "<iframe src='https://google.com" + "rikyvr81@gmail.com" + "&ctz=Europe/Rome&mode=MONTH&showTitle=0&showNav=0&showDate=1&showPrint=0&showTabs=0&showCalendars=0' style='border:0; filter:invert(95%) hue-rotate(180deg);' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
 			}
 		},
 		{
