@@ -44,6 +44,13 @@ let config = {
 			}
 		},
 		{
+			module: "helloworld",
+			position: "bottom_bar",
+			config: {
+				text: "<iframe src='https://calendar.google.com/calendar/u/0/r/tasks?pli=1' style='border:0; width:100%; height:300px; filter:invert(90%) hue-rotate(180deg);' frameborder='0' scrolling='no'></iframe>"
+			}
+		},
+		{
 			module: "compliments",
 			position: "lower_third"
 		},
