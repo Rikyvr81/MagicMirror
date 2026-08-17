@@ -39,7 +39,7 @@ body::before {
   position: fixed;
   inset: 0;
 
-  background: rgba(0,0,0,.35);
+  background: rgba(0,0,0,.60);
 
   z-index: -1;
 }
@@ -134,7 +134,8 @@ body::before {
   overflow: hidden !important;
 
   border-radius: 14px !important;
-  background: white !important;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(12px);
 
   box-shadow: 0 0 20px rgba(255,255,255,0.12) !important;
 }
@@ -204,7 +205,8 @@ body::before {
 
 .family-message {
   width: 420px !important;
-  background: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(12px);
   color: #1f2933;
 
   border-radius: 12px;
@@ -293,10 +295,12 @@ body::before {
   font-size: 18px !important;
   width: 600px !important;
   text-align: left !important;
-  border-bottom: 1px solid #666 !important;
+  border-bottom: 2px solid rgba(255,255,255,.40) !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
   margin-top: -82px !important;
+  letter-spacing: 1px;
+  
 }
 
 .weather-forecast-box header {
@@ -304,9 +308,10 @@ body::before {
   font-size: 18px !important;
   width: 600px !important;
   text-align: right !important;
-  border-bottom: 1px solid #666 !important;
+  border-bottom: 2px solid rgba(255,255,255,.40) !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
+  letter-spacing: 1px;
 }
 
 /* Testo */
