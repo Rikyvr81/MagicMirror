@@ -54,16 +54,13 @@ let config = {
 				maxNumberOfDays: 5
 			}
 		},
-
 		{
 			module: "helloworld",
 			position: "middle_center",
 			config: {
-				text: `
-					<iframe
-						src="https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome"
-								},
-
+				text: "<iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
+			}
+		},
 		{
 			module: "calendar",
 			position: "bottom_left",
@@ -71,9 +68,8 @@ let config = {
 			config: {
 				language: "it",
 				timeFormat: "absolute",
-				maximumEntries: 5,
+				maximumEntries: 5, 
 				displaySymbol: true,
-				fade: false,
 				calendars: [
 					{
 						url: "https://calendar.google.com/calendar/ical/6bb24c0fb7ed698a938c7a81d953e53f82e361c0f061bf25daaff1616cb8fe2d%40group.calendar.google.com/private-0fd6a3516912f9807cdf5c47c1deccd0/basic.ics",
@@ -82,7 +78,8 @@ let config = {
 					}
 				]
 			}
-		}
+		},
+		
 	]
 };
 
