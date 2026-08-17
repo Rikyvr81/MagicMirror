@@ -80,7 +80,7 @@ let config = {
 			module: "calendar",
 			position: "top_right",
 			classes: "todo-list",
-			header: "📋 TO DO LIST",
+			header: "TO DO LIST",
 			config: {
 				updateInterval: 300000,
 				language: "it",
