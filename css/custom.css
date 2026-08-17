@@ -1,0 +1,237 @@
+/* ==========================================
+   FAMILY HUB - RICCARDO SANTORO
+   ========================================== */
+
+:root {
+  --color-text: #FFFFFF;
+  --color-text-dimmed: #BBBBBB;
+  --color-text-bright: #FFFFFF;
+  --color-background: #000000;
+
+  --font-primary: "Roboto Condensed";
+  --font-secondary: "Roboto";
+
+  --font-size: 22px;
+  --font-size-small: 18px;
+
+  --gap-body-top: 15px;
+  --gap-body-right: 20px;
+  --gap-body-bottom: 15px;
+  --gap-body-left: 20px;
+
+  --gap-modules: 15px;
+}
+
+/* ===========================================
+   CALENDARIO (LATO SINISTRO)
+   =========================================== */
+
+.region.top.left {
+  width: 1450px;
+  text-align: left;
+}
+
+/* Titolo mese */
+
+.calendar-month-title {
+  margin-bottom: 10px;
+  text-align: center;
+  width: 1380px;
+  margin-left: -20px;
+}
+
+.calendar-month-title .time {
+  display: none;
+}
+
+.calendar-month-title .date {
+  display: block;
+  font-size: 42px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  line-height: 46px;
+}
+
+/* Modulo calendario Google */
+
+.main-google-calendar {
+  margin-left: -20px;
+}
+
+/* Frame calendario Google */
+
+.family-calendar-frame {
+  width: 1380px;
+  height: 660px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 0 20px rgba(255,255,255,0.12);
+}
+
+/* iframe calendario */
+
+.family-calendar-frame iframe {
+  display: block;
+  width: 1380px;
+  height: 760px;
+  border: none;
+}
+
+/* ==========================================
+   COLONNA DESTRA
+   ========================================== */
+
+.region.top.right {
+  width: 420px;
+  text-align: right;
+}
+
+/* ==========================================
+   OROLOGIO
+   ========================================== */
+
+.main-clock {
+  margin-bottom: 35px;
+}
+
+.main-clock .date {
+  font-size: 28px;
+  line-height: 32px;
+}
+
+.main-clock .time {
+  font-size: 82px;
+  line-height: 84px;
+}
+
+/* ==========================================
+   TODO LIST
+   ========================================== */
+
+.todo-list {
+  width: 380px;
+  text-align: left;
+  display: inline-block;
+}
+
+.todo-list header {
+  color: #ffffff;
+  font-size: 20px;
+
+  border-bottom: 1px solid #666;
+
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.todo-list .title {
+  font-size: 24px;
+}
+
+.todo-list .time {
+  font-size: 18px;
+  color: #aaaaaa;
+}
+
+.todo-list .calendar {
+  font-size: 24px;
+}
+
+/* ==========================================
+   METEO IN BASSO CENTRALE
+   ========================================== */
+
+.region.bottom.center {
+  width: 1000px;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  gap: 120px;
+
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.region.bottom.bar {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 120px;
+	width: 100%;
+}
+
+.region.bottom.left {
+    width: 1400px;
+}
+
+/* Meteo attuale */
+
+.weather-current-box .large {
+	font-size: 42px !important;
+}
+
+.weather-current-box {
+    width: 500px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+
+/* Previsioni */
+
+.weather-forecast-box {
+    width: 500px;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 80px;
+    text-align: center;
+}
+
+.weather-current-box header,
+.weather-forecast-box header {
+  color: #ffffff;
+
+  font-size: 18px;
+
+  border-bottom: 1px solid #666;
+
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+}
+
+/* Riduce temperatura troppo grande */
+
+.weather-current-box .large {
+  font-size: 42px;
+}
+
+/* ==========================================
+   STILE GENERALE
+   ========================================== */
+
+.weather {
+  font-size: 22px;
+}
+
+.calendar {
+  font-size: 24px;
+}
+
+iframe {
+  border-radius: 12px;
+}
+
+/* Nasconde eventuali scrollbar */
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: red !important;
+}
