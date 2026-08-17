@@ -321,7 +321,7 @@ body::before {
   border-bottom: 2px solid rgba(255,255,255,.40) !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
-  margin-top: -82px !important;
+ /*  margin-top: -82px !important;*/
   letter-spacing: 1px;
   
 }
@@ -341,8 +341,8 @@ body::before {
 
 .weather-current-box {
   font-size: 20px !important;
-  padding-left: 15px !important;
-  margin-top: -82px !important;
+ /* padding-left: 15px !important;
+   margin-top: -82px !important;*/
 }
 
 .weather-forecast-box {
