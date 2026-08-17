@@ -50,22 +50,15 @@ body::before {
    Titoli dashboard
    ========================================== */
 
-.second-calendar-month-title,
-.family-message-title {
-
-    font-family: inherit !important;
-
-    font-size: 18px !important;
-
-    font-weight: normal !important;
-
-    letter-spacing: 1px !important;
-
-    text-transform: uppercase !important;
-
-    color: white !important;
-
-    text-shadow: none !important;
+.family-message-title,
+.second-calendar-month-title {
+  font-family: inherit !important;
+  font-size: 18px !important;
+  font-weight: 300 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: white !important;
+  text-shadow: none !important;
 }
 
 /* ==========================================
@@ -109,15 +102,11 @@ body::before {
   width: 1380px !important;
   height: 665px !important;
   overflow: hidden !important;
-
   border-radius: 14px !important;
-
   background: transparent !important;
   backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-
+  webkit-backdrop-filter: blur(10px) !important;
   border: none !important;
-
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35) !important;
 }
 
@@ -125,7 +114,6 @@ body::before {
   width: 1380px !important;
   height: 700px !important;
   border: none !important;
-
   opacity: 1.00 !important;
 }
 
@@ -163,12 +151,10 @@ body::before {
   width: 450px !important;
   height: 280px !important;
   overflow: hidden !important;
-
   border-radius: 14px !important;
-
   background: transparent !important;
   backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
+  webkit-backdrop-filter: blur(14px) !important;
 
   border: none !important;
 
@@ -179,7 +165,6 @@ body::before {
   width: 450px !important;
   height: 300px !important;
   border: none !important;
-
   opacity: 1.00 !important;
 }
 
@@ -245,50 +230,31 @@ body::before {
 }
 
 .family-message {
-
   width: 420px !important;
-
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-
   padding: 0 !important;
   margin: 0 !important;
-
   text-align: left !important;
-
   color: #ffffff !important;
-
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
 }
 
 .family-message-title {
-
-  font-size: 20px !important;
-  font-weight: 600 !important;
-
-  color: #ffffff !important;
-
   text-align: center !important;
-
   border-bottom: 1px solid rgba(255,255,255,.35) !important;
-
   padding-bottom: 8px !important;
   margin-bottom: 12px !important;
-
-  text-shadow: 0 2px 8px rgba(0,0,0,.9) !important;
 }
 
 .family-message p {
 
   font-size: 15px !important;
   line-height: 22px !important;
-
   color: #ffffff !important;
-
   margin-top: 0 !important;
   margin-bottom: 10px !important;
-
   text-shadow: 0 2px 8px rgba(0,0,0,.9) !important;
 }
 
