@@ -176,16 +176,17 @@
 .todo-list .calendar
 
 .family-message-box {
-  width: 470px !important;
-  margin-bottom: 20px !important;
+  width: 420px !important;
+  max-width: 420px !important;
 }
 
 .family-message {
+  width: 420px !important;
   background: rgba(255,255,255,0.92);
   color: #1f2933;
 
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
 
   text-align: left;
 
@@ -204,11 +205,11 @@
 }
 
 .family-message p {
-  font-size: 16px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 18px;
 
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 ``
 
