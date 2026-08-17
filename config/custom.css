@@ -145,9 +145,8 @@
 /* Meteo attuale */
 
 .weather-current-box {
-  width: 450px !important;
+  width: 600px !important;
   text-align: left !important;
-  left: 60px !important;
   
 }
 
@@ -159,9 +158,12 @@
 /* Previsioni */
 
 .weather-forecast-box {
-  width: 500px !important;
+  width: 600px !important;
   text-align: right !important;
-  left: 120px !important;
+}
+.weather-forecast-box .large {
+  font-size: 46px !important;
+  line-height: 48px !important;
 }
 
 /* Intestazioni */
