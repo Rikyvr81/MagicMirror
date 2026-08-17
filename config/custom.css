@@ -200,25 +200,31 @@ body::before {
 }
 
 .todo-list header {
-  color: white;
-  font-size: 20px;
-
-  border-bottom: 1px solid #666;
-
-  padding-bottom: 6px;
-  margin-bottom: 10px;
+  font-family: var(--font-primary) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: rgba(255,255,255,.90) !important;
+  text-shadow: none !important;
+  border-bottom: 2px solid rgba(255,255,255,.40) !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 10px !important;
 }
 
 .todo-list .title {
-  font-size: 24px;
+  font-family: var(--font-primary) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  color: rgba(255,255,255,.90) !important;
 }
 
 .todo-list .time {
-  font-size: 18px;
-  color: #aaaaaa;
+  font-family: var(--font-primary) !important;
+  font-size: 16px !important;
+  color: rgba(255,255,255,.60) !important;
 }
-
-.todo-list .calendar
+/*.todo-list .calendar*/
 
 /* ==========================================
    COMUNICAZIONI FAMIGLIA
