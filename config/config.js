@@ -156,10 +156,10 @@ let config = {
 					const calendarUrl =
 						'https://calendar.google.com/calendar/embed?src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&mode=MONTH' +
 						`&dates=${startDate}%2F${endDate}` +
-						'&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width:'450' height:'350' frameborder='0' scrolling='no''>
+						'&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0'
 
 					return `
-						<div class="second-family-calendar-frame"><iframe src='${calendarUrl}'</iframe></div>",
+						<div class="second-family-calendar-frame"><iframe src='${calendarUrl}' style='border:0' width:'450' height:'350' frameborder='0' scrolling='no'</iframe></div>",
 					`;
 				})()
 			}
