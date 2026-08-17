@@ -77,6 +77,33 @@
 }
 
 /* ==========================================
+   CALENDARIO SECONDARIO
+   ========================================== */
+
+/* Calendario Google */
+
+.second-google-calendar {
+  margin-left: 15px !important;
+}
+
+.second-family-calendar-frame {
+  width: 380px !important;
+  height: 165px !important;
+  overflow: hidden !important;
+
+  border-radius: 14px !important;
+  background: white !important;
+
+  box-shadow: 0 0 20px rgba(255,255,255,0.12) !important;
+}
+
+.second-family-calendar-frame iframe {
+  width: 380px !important;
+  height: 200px !important;
+  border: none !important;
+}
+
+/* ==========================================
    COLONNA DESTRA (OROLOGIO - TO DO - NOTE)
    ========================================== */
 
