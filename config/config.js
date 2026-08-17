@@ -40,7 +40,7 @@ let config = {
 			module: "helloworld",
 			position: "top_bar",
 			config: {
-				text: "<iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81%40gmail.com&ctz=Europe%2FRome' src='https://calendar.google.com/calendar/embed?src=it.italian%23holiday%40group.v.calendar.google.com&ctz=Europe%2FRome' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
+				text: "<iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81%40gmail.com&ctz=Europe%2FRome' &src='https://calendar.google.com/calendar/embed?src=it.italian%23holiday%40group.v.calendar.google.com&ctz=Europe%2FRome' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
 			}
 		},
 		{
