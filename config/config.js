@@ -59,7 +59,7 @@ let config = {
 				urgency: 0,
 				calendars: [
 					{
-						url: "https://calendar.google.com/calendar/ical/rikyvr81%40gmail.com/public/basic.ics",
+						url: "https://calendar.google.com/calendar/ical/rikyvr81%40gmail.com/private-091b2d1fdfaa0054cd0a15f4363f00bf/basic.ics",
 						symbol: "calendar-check",
 						title: "Casa"
 					}
