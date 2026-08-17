@@ -55,6 +55,16 @@ let config = {
 			}
 		},
 		{
+			module: "clock",
+			position: "middle_center",
+			classes: "calendar-month-title",
+			config: {
+				showDate: true,
+				dateFormat: "MMMM YYYY",
+				displaySeconds: false
+			}
+		},
+		{
 			module: "helloworld",
 			position: "middle_center",
 			config: {
