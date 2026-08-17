@@ -50,15 +50,15 @@ body::before {
    Titoli dashboard
    ========================================== */
 
-.family-message-title,
-.second-calendar-month-title {
-  font-family: inherit !important;
-  font-size: 18px !important;
-  font-weight: 300 !important;
-  letter-spacing: 1px !important;
-  text-transform: uppercase !important;
-  color: white !important;
-  text-shadow: none !important;
+.second-calendar-month-title,
+.family-message-title {
+    font-family: var(--font-primary) !important;
+    font-size: 18px !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    color: rgba(255,255,255,.90) !important;
+    text-shadow: none !important;
 }
 
 /* ==========================================
