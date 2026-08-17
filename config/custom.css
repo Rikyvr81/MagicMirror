@@ -237,7 +237,7 @@
    ========================================== */
 
 .weather-current-box {
-  width: 650px !important;
+  width: 600px !important;
   text-align: left !important;
   margin: 0 !important;
 }
@@ -252,7 +252,7 @@
    ========================================== */
 
 .weather-forecast-box {
-  width: 650px !important;
+  width: 600px !important;
   text-align: right !important;
   margin: 0 !important;
 }
