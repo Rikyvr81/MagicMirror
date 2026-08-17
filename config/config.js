@@ -98,13 +98,29 @@ let config = {
 			}
 		},
 		{
-			module: "clock",
+			module: "helloworld",
 			position: "bottom_right",
 			classes: "second-calendar-month-title",
 			config: {
-				showDate: true,
-				dateFormat: "MMMM YYYY",
-				displaySeconds: false
+				text: (() => {
+					const mesi = [
+						"GENNAIO","FEBBRAIO","MARZO","APRILE",
+						"MAGGIO","GIUGNO","LUGLIO","AGOSTO",
+						"SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"
+					];
+
+					const oggi = new Date();
+
+					let mese = oggi.getMonth() + 1;
+					let anno = oggi.getFullYear();
+
+					if (mese > 11) {
+						mese = 0;
+						anno++;
+					}
+
+					return `${mesi[mese]} ${anno}`;
+				})()
 			}
 		},
 		{
