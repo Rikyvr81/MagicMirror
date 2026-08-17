@@ -53,7 +53,7 @@ let config = {
 			module: "helloworld",
 			position: "top_bar",
 			config: {
-				text: "<iframe src='https://google.com" + "rikyvr81@gmail.com" + "&ctz=Europe/Rome&mode=MONTH&showTitle=0&showNav=0&showDate=1&showPrint=0&showTabs=0&showCalendars=0' style='border:0; filter:invert(95%) hue-rotate(180deg);' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
+				text: "<iframe src='https://ansa.it' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
 			}
 		},
 		{
