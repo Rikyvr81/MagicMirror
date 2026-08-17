@@ -220,15 +220,15 @@
 /* Posizionamento regioni */
 
 .region.bottom.left {
-  width: 650px !important;
-  left: 0px !important;
-  bottom: 80px !important;
+  width: 600px !important;
+  left: 25px !important;
+  bottom: 110px !important;
 }
 
 .region.bottom.center {
-  width: 650px !important;
-  left: 900px !important;
-  bottom: 80px !important;
+  width: 600px !important;
+  left: 690px !important;
+  bottom: 110px !important;
   transform: none !important;
 }
 
@@ -269,13 +269,9 @@
 .weather-current-box header {
   color: white !important;
   font-size: 18px !important;
-
-  width: 650px !important;
-
+  width: 600px !important;
   text-align: left !important;
-
   border-bottom: 1px solid #666 !important;
-
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
 }
@@ -283,13 +279,9 @@
 .weather-forecast-box header {
   color: white !important;
   font-size: 18px !important;
-
-  width: 650px !important;
-
+  width: 600px !important;
   text-align: right !important;
-
   border-bottom: 1px solid #666 !important;
-
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
 }
