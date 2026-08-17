@@ -147,6 +147,8 @@
 .weather-current-box {
   width: 450px !important;
   text-align: left !important;
+  left: 60px !important;
+  
 }
 
 .weather-current-box .large {
@@ -159,6 +161,7 @@
 .weather-forecast-box {
   width: 500px !important;
   text-align: right !important;
+  left: 120px !important;
 }
 
 /* Intestazioni */
