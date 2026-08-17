@@ -79,6 +79,26 @@
 /* ==========================================
    CALENDARIO SECONDARIO
    ========================================== */
+/* Titolo mese */
+
+.second-calendar-month-title {
+  width: 450px !important;
+  text-align: center !important;
+  margin-bottom: 10px !important;
+}
+
+.second-calendar-month-title .time {
+  display: none !important;
+}
+
+.second-calendar-month-title .date {
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 300 !important;
+  color: white !important;
+  text-transform: uppercase !important;
+  letter-spacing: 4px !important;
+}
 
 /* Calendario Google */
 
