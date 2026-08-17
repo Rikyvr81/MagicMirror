@@ -103,7 +103,7 @@ let config = {
 			classes: "second-google-calendar",
 			config: {
 				updateInterval: 300000,
-				text: "<div class='second-family-calendar-frame'><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0; width:450px; height:300px;' frameborder='0' scrolling='no' month='next'></iframe></div>",
+				text: "<div class='second-family-calendar-frame'><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0; width:450px; height:350px;' frameborder='0' scrolling='no' month='next'></iframe></div>",
 			}
 		},		
 		
