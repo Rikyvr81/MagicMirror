@@ -194,7 +194,7 @@ body::before {
 }
 
 .todo-list {
-  width: 380px;
+  width: 420px !important;
   text-align: left;
   display: inline-block;
 }
@@ -207,9 +207,10 @@ body::before {
   text-transform: uppercase !important;
   color: rgba(255,255,255,.90) !important;
   text-shadow: none !important;
-  border-bottom: 2px solid rgba(255,255,255,.40) !important;
-  padding-bottom: 6px !important;
-  margin-bottom: 10px !important;
+  text-align: center !important;
+  border-bottom: 1px solid rgba(255,255,255,.35) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
 }
 
 .todo-list .title {
