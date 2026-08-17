@@ -46,7 +46,7 @@ let config = {
 
 		{
 			module: "weather",
-			position: "bottom_right",
+			position: "bottom_center",
 			classes: "weather-forecast-box",
 			header: "Previsioni",
 			config: {
@@ -73,6 +73,7 @@ let config = {
 			classes: "main-google-calendar",
 			config: {
 				text: "<div class='family-calendar-frame'><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe></div>"
+				updateInterval: 300000 // Si aggiorna da solo ogni 5 minuti
 			}
 		},
 		{
@@ -81,6 +82,7 @@ let config = {
 			classes: "todo-list",
 			header: "📋 TO DO LIST",
 			config: {
+				pdateInterval: 300000,
 				language: "it",
 				timeFormat: "absolute",
 				maximumEntries: 6, 
@@ -95,6 +97,15 @@ let config = {
 				]
 			}
 		},
+		{
+			module: "helloworld",
+			position: "bottom_right", 
+			classes: "second-google-calendar",
+			config: {
+				text: "<div class="family-calendar-frame"><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0; filter:invert(95%) hue-rotate(180deg); width:350px; height:280px; transform: scale(0.85); transform-origin: top right;' frameborder='0' scrolling='no'></iframe></div>",
+				updateInterval: 300000 // Si aggiorna da solo ogni 5 minuti
+			}
+		},		
 		
 	]
 };
