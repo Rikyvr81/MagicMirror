@@ -195,23 +195,26 @@ body::before {
 
 .todo-list {
   width: 420px !important;
-  text-align: left;
-  display: inline-block;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: left !important;
 }
 
 .todo-list header {
   font-family: var(--font-primary) !important;
   font-size: 18px !important;
   font-weight: 400 !important;
-  letter-spacing: 1px !important;
   text-transform: uppercase !important;
+  letter-spacing: 1px !important;
   color: rgba(255,255,255,.90) !important;
-  text-shadow: none !important;
   text-align: center !important;
   border-bottom: 1px solid rgba(255,255,255,.35) !important;
+  width: 100% !important;
   padding-bottom: 8px !important;
   margin-bottom: 12px !important;
 }
+
 
 .todo-list .title {
   font-family: var(--font-primary) !important;
