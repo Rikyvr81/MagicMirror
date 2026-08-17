@@ -227,7 +227,7 @@
 
 .region.bottom.center {
   width: 600px !important;
-  left: 780px !important;
+  left: 790px !important;
   bottom: 110px !important;
   transform: none !important;
 }
@@ -274,7 +274,6 @@
   border-bottom: 1px solid #666 !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
-/*  padding-left: 15px !important; */
 }
 
 .weather-forecast-box header {
@@ -285,17 +284,14 @@
   border-bottom: 1px solid #666 !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
-/*  padding-right: 15px !important; */
 }
 
 /* Testo */
 
 .weather-current-box {
   font-size: 20px !important;
-/*  padding-left: 15px !important; */
 }
 
 .weather-forecast-box {
   font-size: 20px !important;
-/*  padding-right: 15px !important; */
 }
