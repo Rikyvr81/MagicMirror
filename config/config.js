@@ -40,7 +40,7 @@ let config = {
 			module: "helloworld",
 			position: "top_bar",
 			config: {
-				text: "<iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&src=it.italian%23holiday@group.v.calendar.google.com&ctz=Europe/Rome' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
+				text: "<iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe>"
 			}
 		},
 		{
@@ -82,8 +82,8 @@ let config = {
 			config: {
 				weatherProvider: "openmeteo",
 				type: "forecast",
-				lat: 40.776676,
-				lon: -73.971321
+				lat: 45.3526,
+				lon: 10.8445
 			}
 		},
 	]
