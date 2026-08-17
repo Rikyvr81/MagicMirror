@@ -61,7 +61,7 @@
 
 .family-calendar-frame {
   width: 1380px !important;
-  height: 740px !important;
+  height: 600px !important;
   overflow: hidden !important;
 
   border-radius: 14px !important;
@@ -72,7 +72,7 @@
 
 .family-calendar-frame iframe {
   width: 1380px !important;
-  height: 800px !important;
+  height: 600px !important;
   border: none !important;
 }
 
