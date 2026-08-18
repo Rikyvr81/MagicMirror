@@ -188,10 +188,15 @@ let config = {
 			module: "weather",
 			position: "bottom_left",
 			classes: "weather-current-box",
-			header: "Meteo",
+			header: "Meteo Villafranca di Verona",
 			config: {
 				weatherProvider: "openmeteo",
 				type: "current",
+				/* Il ", IT-34" veniva dal nome localita' restituito dal
+				   servizio, che il modulo accoda all'intestazione. Qui
+				   disattiviamo l'accodamento e scriviamo il titolo per
+				   intero nel campo header qui sopra. */
+				appendLocationNameToHeader: false,
 				lat: 45.3526,
 				lon: 10.8445
 			}
@@ -201,10 +206,11 @@ let config = {
 			module: "weather",
 			position: "bottom_center",
 			classes: "weather-forecast-box",
-			header: "Previsioni",
+			header: "Previsioni Villafranca di Verona",
 			config: {
 				weatherProvider: "openmeteo",
 				type: "forecast",
+				appendLocationNameToHeader: false,
 				lat: 45.3526,
 				lon: 10.8445,
 				maxNumberOfDays: 5
