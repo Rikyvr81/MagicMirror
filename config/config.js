@@ -55,7 +55,7 @@ const CALENDARI = [
 	{
 		name: "festivita",
 		label: "Festività",
-		color: "#4CAF50",          // verde - reso a BORDO (vedi custom.css)
+		color: "#6EE787",          // verde brillante - reso a BORDO (vedi custom.css)
 		soloBordo: true,
 		symbol: "flag",
 		url: "https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics"
@@ -243,7 +243,7 @@ let config = {
 				maxEventLines: 4,
 				fontSize: "16px",
 				eventHeight: "20px",
-				useSymbol: true,
+				useSymbol: false,               // niente icone negli eventi
 				useIconify: false,              // usa le icone Font Awesome dei symbol
 				showWeekNumber: false,          // niente "CW 34" a lato
 				useWeather: false,              // niente icone meteo dentro le caselle
@@ -284,7 +284,10 @@ let config = {
 			classes: "todo-list",
 			header: "TO DO LIST",
 			config: {
-				accessToken: "51043a285f4e89fc87306fb1ab5f62380c6b2856",
+				/* >>> DA COMPILARE <<<
+				   Todoist -> Impostazioni -> Integrazioni -> Sviluppatore
+				   -> API token. NON e' l'URL iCal. */
+				accessToken: "INCOLLA_QUI_IL_TOKEN_API_TODOIST",
 
 				projects: ["6hHmrPHvXCJqHhHC"],   // progetto "To Do List"
 
