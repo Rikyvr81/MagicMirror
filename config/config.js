@@ -305,10 +305,14 @@ let config = {
 
 		/* ======================================================
 		   NOTE (colonna destra) - solo il titolo
+		   In top_right, sotto la TO DO LIST: la regione in basso
+		   ancorava il blocco al fondo dello schermo, mentre qui il
+		   contenuto scende dall'alto e la distanza si regola con
+		   --notes-top-gap nel custom.css.
 		   ====================================================== */
 		{
 			module: "helloworld",
-			position: "bottom_right",
+			position: "top_right",
 			classes: "family-message-box",
 			config: {
 				/* Ora contiene SOLO il titolo: i messaggi arrivano dal
@@ -334,7 +338,7 @@ let config = {
 		   ====================================================== */
 		{
 			module: "MMM-Todoist",
-			position: "bottom_right",
+			position: "top_right",
 			classes: "family-notes",
 			config: {
 				accessToken: TODOIST_TOKEN,
@@ -343,7 +347,15 @@ let config = {
 				updateInterval: 10 * 60 * 1000,
 				fade: false,
 				showProject: false,
-				hideWhenEmpty: true              // nessun messaggio: spazio libero
+				hideWhenEmpty: true,             // nessun messaggio: spazio libero
+
+				/* Il modulo tronca i titoli lunghi con "..." dopo circa 25
+				   caratteri: e' il valore predefinito ereditato dal modulo
+				   calendario. Qui alziamo il limite e permettiamo il testo
+				   su piu' righe, indispensabile per delle note. */
+				maxTitleLength: 250,
+				wrapEvents: true,
+				maxTitleLines: 4
 			}
 		},
 
