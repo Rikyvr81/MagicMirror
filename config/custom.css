@@ -349,11 +349,16 @@ body,
 
 .CX3_basicCalendar .event {
   border-radius: 4px !important;
-  font-size: 14px !important;
+  /* 16px e' il massimo compatibile con --eventheight: 18px.
+     Per salire oltre va alzato anche --eventheight, e in quel caso il
+     calendario cresce: servirebbe scendere a maxEventLines: 3. */
+  font-size: 16px !important;
 }
 
 .CX3_basicCalendar .event .title {
-  font-weight: 400 !important;
+  /* il peso 500 incide sulla leggibilita' a distanza piu' di un pixel
+     in piu' di dimensione */
+  font-weight: 500 !important;
 }
 
 /* ----------------------------------------------------------
@@ -374,7 +379,7 @@ body,
 
 :root {
   --outline-turni: #26C6DA;
-  --outline-festivita: #4CAF50;
+  --outline-festivita: #6EE787;
 }
 
 .CX3 .event.calendar_turni,
