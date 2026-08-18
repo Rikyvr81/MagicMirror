@@ -492,18 +492,10 @@ body,
   margin-bottom: 12px !important;
 }
 
-.todo-list .title {
-  font-family: var(--font-primary) !important;
-  font-size: 18px !important;
-  font-weight: 400 !important;
-  color: rgba(255, 255, 255, .90) !important;
-}
-
-.todo-list .time {
-  font-family: var(--font-primary) !important;
-  font-size: 16px !important;
-  color: rgba(255, 255, 255, .60) !important;
-}
+/* Le vecchie regole .todo-list .title (18px) e .todo-list .time
+   servivano al modulo calendar. La prima intercettava anche il titolo
+   delle attivita' di Todoist, ingrandendolo: e' stata rimossa e
+   sostituita dalle regole su .divTableCell.title piu' sopra. */
 
 .todo-list table,
 .todo-list .calendar,
@@ -578,27 +570,74 @@ body,
   margin-left: 0 !important;
 }
 
-/* Elementi propri di MMM-Todoist: il modulo porta un suo CSS, qui lo
-   riportiamo in linea con il resto della dashboard */
-.todo-list .todoist,
-.todo-list .todoisttable {
+/* ----------------------------------------------------------
+   Struttura reale di MMM-Todoist (verificata nel DOM):
+   <div class="divTable normal small light">
+     <div class="divTableBody">
+       <div class="divTableRow">
+         <div class="divTableCell"> </div>          <- vuota: qui la spunta
+         <div class="divTableCell spacerCell"> </div>
+         <div class="divTableCell title bright alignLeft">PROVA 2</div>
+         <div class="divTableCell bright align-right dueDate xsmall"></div>
+   Non e' una <table>, quindi le regole su table/td non lo toccano.
+   ---------------------------------------------------------- */
+
+.todo-list .divTable {
+  display: table !important;
   width: 100% !important;
-  border-collapse: collapse !important;
 }
 
-.todo-list .title,
-.todo-list .todoisttitle {
+.todo-list .divTableRow {
+  display: table-row !important;
+}
+
+.todo-list .divTableCell {
+  display: table-cell !important;
+  padding: 2px 0 !important;
+  vertical-align: middle !important;
+}
+
+/* Prima cella: il modulo la lascia vuota, quindi la casella di spunta la
+   disegniamo con uno pseudo-elemento. font-size: 0 serve a togliere lo
+   spazio insecabile che il modulo ci mette dentro. */
+.todo-list .divTableRow .divTableCell:first-child {
+  width: 1% !important;
+  white-space: nowrap !important;
+  font-size: 0 !important;
+}
+
+.todo-list .divTableRow .divTableCell:first-child::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 12px !important;
+  height: 12px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(255, 255, 255, .55) !important;
+  border-radius: 3px !important;
+  vertical-align: middle !important;
+}
+
+/* Spazio tra la casella e il testo */
+.todo-list .spacerCell {
+  width: 10px !important;
+  min-width: 10px !important;
+  font-size: 0 !important;
+}
+
+/* Titolo dell'attivita': stessa scala dei titoli degli eventi nel
+   calendario, non i 18px dell'intestazione */
+.todo-list .divTableCell.title {
   font-family: var(--font-primary) !important;
-  font-size: 18px !important;
+  font-size: 15px !important;
   font-weight: 400 !important;
   color: rgba(255, 255, 255, .90) !important;
+  text-align: left !important;
 }
 
-.todo-list .date,
-.todo-list .duedate,
-.todo-list .todoistdate {
+/* Data di scadenza, quando presente */
+.todo-list .divTableCell.dueDate {
   font-family: var(--font-primary) !important;
-  font-size: 16px !important;
+  font-size: 13px !important;
   color: rgba(255, 255, 255, .60) !important;
   text-align: right !important;
   white-space: nowrap !important;
