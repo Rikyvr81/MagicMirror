@@ -284,10 +284,7 @@ let config = {
 			classes: "todo-list",
 			header: "TO DO LIST",
 			config: {
-				/* >>> DA COMPILARE <<<
-				   Todoist -> Impostazioni -> Integrazioni -> Sviluppatore
-				   -> API token. NON e' l'URL iCal. */
-				accessToken: "INCOLLA_QUI_IL_TOKEN_API_TODOIST",
+				accessToken: "51043a285f4e89fc87306fb1ab5f62380c6b2856",
 
 				projects: ["6hHmrPHvXCJqHhHC"],   // progetto "To Do List"
 
