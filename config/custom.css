@@ -902,10 +902,13 @@ body,
   font-size: 20px !important;
 }
 
+/* Contenuto del meteo attuale centrato nella sua meta' di schermo */
 .weather-current-box {
-  text-align: left !important;
+  text-align: center !important;
 }
 
+/* Le previsioni restano incolonnate a destra: sono una tabella e
+   centrarne il contenuto disallineerebbe temperature e icone */
 .weather-forecast-box {
   text-align: right !important;
 }
@@ -931,12 +934,10 @@ body,
   letter-spacing: 1px;
 }
 
-.weather-current-box header {
-  text-align: left !important;
-}
-
+/* Entrambe le intestazioni centrate sopra la propria riga bianca */
+.weather-current-box header,
 .weather-forecast-box header {
-  text-align: right !important;
+  text-align: center !important;
 }
 
 /* ==========================================================
