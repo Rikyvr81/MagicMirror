@@ -178,7 +178,7 @@ body,
   width: 100% !important;
   box-sizing: border-box !important;
   border-radius: 14px !important;
-  overflow: hidden !important;
+  overflow: visible !important;   /* vedi nota sulle intestazioni ritagliate */
 
   /* velo scuro al posto del fondo bianco dell'iframe:
      alza l'alfa se lo sfondo fotografico disturba la lettura */
@@ -191,6 +191,24 @@ body,
 /* Celle */
 
 /* ---- Regole comuni alle DUE istanze (selettore .CX3) ---- */
+
+/* Le intestazioni (AGOSTO 2026 / SETTEMBRE 2026) venivano ritagliate in
+   alto: l'overflow: hidden del pannello tagliava la parte del titolo che
+   sporge oltre l'area del contenitore. Qui lo disattiviamo e riportiamo
+   il titolo a un flusso normale con spazio verticale sufficiente.
+   position: static neutralizza un eventuale posizionamento assoluto
+   applicato dal CSS del modulo. */
+.CX3 {
+  overflow: visible !important;
+}
+
+.CX3 .headerTitle {
+  position: static !important;
+  height: auto !important;
+  min-height: 1.3em !important;
+  line-height: 1.3 !important;
+  overflow: visible !important;
+}
 
 /* Giorni fuori dal mese corrente: invece di sfumarli con opacity, che
    annacqua tutto, li scuriamo. Cosi' il mese in corso risalta per
@@ -494,7 +512,7 @@ body,
   width: 100% !important;
   box-sizing: border-box !important;
   border-radius: 14px !important;
-  overflow: hidden !important;
+  overflow: visible !important;   /* vedi nota sulle intestazioni ritagliate */
   background: rgba(0, 0, 0, .18) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   backdrop-filter: blur(14px) !important;
