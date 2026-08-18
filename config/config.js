@@ -264,27 +264,28 @@ let config = {
 
 		/* ======================================================
 		   TO DO LIST (colonna destra)
+		   Todoist: le attivita' restano visibili finche' non le
+		   spunti dall'app, anche senza data. Sostituisce il vecchio
+		   calendario Google, dove gli impegni scomparivano al
+		   passare della data.
+		   Sulla bacheca la lista e' in sola lettura: si spunta
+		   dall'app sul telefono.
 		   ====================================================== */
 		{
-			module: "calendar",
+			module: "MMM-Todoist",
 			position: "top_right",
 			classes: "todo-list",
 			header: "TO DO LIST",
 			config: {
-				updateInterval: 300000,
-				language: "it",
-				timeFormat: "absolute",
-				maximumEntries: 6,
-				displaySymbol: true,
+				accessToken: "51043a285f4e89fc87306fb1ab5f62380c6b2856",
+
+				projects: ["6hHmrPHvXCJqHhHC"],   // progetto "To Do List"
+
+				maximumEntries: 8,
+				updateInterval: 10 * 60 * 1000,   // ogni 10 minuti
 				fade: false,
-				calendars: [
-					{
-						url: "https://calendar.google.com/calendar/ical/6bb24c0fb7ed698a938c7a81d953e53f82e361c0f061bf25daaff1616cb8fe2d%40group.calendar.google.com/private-0fd6a3516912f9807cdf5c47c1deccd0/basic.ics",
-						symbol: "check-square",
-						name: "todo",        // il nome serve a NON farla comparire nei calendari mensili
-						title: "To-Do"
-					}
-				]
+				showProject: false,               // un solo progetto: il nome e' superfluo
+				hideWhenEmpty: false              // mostra l'intestazione anche a lista vuota
 			}
 		},
 
