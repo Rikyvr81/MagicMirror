@@ -81,7 +81,10 @@ let config = {
 				fetchInterval: 300000,
 				calendars: [
 					{
-						url: "https://calendar.google.com/calendar/ical/rikyvr81%40gmail.com/private-091b2d1fdfaa0054cd0a15f4363f00bf/basic.ics",
+						/* >>> DA COMPILARE <<<
+						   Google Calendar -> Impostazioni del calendario ->
+						   "Indirizzo segreto in formato iCal" -> copia qui l'URL */
+						url: "INCOLLA_QUI_INDIRIZZO_SEGRETO_ICAL_DI_rikyvr81",
 						name: "personale",
 						color: "#039BE5",
 						symbol: "calendar-check"
@@ -200,7 +203,27 @@ let config = {
 				useWeather: false,
 				customHeader: true,
 				headerTitleOptions: { month: "long", year: "numeric" },
-				calendarSet: ["personale", "festivita"]
+				calendarSet: ["personale", "festivita"],
+
+				/* La classe .thisMonth del modulo indica il mese REALE corrente,
+				   non quello mostrato dalla vista: in questo calendario (mese
+				   successivo) la logica si ribalterebbe. Qui marchiamo ogni
+				   cella con inView / outOfView confrontandola con il mese
+				   effettivamente visualizzato, e il CSS usa quelle classi. */
+				manipulateDateCell: (cellDom) => {
+					const now = new Date();
+					// primo giorno del mese successivo (gestisce dicembre -> gennaio)
+					const target = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+					const wantedMonth = `month_${target.getMonth() + 1}`;
+					const wantedYear = `year_${target.getFullYear()}`;
+
+					const isInView =
+						cellDom.classList.contains(wantedMonth) &&
+						cellDom.classList.contains(wantedYear);
+
+					cellDom.classList.add(isInView ? "inView" : "outOfView");
+				}
 			}
 		}
 	]
