@@ -60,6 +60,12 @@
      Valore negativo = piu' in alto. */
   --cal-region-top: -8px;
 
+  /* Visibilita' degli eventi nel calendario piccolo: e' una vista di
+     riferimento sul mese successivo, quindi gli eventi restano leggibili
+     ma in secondo piano, come gli impegni gia' passati.
+     1 = piena visibilita', valori piu' bassi = piu' tenui. */
+  --small-cal-event-opacity: .45;
+
   /* Sollevamento del calendario piccolo (titolo, riga bianca e griglia).
      La sua regione e' ancorata al fondo dello schermo, quindi qui il
      valore va nella direzione opposta: piu' alto = piu' in su. */
@@ -958,6 +964,8 @@ body,
 .CX3_smallCalendar .event {
   border-radius: 3px !important;
   font-size: 10px !important;
+  /* eventi in secondo piano, come quelli passati */
+  opacity: var(--small-cal-event-opacity) !important;
 }
 
 /* ==========================================
