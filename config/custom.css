@@ -164,18 +164,69 @@ body,
   margin-top: var(--cal-top-gap) !important;
 }
 
-/* Titolo del mese generato da customHeader: true */
+/* Intestazione del calendario grande: una riga con il nome del mese a
+   sinistra e la legenda dei calendari a destra. L'HTML e' generato dalla
+   funzione customHeader nel config.js. */
 .main-month-calendar .headerTitle {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0 4px !important;
+  margin: 0 0 10px 0 !important;
+  text-align: left !important;
+  font-size: 15px !important;     /* base: la usa la legenda */
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Nome del mese */
+.main-month-calendar .cx3-title {
+  flex: 0 0 auto !important;
   font-family: var(--font-primary) !important;
   font-size: 42px !important;
   font-weight: 300 !important;
   letter-spacing: 4px !important;
   text-transform: uppercase !important;
-  text-align: center !important;
-  color: #ffffff !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 0 10px 0 !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+
+/* Legenda */
+.main-month-calendar .cx3-legend {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 4px 18px !important;
+  font-family: var(--font-primary) !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  letter-spacing: .5px !important;
+  text-transform: uppercase !important;
+  line-height: 1.4 !important;
+}
+
+.main-month-calendar .cx3-legend-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+/* Quadratino colorato */
+.main-month-calendar .cx3-dot {
+  display: inline-block !important;
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 3px !important;
+  flex: 0 0 auto !important;
 }
 
 /* Radice dell'istanza grande: qui vivono le variabili di CalendarExt3.
@@ -289,6 +340,15 @@ body,
 
 .CX3_basicCalendar .event .title {
   font-weight: 400 !important;
+}
+
+/* Il calendario "varie" e' giallo: il testo bianco predefinito sarebbe
+   illeggibile, quindi per quei soli eventi passiamo a testo scuro.
+   La classe .calendar_{nome} viene assegnata dal modulo. */
+.CX3 .event.calendar_varie,
+.CX3 .event.calendar_varie * {
+  color: #1a1a1a !important;
+  text-shadow: none !important;
 }
 
 /* Per agire su un solo calendario esiste .calendar_{nome}:
