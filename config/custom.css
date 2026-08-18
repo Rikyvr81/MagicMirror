@@ -190,7 +190,7 @@ body,
 .main-month-calendar .headerTitle {
   font-family: var(--font-primary) !important;
   font-size: 42px !important;
-  font-weight: 300 !important;
+  font-weight: 700 !important;
   letter-spacing: 4px !important;
   text-transform: uppercase !important;
   text-align: left !important;
