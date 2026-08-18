@@ -60,6 +60,11 @@
   --outmonth-bg: rgba(0, 0, 0, .45);
   --outmonth-text: rgba(255, 255, 255, .28);
 
+  /* Distanza del blocco NOTE dalla TO DO LIST che sta sopra.
+     Le note ora stanno nella regione in alto a destra, quindi scendono
+     dall'alto: alzando questo valore le si sposta piu' in basso. */
+  --notes-top-gap: 120px;
+
   /* Blocco meteo:
      --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
      --weather-height = altezza riservata alle due regioni meteo; serve a far
@@ -719,6 +724,11 @@ body,
   margin-top: 0 !important;
 }
 
+/* Il titolo NOTE porta lo stacco dalla TO DO LIST */
+.family-message-box {
+  margin-top: var(--notes-top-gap) !important;
+}
+
 .family-notes .divTable {
   display: block !important;
   width: 100% !important;
@@ -744,6 +754,9 @@ body,
 
 /* Testo del messaggio: stessa resa dei vecchi <p> */
 .family-notes .divTableCell.title {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  max-width: none !important;
   font-family: var(--font-primary) !important;
   font-size: 15px !important;
   font-weight: 400 !important;
