@@ -62,6 +62,14 @@ const CALENDARI = [
 	}
 ];
 
+/* Token Todoist: definito una volta sola e riusato da tutte le istanze
+   del modulo, cosi' quando lo rigeneri c'e' un solo punto da aggiornare. */
+const TODOIST_TOKEN = "b5165897484eaae9d7d53d4f5d6378886a331bb5";   // >>> UNICO PUNTO DA COMPILARE <<<
+
+/* Progetti Todoist */
+const PROGETTO_TODO = "6hHmrPHvXCJqHhHC";                  // "To Do List"
+const PROGETTO_NOTE = "6hHp8PVv3GGJv7ch";                  // progetto "Note"
+
 /* Nomi ammessi nelle viste: la TO DO LIST non e' in questo elenco,
    quindi i suoi impegni non compaiono nelle griglie mensili. */
 const NOMI_CALENDARI = CALENDARI.map((c) => c.name);
@@ -284,9 +292,8 @@ let config = {
 			classes: "todo-list",
 			header: "TO DO LIST",
 			config: {
-				accessToken: "51043a285f4e89fc87306fb1ab5f62380c6b2856",
-
-				projects: ["6hHmrPHvXCJqHhHC"],   // progetto "To Do List"
+				accessToken: TODOIST_TOKEN,
+				projects: [PROGETTO_TODO],
 
 				maximumEntries: 8,
 				updateInterval: 10 * 60 * 1000,   // ogni 10 minuti
@@ -297,30 +304,46 @@ let config = {
 		},
 
 		/* ======================================================
-		   COMUNICAZIONI FAMIGLIA (colonna destra)
+		   NOTE (colonna destra) - solo il titolo
 		   ====================================================== */
 		{
 			module: "helloworld",
 			position: "bottom_right",
 			classes: "family-message-box",
 			config: {
+				/* Ora contiene SOLO il titolo: i messaggi arrivano dal
+				   modulo Todoist qui sotto, che non ha intestazione propria
+				   e si presenta quindi come continuazione di questa. */
 				text: `
 					<div class="family-message">
 						<div class="family-message-title">
-							COMUNICAZIONI FAMIGLIA
+							NOTE
 						</div>
-
-						<p>
-							Ricordarsi di verificare il materiale scolastico prima dell'inizio delle lezioni
-							e controllare eventuali comunicazioni ricevute dalla scuola durante la settimana.
-						</p>
-
-						<p>
-							Questa settimana è prevista la visita medica annuale.
-							Verificare che tutta la documentazione necessaria sia disponibile e aggiornata.
-						</p>
 					</div>
 				`
+			}
+		},
+
+		/* ======================================================
+		   NOTE - CONTENUTO DINAMICO
+		   Seconda istanza di MMM-Todoist su un progetto dedicato.
+		   Nessuna intestazione: il titolo e' quello del modulo qui
+		   sopra, cosi' i due blocchi sembrano una sezione unica.
+		   Senza casella di spunta e con il testo a capo, l'aspetto
+		   e' quello dei paragrafi che c'erano prima.
+		   ====================================================== */
+		{
+			module: "MMM-Todoist",
+			position: "bottom_right",
+			classes: "family-notes",
+			config: {
+				accessToken: TODOIST_TOKEN,
+				projects: [PROGETTO_NOTE],
+				maximumEntries: 5,
+				updateInterval: 10 * 60 * 1000,
+				fade: false,
+				showProject: false,
+				hideWhenEmpty: true              // nessun messaggio: spazio libero
 			}
 		},
 
