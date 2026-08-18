@@ -24,6 +24,10 @@
   /* Colonna destra: unica sorgente di verita' per larghezza e distanza dal bordo */
   --right-col-width: 400px;
   --right-col-offset: 40px;
+
+  /* Distanza del blocco meteo dal bordo inferiore dello schermo:
+     valore piu' basso = meteo piu' in basso */
+  --weather-bottom: 25px;
 }
 
 /* ==========================================
@@ -323,13 +327,13 @@ body::before {
 .region.bottom.left {
   width: 600px !important;
   left: 17px !important;
-  bottom: 110px !important;
+  bottom: var(--weather-bottom) !important;
 }
 
 .region.bottom.center {
   width: 600px !important;
   left: 790px !important;
-  bottom: 110px !important;
+  bottom: var(--weather-bottom) !important;
   transform: none !important;
 }
 
