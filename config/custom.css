@@ -1,5 +1,6 @@
 /* ==========================================
    FAMILY HUB - RICCARDO SANTORO
+   Versione per MMM-CalendarExt3 (senza iframe)
    ========================================== */
 
 :root {
@@ -22,13 +23,16 @@
   --gap-modules: 15px;
 
   /* Stacco laterale interno: e' lo spazio che il calendario principale lascia
-     a sinistra (margin-left di .main-google-calendar). Usando lo stesso valore
-     a destra, le due colonne risultano simmetriche rispetto ai bordi schermo. */
+     a sinistra. Usando lo stesso valore a destra, le due colonne risultano
+     simmetriche rispetto ai bordi dello schermo. */
   --side-gap: 15px;
 
   /* Colonna destra: unica sorgente di verita' per larghezza e distanza dal bordo */
   --right-col-width: 440px;
   --right-col-offset: var(--side-gap);
+
+  /* Larghezza del calendario mensile grande */
+  --cal-width: 1400px;
 
   /* Blocco meteo:
      --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
@@ -44,8 +48,8 @@
 
 /* Lo sfondo va messo su <html>, non su <body>: MagicMirror applica ai bordi
    del body dei MARGINI (--gap-body-*), e i margini restano fuori dall'area
-   dipinta dal body, lasciando la cornice nera. Su <html> l'immagine copre
-   invece tutto lo schermo, senza spostare di un pixel il layout. */
+   dipinta dal body, lasciando una cornice nera. Su <html> l'immagine copre
+   tutto lo schermo, senza spostare di un pixel il layout. */
 html {
   background-image: url("https://picsum.photos/1920/1080");
   background-size: cover;
@@ -94,9 +98,9 @@ body,
    Titoli dashboard
    ========================================== */
 
-.second-calendar-month-title,
 .family-message-title,
-.todo-list header {
+.todo-list header,
+.second-month-calendar .headerTitle {
   font-family: var(--font-primary) !important;
   font-size: 18px !important;
   font-weight: 400 !important;
@@ -107,75 +111,126 @@ body,
 }
 
 /* ==========================================
-   CALENDARIO
+   FEEDER EVENTI
+   Il modulo calendar che alimenta CalendarExt3 non deve essere visibile.
+   Il download degli eventi avviene comunque, perche' e' gestito lato
+   server dal node_helper e non dipende dalla visibilita' del modulo.
+   ========================================== */
+
+.calendar-feeder {
+  display: none !important;
+}
+
+/* ==========================================
+   CALENDARIO MENSILE GRANDE
    ========================================== */
 
 .region.top.left {
-  width: 1400px !important;
+  width: var(--cal-width) !important;
   text-align: center !important;
   left: 0px !important;
 }
 
-/* Titolo mese */
-
-.calendar-month-title {
-  width: 1400px !important;
-  text-align: center !important;
-  margin-bottom: 10px !important;
-}
-
-.calendar-month-title .time {
-  display: none !important;
-}
-
-.calendar-month-title .date {
-  display: block !important;
-  font-family: var(--font-primary) !important;   /* stesso font di SETTEMBRE 2026 */
-  font-size: 42px !important;                    /* dimensione invariata */
-  font-weight: 300 !important;                   /* come il titolo secondario */
-  color: white !important;
-  text-transform: uppercase !important;
-  letter-spacing: 4px !important;
-  text-shadow: none !important;
-}
-
-/* Calendario Google */
-
-.main-google-calendar {
+.main-month-calendar {
+  width: var(--cal-width) !important;
   margin-left: var(--side-gap) !important;
 }
 
-.family-calendar-frame {
-  width: 1380px !important;
-  height: 665px !important;
-  overflow: hidden !important;
-  border-radius: 14px !important;
-  background: transparent !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  backdrop-filter: blur(10px) !important;
+/* Titolo del mese generato da customHeader: true */
+.main-month-calendar .headerTitle {
+  font-family: var(--font-primary) !important;
+  font-size: 42px !important;
+  font-weight: 300 !important;
+  letter-spacing: 4px !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35) !important;
+  padding: 0 !important;
+  margin: 0 0 10px 0 !important;
 }
 
-.family-calendar-frame iframe {
-  width: 1380px !important;
-  height: 700px !important;
-  border: none !important;
-  opacity: 1.00 !important;
+/* Radice dell'istanza grande: qui vivono le variabili di CalendarExt3.
+   L'altezza NON e' forzata: il modulo la calcola da fontSize, eventHeight
+   e maxEventLines. Se il calendario risultasse troppo alto o troppo basso
+   si regola da config.js con quei tre valori, non con un height fisso
+   (che taglierebbe l'ultima settimana). */
+.CX3_basicCalendar {
+  --fontsize: 16px;
+  --defaultcolor: rgba(255, 255, 255, .92);
+  --celllinecolor: rgba(255, 255, 255, .14);   /* griglia tenue */
+  --cellbgcolor: rgba(255, 255, 255, .05);     /* trasparenza reale delle celle */
+  --cellheaderheight: 26px;
+  --eventheight: 20px;
+
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+
+  /* velo scuro al posto del fondo bianco dell'iframe:
+     alza l'alfa se lo sfondo fotografico disturba la lettura */
+  background: rgba(0, 0, 0, .18) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .35) !important;
 }
+
+/* Celle */
+
+.CX3_basicCalendar .cell {
+  background: var(--cellbgcolor) !important;
+}
+
+.CX3_basicCalendar .cell:not(.thisMonth) {
+  opacity: .35 !important;
+}
+
+.CX3_basicCalendar .cell.today {
+  background: rgba(255, 255, 255, .13) !important;
+}
+
+.CX3_basicCalendar .cellHeader .cellDate {
+  font-size: 15px !important;
+  font-weight: 300 !important;
+  letter-spacing: .5px !important;
+}
+
+/* Rete di sicurezza: il numero di settimana e' gia' disattivato da
+   showWeekNumber: false nel config */
+.CX3_basicCalendar .cellHeader .cw {
+  display: none !important;
+}
+
+/* Eventi (il colore arriva dal campo "color" dei calendari nel config) */
+
+.CX3_basicCalendar .event {
+  border-radius: 4px !important;
+  font-size: 14px !important;
+}
+
+.CX3_basicCalendar .event .title {
+  font-weight: 400 !important;
+}
+
+/* Per agire su un solo calendario esiste .calendar_{nome}:
+.CX3_basicCalendar .event.calendar_festivita {
+  font-style: italic !important;
+}
+*/
 
 /* ==========================================
    COLONNA DESTRA - ALLINEAMENTO GLOBALE
    ========================================== */
 
-/* La regione dell'orologio/to-do e la regione che contiene comunicazioni /
-   calendario secondario usano la stessa larghezza e lo stesso stacco a destra.
+/* La regione dell'orologio/to-do e la regione che contiene comunicazioni e
+   calendario piccolo usano la stessa larghezza e lo stesso stacco a destra.
    :not(:has(.region)) esclude le barre contenitore (.region.top.bar,
    .region.bottom.bar) che in MagicMirror racchiudono le altre regioni:
    senza questo filtro verrebbe ristretta anche la barra del meteo. */
 .region.top.right,
 .region:not(:has(.region)):has(.family-message-box),
-.region:not(:has(.region)):has(.second-family-calendar-frame) {
+.region:not(:has(.region)):has(.second-month-calendar) {
   width: var(--right-col-width) !important;
   max-width: var(--right-col-width) !important;
   right: var(--right-col-offset) !important;
@@ -197,16 +252,15 @@ body,
 .family-message-box,
 .family-message,
 .family-message-title,
-.second-calendar-month-title,
-.second-google-calendar,
-.second-family-calendar-frame {
+.second-month-calendar {
   width: var(--right-col-width) !important;
   max-width: var(--right-col-width) !important;
   margin-left: auto !important;
   margin-right: 0 !important;
+  box-sizing: border-box !important;
 }
 
-/* Tutti i moduli e i loro contenitori seguono la larghezza della colonna */
+/* Moduli della regione top_right: seguono la larghezza della colonna */
 .region.top.right .module,
 .main-clock,
 .todo-list,
@@ -215,15 +269,6 @@ body,
   max-width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  box-sizing: border-box !important;
-}
-
-.family-message-box,
-.family-message,
-.family-message-title,
-.second-calendar-month-title,
-.second-google-calendar,
-.second-family-calendar-frame {
   box-sizing: border-box !important;
 }
 
@@ -345,9 +390,9 @@ body,
   margin-left: 0 !important;
 }
 
-/* ULTIMA RISORSA - se dopo le regole sopra restasse ancora un rientro,
-   togli il commento e regola il valore finche' la casella di spunta non
-   coincide con l'inizio della riga bianca (valore negativo = sposta a sinistra) */
+/* ULTIMA RISORSA - se restasse un rientro, togli il commento e regola il
+   valore finche' la casella di spunta non coincide con l'inizio della riga
+   bianca (valore negativo = sposta a sinistra) */
 /*
 .todo-list .module-content,
 .todo-list table {
@@ -388,50 +433,59 @@ body,
 }
 
 /* ==========================================
-   CALENDARIO SECONDARIO
+   CALENDARIO PICCOLO (mese successivo)
    ========================================== */
 
-.second-calendar-month-title {
+.second-month-calendar .headerTitle {
   text-align: center !important;
-  margin-bottom: 0px !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 6px 0 !important;
 }
 
-.second-calendar-month-title .time {
+.CX3_smallCalendar {
+  --fontsize: 11px;
+  --defaultcolor: rgba(255, 255, 255, .92);
+  --celllinecolor: rgba(255, 255, 255, .12);
+  --cellbgcolor: rgba(255, 255, 255, .05);
+  --cellheaderheight: 18px;
+  --eventheight: 13px;
+
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: rgba(0, 0, 0, .18) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .35) !important;
+}
+
+.CX3_smallCalendar .cell {
+  background: var(--cellbgcolor) !important;
+}
+
+.CX3_smallCalendar .cell:not(.thisMonth) {
+  opacity: .30 !important;
+}
+
+.CX3_smallCalendar .cellHeader .cellDate {
+  font-size: 10px !important;
+  font-weight: 300 !important;
+}
+
+.CX3_smallCalendar .cellHeader .cw {
   display: none !important;
 }
 
-.second-calendar-month-title .date {
-  display: block !important;
-  font-size: 12px !important;
-  font-weight: 300 !important;
-  color: white !important;
-  text-transform: uppercase !important;
-  letter-spacing: 4px !important;
-}
-
-.second-family-calendar-frame {
-  height: 280px !important;
-  overflow: hidden !important;
-  border-radius: 14px !important;
-  background: transparent !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  backdrop-filter: blur(14px) !important;
-  border: none !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
-}
-
-.second-family-calendar-frame iframe {
-  width: 100% !important;
-  height: 300px !important;   /* piu' alto del contenitore per nascondere la barra in basso */
-  border: none !important;
-  opacity: 1.00 !important;
+.CX3_smallCalendar .event {
+  border-radius: 3px !important;
+  font-size: 10px !important;
 }
 
 /* ==========================================
-   METEO SOTTO IL CALENDARIO
+   METEO - POSIZIONAMENTO REGIONI
    ========================================== */
-
-/* Posizionamento regioni */
 
 /* Altezza fissa uguale per entrambe: essendo ancorate in basso, senza questo
    accorgimento il blocco piu' alto farebbe partire la sua intestazione piu'
