@@ -78,6 +78,19 @@ body::before {
 }
 
 /* ==========================================
+   FONT UNIFORME SU TUTTA LA DASHBOARD
+   ========================================== */
+
+/* Le icone (meteo, Font Awesome) sono a loro volta dei font: se le
+   includessimo diventerebbero quadratini. Vanno quindi ESCLUSE, non
+   riportate a "inherit" (che darebbe comunque Roboto Condensed). */
+body,
+.module,
+.module *:not(.wi):not([class*="wi-"]):not(.fa):not(.fas):not(.far):not(.fab):not([class*="fa-"]):not(i) {
+  font-family: var(--font-primary) !important;
+}
+
+/* ==========================================
    Titoli dashboard
    ========================================== */
 
