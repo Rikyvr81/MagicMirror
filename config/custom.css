@@ -221,18 +221,27 @@ body,
   z-index: 2 !important;
 }
 
+/* Contenitore: le righe si impilano in verticale, allineate a destra */
 .calendar-legend {
   display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: flex-end !important;
-  align-items: center !important;
-  gap: 4px 16px !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 3px !important;
   font-family: var(--font-primary) !important;
   font-size: 15px !important;
   font-weight: 400 !important;
   letter-spacing: .5px !important;
   text-transform: uppercase !important;
   line-height: 1.4 !important;
+}
+
+/* Ogni riga della legenda: voci in fila, allineate a destra */
+.calendar-legend .legend-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 4px 16px !important;
 }
 
 .calendar-legend .legend-item {
