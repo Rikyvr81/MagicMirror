@@ -903,11 +903,11 @@ body,
 }
 
 .weather-current-box {
-  text-align: left !important;
+  text-align: center !important;
 }
 
 .weather-forecast-box {
-  text-align: right !important;
+  text-align: center !important;
 }
 
 .weather-current-box .large,
@@ -932,11 +932,11 @@ body,
 }
 
 .weather-current-box header {
-  text-align: left !important;
+  text-align: center !important;
 }
 
 .weather-forecast-box header {
-  text-align: right !important;
+  text-align: center !important;
 }
 
 /* ==========================================================
