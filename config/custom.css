@@ -429,6 +429,13 @@ body,
   justify-content: center !important;
 }
 
+/* Turni in grassetto. Il peso va messo anche sui figli: il titolo sta
+   in un elemento interno che porta un peso proprio. */
+.CX3 .event.calendar_turni,
+.CX3 .event.calendar_turni * {
+  font-weight: 700 !important;
+}
+
 .CX3 .event.calendar_festivita,
 .CX3 .event.calendar_festivita * {
   color: var(--outline-festivita) !important;
