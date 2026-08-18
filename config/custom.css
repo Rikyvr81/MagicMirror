@@ -760,9 +760,15 @@ body,
 
 .CX3 .cell,
 .CX3_basicCalendar .cell:not(.thisMonth),
-.CX3_smallCalendar .cell.outOfView,
 .CX3_smallCalendar .cell.inView {
   background: transparent !important;
+}
+
+/* Eccezione: nel calendario piccolo i giorni fuori dal mese mostrato
+   tengono un velo scuro. A 10px il solo colore del numero si
+   distinguerebbe troppo poco. */
+.CX3_smallCalendar .cell.outOfView {
+  background: rgba(0, 0, 0, .45) !important;
 }
 
 /* Senza fondo, i giorni fuori dal mese si distinguono solo per il
