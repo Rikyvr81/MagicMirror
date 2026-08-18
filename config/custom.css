@@ -731,6 +731,16 @@ body,
   font-weight: 300 !important;
 }
 
+/* Riga dei nomi dei giorni (lunedi', martedi', ...).
+   La classe .headerContainer.weekGrid non e' documentata nel README del
+   modulo: ricavata ispezionando il DOM. Il selettore > * copre le celle
+   interne, di cui non conosciamo il nome di classe. */
+.CX3_smallCalendar .headerContainer.weekGrid,
+.CX3_smallCalendar .headerContainer.weekGrid > * {
+  text-align: center !important;
+  justify-content: center !important;
+}
+
 /* Numeri dei giorni centrati nella cella invece che appoggiati a destra.
    Il modulo usa un contenitore flessibile, quindi serve sia justify-content
    sia text-align: il primo agisce sulla disposizione, il secondo sul testo. */
