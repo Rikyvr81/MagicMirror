@@ -285,7 +285,8 @@ body,
    annacqua tutto, li scuriamo. Cosi' il mese in corso risalta per
    contrasto invece di essere solo "meno slavato" degli altri.
    ATTENZIONE: .thisMonth = mese REALE corrente, quindi vale solo per il
-   calendario grande. Quello piccolo usa inView/outOfView (vedi sotto). */
+   calendario grande. Quello piccolo e' gestito dal blocco <style>
+   generato dal config.js. */
 .CX3_basicCalendar .cell:not(.thisMonth) {
   opacity: 1 !important;
   background: var(--outmonth-bg) !important;
@@ -307,9 +308,7 @@ body,
 
 /* ...tranne quando quel giorno e' fuori dal mese: allora resta spento */
 .CX3_basicCalendar .cell:not(.thisMonth)[class*="weekday_0"] .cellDate,
-.CX3_basicCalendar .cell:not(.thisMonth)[class*="weekday_6"] .cellDate,
-.CX3_smallCalendar .cell.outOfView[class*="weekday_0"] .cellDate,
-.CX3_smallCalendar .cell.outOfView[class*="weekday_6"] .cellDate {
+.CX3_basicCalendar .cell:not(.thisMonth)[class*="weekday_6"] .cellDate {
   color: var(--outmonth-text) !important;
 }
 
@@ -605,47 +604,12 @@ body,
   background: var(--cellbgcolor) !important;
 }
 
-/* Classi assegnate da manipulateDateCell nel config.js: outOfView sono i
-   giorni di agosto/ottobre che riempiono le settimane di bordo, inView i
-   giorni del mese effettivamente mostrato.
-   Se per qualsiasi motivo le classi non venissero applicate, le celle
-   restano semplicemente tutte uguali: nessun effetto invertito. */
-.CX3_smallCalendar .cell.outOfView {
-  background: var(--outmonth-bg) !important;
-}
-
-.CX3_smallCalendar .cell.outOfView .cellDate {
-  color: var(--outmonth-text) !important;
-}
-
-.CX3_smallCalendar .cell.inView {
-  background: var(--cellbgcolor) !important;
-}
-
-.CX3_smallCalendar .cell.inView .cellDate {
-  color: rgba(255, 255, 255, .92) !important;
-}
-
-/* La regola qui sopra e' piu' specifica di quella generale sul weekend
-   (.CX3 [class*="weekday_0"] .cellDate) e la stava annullando: ecco perche'
-   nel calendario di settembre sabato e domenica non erano blu.
-   Qui la riportiamo con specificita' sufficiente a vincere. */
-.CX3_smallCalendar .cell.inView[class*="weekday_0"] .cellDate,
-.CX3_smallCalendar .cell.inView[class*="weekday_6"] .cellDate {
-  color: var(--weekend-color) !important;
-}
-
-/* FESTIVITA' - deve stare DOPO le regole sul weekend: ha la stessa
-   specificita', quindi vince per posizione nel file.
-   La classe .holiday viene assegnata da manipulateDateCell nel config.js
-   quando la cella contiene un evento del calendario "festivita".
-   Il rosso si applica solo ai giorni del mese visualizzato, altrimenti
-   accenderebbe anche le celle spente di bordo. */
-.CX3_basicCalendar .cell.thisMonth.holiday .cellDate,
-.CX3_smallCalendar .cell.inView.holiday .cellDate {
-  color: var(--holiday-color) !important;
-  font-weight: 500 !important;
-}
+/* NOTA: l'evidenziazione dei giorni del mese mostrato da questo
+   calendario non e' definita qui, ma in un blocco <style> generato dal
+   config.js e inserito dal modulo della legenda. Il motivo: il modulo
+   non chiama manipulateDateCell sulle celle senza eventi, quindi non
+   possiamo marcarle da codice; il CSS generato usa invece le classi
+   month_N / year_N che il modulo assegna sempre. */
 
 .CX3_smallCalendar .cellHeader .cellDate {
   font-size: 10px !important;
@@ -759,22 +723,13 @@ body,
 }
 
 .CX3 .cell,
-.CX3_basicCalendar .cell:not(.thisMonth),
-.CX3_smallCalendar .cell.inView {
+.CX3_basicCalendar .cell:not(.thisMonth) {
   background: transparent !important;
-}
-
-/* Eccezione: nel calendario piccolo i giorni fuori dal mese mostrato
-   tengono un velo scuro. A 10px il solo colore del numero si
-   distinguerebbe troppo poco. */
-.CX3_smallCalendar .cell.outOfView {
-  background: rgba(0, 0, 0, .45) !important;
 }
 
 /* Senza fondo, i giorni fuori dal mese si distinguono solo per il
    colore del numero: lo spegniamo di piu' per compensare */
-.CX3_basicCalendar .cell:not(.thisMonth) .cellDate,
-.CX3_smallCalendar .cell.outOfView .cellDate {
+.CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
   color: rgba(255, 255, 255, .22) !important;
 }
 
