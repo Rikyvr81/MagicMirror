@@ -132,26 +132,51 @@ body::before {
    COLONNA DESTRA - ALLINEAMENTO GLOBALE
    ========================================== */
 
-.region.top.right {
+/* La regione dell'orologio/to-do e QUALSIASI regione che contenga
+   le comunicazioni o il calendario secondario usano la stessa larghezza
+   e la stessa distanza dal bordo destro */
+.region.top.right,
+.region:has(.family-message-box),
+.region:has(.second-family-calendar-frame) {
   width: var(--right-col-width) !important;
+  max-width: var(--right-col-width) !important;
   right: var(--right-col-offset) !important;
+  left: auto !important;
+  transform: none !important;
 }
 
-/* Tutti i moduli e i loro contenitori seguono la larghezza della colonna */
-.region.top.right .module,
-.main-clock,
-.todo-list,
-.todo-list header,
+/* Fallback: se :has() non fosse supportato, i moduli restano comunque
+   larghi quanto la colonna e ancorati a destra */
 .family-message-box,
 .family-message,
 .family-message-title,
 .second-calendar-month-title,
 .second-google-calendar,
 .second-family-calendar-frame {
+  width: var(--right-col-width) !important;
+  max-width: var(--right-col-width) !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/* Tutti i moduli e i loro contenitori seguono la larghezza della colonna */
+.region.top.right .module,
+.main-clock,
+.todo-list,
+.todo-list header {
   width: 100% !important;
   max-width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.family-message-box,
+.family-message,
+.family-message-title,
+.second-calendar-month-title,
+.second-google-calendar,
+.second-family-calendar-frame {
   box-sizing: border-box !important;
 }
 
