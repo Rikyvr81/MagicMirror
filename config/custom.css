@@ -57,7 +57,7 @@
   --today-color: var(--weekend-color);
 
   /* Celle dei giorni fuori dal mese corrente */
-  --outmonth-bg: rgba(0, 0, 0, .50);
+  --outmonth-bg: rgba(0, 0, 0, .45);
   --outmonth-text: rgba(255, 255, 255, .28);
 
   /* Blocco meteo:
@@ -225,6 +225,7 @@ body,
 
 .calendar-legend .legend-dot {
   display: inline-block !important;
+  box-sizing: border-box !important;
   width: 11px !important;
   height: 11px !important;
   border-radius: 3px !important;
@@ -836,9 +837,15 @@ body,
   --celllinecolor: rgba(255, 255, 255, .28);
 }
 
-.CX3 .cell,
-.CX3_basicCalendar .cell:not(.thisMonth) {
+.CX3 .cell {
   background: transparent !important;
+}
+
+/* Eccezione: i giorni fuori dal mese tengono un velo scuro, come nel
+   calendario piccolo. Deve stare DOPO la regola qui sopra: pari
+   specificita', vince la posizione. */
+.CX3_basicCalendar .cell:not(.thisMonth) {
+  background: var(--outmonth-bg) !important;
 }
 
 /* Senza fondo, i giorni fuori dal mese si distinguono solo per il
