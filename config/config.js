@@ -64,25 +64,20 @@ const CALENDARI = [
    quindi i suoi impegni non compaiono nelle griglie mensili. */
 const NOMI_CALENDARI = CALENDARI.map((c) => c.name);
 
-/* Intestazione del calendario grande: mese a sinistra, legenda a destra.
-   La funzione riceve la configurazione attiva e le date di inizio/fine
-   della vista; il mese si ricava dal punto centrale dell'intervallo,
-   perche' la prima cella puo' appartenere al mese precedente. */
-const intestazioneConLegenda = (cfg, inizioVista, fineVista) => {
-	const meta = new Date((inizioVista.getTime() + fineVista.getTime()) / 2);
-
-	const mese = meta.toLocaleDateString(cfg.locale || "it-IT", {
-		month: "long",
-		year: "numeric"
-	});
-
-	const voci = CALENDARI.map(
+/* Legenda: e' una STRINGA HTML calcolata una volta sola al caricamento
+   del config, non una funzione passata al modulo. Viene mostrata da un
+   modulo helloworld dedicato e posizionata dal custom.css in alto a
+   destra del calendario grande.
+   Nota: in precedenza la legenda era generata da customHeader come
+   funzione, ma quella configurazione veniva applicata anche alla seconda
+   istanza del calendario e mandava in errore il disegno del modulo. */
+const LEGENDA_HTML =
+	'<div class="calendar-legend">' +
+	CALENDARI.map(
 		(c) =>
-			`<span class="cx3-legend-item"><span class="cx3-dot" style="background:${c.color}"></span>${c.label}</span>`
-	).join("");
-
-	return `<span class="cx3-title">${mese}</span><span class="cx3-legend">${voci}</span>`;
-};
+			`<span class="legend-item"><span class="legend-dot" style="background:${c.color}"></span>${c.label}</span>`
+	).join("") +
+	"</div>";
 
 /* Marca le celle che contengono una festivita': il custom.css usa la
    classe .holiday per colorare di rosso il numero del giorno. */
@@ -205,9 +200,25 @@ let config = {
 				useIconify: false,              // usa le icone Font Awesome dei symbol
 				showWeekNumber: false,          // niente "CW 34" a lato
 				useWeather: false,              // niente icone meteo dentro le caselle
-				customHeader: intestazioneConLegenda,
+				customHeader: true,
+				headerTitleOptions: { month: "long", year: "numeric" },
 				calendarSet: NOMI_CALENDARI,
 				manipulateDateCell: marcaFestivita
+			}
+		},
+
+		/* ======================================================
+		   LEGENDA DEI CALENDARI
+		   Modulo a se' stante: il custom.css lo posiziona in alto a
+		   destra sopra il calendario grande, in modo che il nome del
+		   mese resti a sinistra e la legenda a destra.
+		   ====================================================== */
+		{
+			module: "helloworld",
+			position: "top_left",
+			classes: "calendar-legend-box",
+			config: {
+				text: LEGENDA_HTML
 			}
 		},
 
