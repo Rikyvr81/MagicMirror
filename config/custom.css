@@ -164,46 +164,48 @@ body,
   margin-top: var(--cal-top-gap) !important;
 }
 
-/* Intestazione del calendario grande: una riga con il nome del mese a
-   sinistra e la legenda dei calendari a destra. L'HTML e' generato dalla
-   funzione customHeader nel config.js. */
+/* Titolo del mese (generato da customHeader: true), allineato a sinistra
+   per lasciare spazio alla legenda sulla destra */
 .main-month-calendar .headerTitle {
-  display: flex !important;
-  align-items: baseline !important;
-  justify-content: space-between !important;
-  gap: 24px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  padding: 0 4px !important;
-  margin: 0 0 10px 0 !important;
-  text-align: left !important;
-  font-size: 15px !important;     /* base: la usa la legenda */
-  font-weight: 400 !important;
-  letter-spacing: normal !important;
-  text-transform: none !important;
-  color: #ffffff !important;
-  border: none !important;
-}
-
-/* Nome del mese */
-.main-month-calendar .cx3-title {
-  flex: 0 0 auto !important;
   font-family: var(--font-primary) !important;
   font-size: 42px !important;
   font-weight: 300 !important;
   letter-spacing: 4px !important;
   text-transform: uppercase !important;
-  white-space: nowrap !important;
-  line-height: 1.1 !important;
+  text-align: left !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0 0 0 6px !important;
+  margin: 0 0 10px 0 !important;
 }
 
-/* Legenda */
-.main-month-calendar .cx3-legend {
+/* ----------------------------------------------------------
+   LEGENDA DEI CALENDARI
+   E' un modulo helloworld a se' stante, portato qui in alto a
+   destra con position: absolute. Essendo fuori dal flusso non
+   occupa spazio verticale e non sposta il calendario.
+   Il riferimento e' .region.top.left, che MagicMirror posiziona
+   in modo assoluto: right: 0 coincide quindi col bordo destro
+   del calendario.
+   ---------------------------------------------------------- */
+
+.calendar-legend-box {
+  position: absolute !important;
+  top: 20px !important;
+  right: 4px !important;
+  width: auto !important;
+  max-width: 700px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 2 !important;
+}
+
+.calendar-legend {
   display: flex !important;
   flex-wrap: wrap !important;
   justify-content: flex-end !important;
   align-items: center !important;
-  gap: 4px 18px !important;
+  gap: 4px 16px !important;
   font-family: var(--font-primary) !important;
   font-size: 15px !important;
   font-weight: 400 !important;
@@ -212,16 +214,16 @@ body,
   line-height: 1.4 !important;
 }
 
-.main-month-calendar .cx3-legend-item {
+.calendar-legend .legend-item {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
   white-space: nowrap !important;
   color: rgba(255, 255, 255, .85) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .95) !important;
 }
 
-/* Quadratino colorato */
-.main-month-calendar .cx3-dot {
+.calendar-legend .legend-dot {
   display: inline-block !important;
   width: 11px !important;
   height: 11px !important;
