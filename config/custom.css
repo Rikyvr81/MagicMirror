@@ -383,7 +383,7 @@ body,
    ---------------------------------------------------------- */
 
 :root {
-  --outline-turni: #26C6DA;
+  --outline-turni: #5FE3FF;
   --outline-festivita: #6EE787;
 }
 
@@ -724,9 +724,15 @@ body,
   margin-top: 0 !important;
 }
 
-/* Il titolo NOTE porta lo stacco dalla TO DO LIST */
+/* Il titolo NOTE porta lo stacco dalla TO DO LIST.
+   margin-bottom: 0 e' necessario perche' MagicMirror inserisce
+   --gap-modules (15px) tra un modulo e il successivo: sommandosi ai
+   12px del titolo, lo spazio sotto la riga bianca risultava molto
+   maggiore di quello della TO DO LIST, dove intestazione ed elenco
+   appartengono allo stesso modulo. */
 .family-message-box {
   margin-top: var(--notes-top-gap) !important;
+  margin-bottom: 0 !important;
 }
 
 .family-notes .divTable {
