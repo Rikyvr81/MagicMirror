@@ -60,6 +60,11 @@
      Valore negativo = piu' in alto. */
   --cal-region-top: -8px;
 
+  /* Sollevamento del calendario piccolo (titolo, riga bianca e griglia).
+     La sua regione e' ancorata al fondo dello schermo, quindi qui il
+     valore va nella direzione opposta: piu' alto = piu' in su. */
+  --small-cal-bottom: 10px;
+
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
   --weekend-color: #4fb8ff;
@@ -519,6 +524,12 @@ body,
   right: var(--right-col-offset) !important;
   left: auto !important;
   transform: none !important;
+}
+
+/* Il calendario piccolo e' ancorato al fondo: alzando il valore di
+   bottom si solleva l'intero blocco, titolo e riga bianca compresi. */
+.region:not(:has(.region)):has(.second-month-calendar) {
+  bottom: var(--small-cal-bottom) !important;
 }
 
 /* Protezione: le barre contenitore non devono mai essere ristrette */
