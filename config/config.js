@@ -90,6 +90,39 @@ const marcaFestivita = (cellDom, events) => {
 	}
 };
 
+/* Marca le celle come inView / outOfView rispetto al mese effettivamente
+   mostrato dalla vista (offsetMesi: 0 = mese corrente, 1 = successivo).
+   Serve perche' la classe .thisMonth del modulo indica il mese REALE
+   corrente: nel calendario del mese successivo la logica si ribalterebbe.
+
+   Le classi month_N / year_N del modulo possono non essere ancora
+   assegnate quando questa funzione viene chiamata: in quel caso il
+   confronto fallirebbe silenziosamente, quindi riproviamo con un
+   setTimeout, che viene eseguito a disegno concluso. */
+const marcaMeseVisualizzato = (cellDom, offsetMesi) => {
+	const applica = () => {
+		const classi = Array.from(cellDom.classList);
+		const classeMese = classi.find((c) => c.startsWith("month_"));
+		const classeAnno = classi.find((c) => c.startsWith("year_"));
+
+		// classi non ancora presenti: segnalo il fallimento al chiamante
+		if (!classeMese || !classeAnno) return false;
+
+		const now = new Date();
+		// gestisce il passaggio dicembre -> gennaio
+		const target = new Date(now.getFullYear(), now.getMonth() + offsetMesi, 1);
+
+		const inView =
+			classeMese === `month_${target.getMonth() + 1}` &&
+			classeAnno === `year_${target.getFullYear()}`;
+
+		cellDom.classList.add(inView ? "inView" : "outOfView");
+		return true;
+	};
+
+	if (!applica()) setTimeout(applica, 0);
+};
+
 let config = {
 	address: "0.0.0.0",
 	port: 10000,
@@ -302,26 +335,8 @@ let config = {
 				headerTitleOptions: { month: "long", year: "numeric" },
 				calendarSet: NOMI_CALENDARI,
 
-				/* La classe .thisMonth del modulo indica il mese REALE corrente,
-				   non quello mostrato dalla vista: in questo calendario (mese
-				   successivo) la logica si ribalterebbe. Qui marchiamo ogni
-				   cella con inView / outOfView confrontandola con il mese
-				   effettivamente visualizzato, e il CSS usa quelle classi. */
 				manipulateDateCell: (cellDom, events) => {
-					const now = new Date();
-					// primo giorno del mese successivo (gestisce dicembre -> gennaio)
-					const target = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
-					const wantedMonth = `month_${target.getMonth() + 1}`;
-					const wantedYear = `year_${target.getFullYear()}`;
-
-					const isInView =
-						cellDom.classList.contains(wantedMonth) &&
-						cellDom.classList.contains(wantedYear);
-
-					cellDom.classList.add(isInView ? "inView" : "outOfView");
-
-					// festivita': stessa logica del calendario grande
+					marcaMeseVisualizzato(cellDom, 1);   // 1 = mese successivo
 					marcaFestivita(cellDom, events);
 				}
 			}
