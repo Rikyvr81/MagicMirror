@@ -554,3 +554,9 @@ body,
 .weather-forecast-box header {
   text-align: right !important;
 }
+
+.CX3 {
+  outline: 2px solid red !important;
+  min-height: 200px !important;
+  overflow: visible !important;
+}
