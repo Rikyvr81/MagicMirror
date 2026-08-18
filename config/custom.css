@@ -902,15 +902,45 @@ body,
   font-size: 20px !important;
 }
 
-/* Contenuto del meteo attuale centrato nella sua meta' di schermo */
-.weather-current-box {
+/* Contenuto del meteo attuale centrato nella sua meta' di schermo.
+   Il selettore * serve perche' il modulo annida temperatura e valore
+   percepito in contenitori con un allineamento proprio, che vinceva
+   sulla regola applicata al solo riquadro esterno. */
+.weather-current-box,
+.weather-current-box * {
   text-align: center !important;
 }
 
-/* Le previsioni restano incolonnate a destra: sono una tabella e
-   centrarne il contenuto disallineerebbe temperature e icone */
+/* Se qualche riga e' un contenitore flessibile, text-align non basta */
+.weather-current-box .large,
+.weather-current-box .medium,
+.weather-current-box .normal,
+.weather-current-box .feelslike,
+.weather-current-box .weather-current {
+  justify-content: center !important;
+}
+
+/* Eventuale tabella interna centrata come blocco */
+.weather-current-box table {
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Le previsioni restano incolonnate a destra DENTRO le celle, cosi'
+   temperature e icone non perdono l'allineamento verticale... */
 .weather-forecast-box {
   text-align: right !important;
+}
+
+/* ...ma la tabella nel suo insieme viene centrata nel riquadro da 600px.
+   Era piu' stretta del riquadro e restava appoggiata al bordo destro:
+   width auto + margini automatici la spostano verso sinistra quanto
+   serve per risultare centrata sotto l'intestazione. */
+.weather-forecast-box table {
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .weather-current-box .large,
