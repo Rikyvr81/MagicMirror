@@ -313,6 +313,18 @@ body,
   color: var(--outmonth-text) !important;
 }
 
+/* FESTIVITA' nel calendario grande.
+   Deve stare DOPO le regole sul weekend, altrimenti un sabato festivo
+   resterebbe blu invece di diventare rosso (Ferragosto e' il caso tipico).
+   Solo sui giorni del mese corrente: sulle celle di bordo il rosso
+   accenderebbe giorni che devono restare spenti.
+   Nel calendario piccolo la stessa cosa la fa il blocco <style>
+   generato dal config.js. */
+.CX3_basicCalendar .cell.thisMonth.holiday .cellDate {
+  color: var(--holiday-color) !important;
+  font-weight: 500 !important;
+}
+
 /* ---- Istanza grande ---- */
 
 .CX3_basicCalendar .cell {
