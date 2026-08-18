@@ -66,8 +66,15 @@
   --notes-top-gap: 120px;
 
   /* Larghezza della tabella delle previsioni dentro il suo riquadro da
-     600px: piu' e' alta, piu' le colonne si distanziano. Resta centrata. */
+     600px: piu' e' alta, piu' le colonne si distanziano. */
   --forecast-width: 520px;
+
+  /* Spostamento a sinistra delle previsioni. Serve perche' la prima
+     colonna (i nomi dei giorni) e' allineata a destra e lascia uno spazio
+     vuoto sul lato sinistro della tabella: il blocco risulta cosi'
+     centrato come tabella ma spostato a destra come contenuto visibile.
+     Alza il valore per spostarlo ancora piu' a sinistra. */
+  --forecast-shift: 45px;
 
   /* Blocco meteo:
      --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
@@ -956,6 +963,9 @@ body,
   width: var(--forecast-width) !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  /* transform invece di un margine: non altera il calcolo della
+     larghezza, quindi la spaziatura tra le colonne resta identica */
+  transform: translateX(calc(-1 * var(--forecast-shift))) !important;
 }
 
 .weather-current-box .large,
