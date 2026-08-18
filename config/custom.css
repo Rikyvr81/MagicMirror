@@ -1,3 +1,8 @@
+/* Font per il titolo del mese. L'@import deve stare in cima al file,
+   prima di ogni altra regola, altrimenti il browser lo ignora.
+   Carico tre alternative: si sceglie cambiando --font-title. */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Cormorant+Garamond:wght@300;400;500;600&family=Marcellus&display=swap");
+
 /* ==========================================
    FAMILY HUB - RICCARDO SANTORO
    Versione per MMM-CalendarExt3 (senza iframe)
@@ -10,6 +15,11 @@
   --color-background: #000000;
 
   --font-primary: "Roboto Condensed", "Roboto", sans-serif;
+
+  /* Font del titolo del mese. Alternative gia' caricate:
+     "Cormorant Garamond" -> piu' sottile e affilato, molto elegante
+     "Marcellus"          -> lapidario, ispirato alle iscrizioni romane */
+  --font-title: "Playfair Display", Georgia, serif;
   --font-secondary: "Roboto", sans-serif;
 
   --font-size: 22px;
@@ -137,9 +147,13 @@ body::before {
    riportate a "inherit" (che darebbe comunque Roboto Condensed). */
 body,
 .module,
-.module *:not(.wi):not([class*="wi-"]):not(.fa):not(.fas):not(.far):not(.fab):not([class*="fa-"]):not(i) {
+.module *:not(.wi):not([class*="wi-"]):not(.fa):not(.fas):not(.far):not(.fab):not([class*="fa-"]):not(i):not(.headerTitle) {
   font-family: var(--font-primary) !important;
 }
+/* Nota: .headerTitle e' escluso perche' questa regola, per via della
+   lunga catena di :not(), ha una specificita' altissima e batterebbe
+   qualunque font dichiarato sui titoli dei calendari. I due titoli
+   dichiarano quindi il proprio font per conto loro. */
 
 /* ==========================================
    Titoli dashboard
@@ -188,11 +202,11 @@ body,
 /* Titolo del mese (generato da customHeader: true), allineato a sinistra
    per lasciare spazio alla legenda sulla destra */
 .main-month-calendar .headerTitle {
-  font-family: var(--font-primary) !important;
-  font-size: 42px !important;
-  font-weight: 700 !important;
-  letter-spacing: 4px !important;
-  text-transform: uppercase !important;
+  font-family: var(--font-title) !important;
+  font-size: 48px !important;          /* i serif hanno occhio piu' piccolo: +6px */
+  font-weight: 500 !important;
+  letter-spacing: 1px !important;      /* i serif non amano spaziature larghe */
+  text-transform: capitalize !important;   /* "Agosto 2026" */
   text-align: left !important;
   color: #ffffff !important;
   border: none !important;
