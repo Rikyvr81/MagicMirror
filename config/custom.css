@@ -35,7 +35,7 @@
   --cal-width: 1400px;
 
   /* Stacco del calendario grande dal bordo superiore (piu' alto = piu' giu') */
-  --cal-top-gap: 28px;
+  --cal-top-gap: 10px;
 
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
@@ -173,7 +173,9 @@ body,
   --celllinecolor: rgba(255, 255, 255, .14);   /* griglia tenue */
   --cellbgcolor: rgba(255, 255, 255, .05);     /* trasparenza reale delle celle */
   --cellheaderheight: 26px;
-  --eventheight: 20px;
+  --eventheight: 18px;   /* leva principale per l'ALTEZZA totale:
+                            altezza cella = cellheaderheight + 4 x eventheight,
+                            per 6 righe di settimane. Ridurlo accorcia molto. */
 
   width: 100% !important;
   box-sizing: border-box !important;
