@@ -79,8 +79,48 @@ const LEGENDA_HTML =
 	).join("") +
 	"</div>";
 
+/* Evidenziazione del mese mostrato dal calendario piccolo.
+
+   Il modulo NON chiama manipulateDateCell sulle celle senza eventi
+   (verificato in console: le celle hanno month_9 / year_2026 ma nessuna
+   classe aggiunta da noi), quindi la marcatura da codice non e' una
+   strada praticabile.
+
+   Le celle hanno pero' gia' le classi month_N e year_N: qui generiamo
+   un blocco <style> con i numeri del mese successivo, calcolati al
+   caricamento della pagina. Le celle sono spente per default e solo
+   quelle del mese mostrato vengono accese.
+
+   Nota: i numeri sono fissati al caricamento. Al cambio di mese la
+   dashboard va ricaricata perche' l'evidenziazione si sposti. */
+const STILE_MESE_SUCCESSIVO = (() => {
+	const oggi = new Date();
+	// gestisce il passaggio dicembre -> gennaio
+	const target = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 1);
+
+	const sel = `.CX3_smallCalendar .cell.month_${target.getMonth() + 1}.year_${target.getFullYear()}`;
+
+	return `<style>
+/* default: tutte le celle spente */
+.CX3_smallCalendar .cell { background: rgba(0, 0, 0, .45) !important; }
+.CX3_smallCalendar .cell .cellDate { color: rgba(255, 255, 255, .22) !important; }
+
+/* celle del mese mostrato: accese */
+${sel} { background: transparent !important; }
+${sel} .cellDate { color: rgba(255, 255, 255, .92) !important; }
+
+/* sabato e domenica del mese mostrato */
+${sel}[class*="weekday_0"] .cellDate,
+${sel}[class*="weekday_6"] .cellDate { color: var(--weekend-color) !important; }
+
+/* festivita': dopo il weekend, per prevalere a pari specificita' */
+${sel}.holiday .cellDate { color: var(--holiday-color) !important; }
+</style>`;
+})();
+
 /* Marca le celle che contengono una festivita': il custom.css usa la
-   classe .holiday per colorare di rosso il numero del giorno. */
+   classe .holiday per colorare di rosso il numero del giorno.
+   Funziona perche' queste celle contengono eventi. */
 const marcaFestivita = (cellDom, events) => {
 	if (
 		Array.isArray(events) &&
@@ -88,39 +128,6 @@ const marcaFestivita = (cellDom, events) => {
 	) {
 		cellDom.classList.add("holiday");
 	}
-};
-
-/* Marca le celle come inView / outOfView rispetto al mese effettivamente
-   mostrato dalla vista (offsetMesi: 0 = mese corrente, 1 = successivo).
-   Serve perche' la classe .thisMonth del modulo indica il mese REALE
-   corrente: nel calendario del mese successivo la logica si ribalterebbe.
-
-   Le classi month_N / year_N del modulo possono non essere ancora
-   assegnate quando questa funzione viene chiamata: in quel caso il
-   confronto fallirebbe silenziosamente, quindi riproviamo con un
-   setTimeout, che viene eseguito a disegno concluso. */
-const marcaMeseVisualizzato = (cellDom, offsetMesi) => {
-	const applica = () => {
-		const classi = Array.from(cellDom.classList);
-		const classeMese = classi.find((c) => c.startsWith("month_"));
-		const classeAnno = classi.find((c) => c.startsWith("year_"));
-
-		// classi non ancora presenti: segnalo il fallimento al chiamante
-		if (!classeMese || !classeAnno) return false;
-
-		const now = new Date();
-		// gestisce il passaggio dicembre -> gennaio
-		const target = new Date(now.getFullYear(), now.getMonth() + offsetMesi, 1);
-
-		const inView =
-			classeMese === `month_${target.getMonth() + 1}` &&
-			classeAnno === `year_${target.getFullYear()}`;
-
-		cellDom.classList.add(inView ? "inView" : "outOfView");
-		return true;
-	};
-
-	if (!applica()) setTimeout(applica, 0);
 };
 
 let config = {
@@ -251,7 +258,7 @@ let config = {
 			position: "top_left",
 			classes: "calendar-legend-box",
 			config: {
-				text: LEGENDA_HTML
+				text: LEGENDA_HTML + STILE_MESE_SUCCESSIVO
 			}
 		},
 
@@ -335,10 +342,9 @@ let config = {
 				headerTitleOptions: { month: "long", year: "numeric" },
 				calendarSet: NOMI_CALENDARI,
 
-				manipulateDateCell: (cellDom, events) => {
-					marcaMeseVisualizzato(cellDom, 1);   // 1 = mese successivo
-					marcaFestivita(cellDom, events);
-				}
+				/* solo le festivita': l'evidenziazione del mese mostrato la
+				   fa il blocco <style> generato sopra */
+				manipulateDateCell: marcaFestivita
 			}
 		}
 	]
