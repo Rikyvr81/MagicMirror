@@ -81,10 +81,7 @@ let config = {
 				fetchInterval: 300000,
 				calendars: [
 					{
-						/* >>> DA COMPILARE <<<
-						   Google Calendar -> Impostazioni del calendario ->
-						   "Indirizzo segreto in formato iCal" -> copia qui l'URL */
-						url: "INCOLLA_QUI_INDIRIZZO_SEGRETO_ICAL_DI_rikyvr81",
+						url: "https://calendar.google.com/calendar/ical/rikyvr81%40gmail.com/private-091b2d1fdfaa0054cd0a15f4363f00bf/basic.ics",
 						name: "personale",
 						color: "#039BE5",
 						symbol: "calendar-check"
