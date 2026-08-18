@@ -47,7 +47,11 @@
 
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
-  --weekend-color: #5b9bd5;
+  --weekend-color: #4fb8ff;
+
+  /* Giorni con una festivita': il numero del giorno diventa rosso.
+     La marcatura arriva da manipulateDateCell nel config.js. */
+  --holiday-color: #ff5c5c;
 
   /* Celle dei giorni fuori dal mese corrente */
   --outmonth-bg: rgba(0, 0, 0, .50);
@@ -557,6 +561,27 @@ body,
 
 .CX3_smallCalendar .cell.inView .cellDate {
   color: rgba(255, 255, 255, .92) !important;
+}
+
+/* La regola qui sopra e' piu' specifica di quella generale sul weekend
+   (.CX3 [class*="weekday_0"] .cellDate) e la stava annullando: ecco perche'
+   nel calendario di settembre sabato e domenica non erano blu.
+   Qui la riportiamo con specificita' sufficiente a vincere. */
+.CX3_smallCalendar .cell.inView[class*="weekday_0"] .cellDate,
+.CX3_smallCalendar .cell.inView[class*="weekday_6"] .cellDate {
+  color: var(--weekend-color) !important;
+}
+
+/* FESTIVITA' - deve stare DOPO le regole sul weekend: ha la stessa
+   specificita', quindi vince per posizione nel file.
+   La classe .holiday viene assegnata da manipulateDateCell nel config.js
+   quando la cella contiene un evento del calendario "festivita".
+   Il rosso si applica solo ai giorni del mese visualizzato, altrimenti
+   accenderebbe anche le celle spente di bordo. */
+.CX3_basicCalendar .cell.thisMonth.holiday .cellDate,
+.CX3_smallCalendar .cell.inView.holiday .cellDate {
+  color: var(--holiday-color) !important;
+  font-weight: 500 !important;
 }
 
 .CX3_smallCalendar .cellHeader .cellDate {
