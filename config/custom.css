@@ -21,9 +21,14 @@
 
   --gap-modules: 15px;
 
+  /* Stacco laterale interno: e' lo spazio che il calendario principale lascia
+     a sinistra (margin-left di .main-google-calendar). Usando lo stesso valore
+     a destra, le due colonne risultano simmetriche rispetto ai bordi schermo. */
+  --side-gap: 15px;
+
   /* Colonna destra: unica sorgente di verita' per larghezza e distanza dal bordo */
   --right-col-width: 440px;
-  --right-col-offset: 30px;
+  --right-col-offset: var(--side-gap);
 
   /* Blocco meteo:
      --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
@@ -124,7 +129,7 @@ body::before {
 /* Calendario Google */
 
 .main-google-calendar {
-  margin-left: 15px !important;
+  margin-left: var(--side-gap) !important;
 }
 
 .family-calendar-frame {
