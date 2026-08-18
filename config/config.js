@@ -70,6 +70,28 @@ const TODOIST_TOKEN = "b5165897484eaae9d7d53d4f5d6378886a331bb5";   // >>> UNICO
 const PROGETTO_TODO = "6hHmrPHvXCJqHhHC";                  // "To Do List"
 const PROGETTO_NOTE = "6hHp8PVv3GGJv7ch";                  // progetto "Note"
 
+/* Ordine con cui gli eventi si dispongono dentro la cella del giorno:
+   valore piu' basso = piu' in alto. Il modulo dispone gli eventi
+   "a incastro" per riempire lo spazio, quindi in presenza di eventi di
+   piu' giorni l'ordine puo' non essere rispettato alla lettera. */
+const ORDINE_EVENTI = ["turni", "festivita", "varie", "riky", "elisa", "greta", "edo"];
+
+const ordinaEventi = (a, b) => {
+	const pos = (ev) => {
+		const i = ORDINE_EVENTI.indexOf(ev.calendarName);
+		return i === -1 ? 99 : i;      // calendari non elencati vanno in fondo
+	};
+	return pos(a) - pos(b);
+};
+
+/* Legenda su due righe, allineate a destra. Il primo gruppo sono le
+   persone, il secondo i calendari di contesto. Per spostare una voce
+   da una riga all'altra basta cambiarla di gruppo qui sotto. */
+const LEGENDA_RIGHE = [
+	["riky", "elisa", "greta", "edo"],
+	["varie", "turni", "festivita"]
+];
+
 /* Nomi ammessi nelle viste: la TO DO LIST non e' in questo elenco,
    quindi i suoi impegni non compaiono nelle griglie mensili. */
 const NOMI_CALENDARI = CALENDARI.map((c) => c.name);
@@ -83,15 +105,21 @@ const NOMI_CALENDARI = CALENDARI.map((c) => c.name);
    istanza del calendario e mandava in errore il disegno del modulo. */
 const LEGENDA_HTML =
 	'<div class="calendar-legend">' +
-	CALENDARI.map((c) => {
-		/* i calendari mostrati a bordo nel calendario (turni, festivita')
-		   hanno il quadratino vuoto con il contorno colorato, cosi' la
-		   legenda richiama l'aspetto dell'evento */
-		const stile = c.soloBordo
-			? `background:transparent;border:2px solid ${c.color}`
-			: `background:${c.color}`;
-		return `<span class="legend-item"><span class="legend-dot" style="${stile}"></span>${c.label}</span>`;
-	}).join("") +
+	LEGENDA_RIGHE.map((riga) =>
+		'<div class="legend-row">' +
+		riga.map((nome) => {
+			const c = CALENDARI.find((x) => x.name === nome);
+			if (!c) return "";
+			/* i calendari mostrati a bordo nel calendario (turni, festivita')
+			   hanno il quadratino vuoto con il contorno colorato, cosi' la
+			   legenda richiama l'aspetto dell'evento */
+			const stile = c.soloBordo
+				? `background:transparent;border:2px solid ${c.color}`
+				: `background:${c.color}`;
+			return `<span class="legend-item"><span class="legend-dot" style="${stile}"></span>${c.label}</span>`;
+		}).join("") +
+		"</div>"
+	).join("") +
 	"</div>";
 
 /* Evidenziazione del mese mostrato dal calendario piccolo.
@@ -264,6 +292,7 @@ let config = {
 				customHeader: true,
 				headerTitleOptions: { month: "long", year: "numeric" },
 				calendarSet: NOMI_CALENDARI,
+				eventSorter: ordinaEventi,
 				manipulateDateCell: marcaFestivita
 			}
 		},
@@ -390,6 +419,7 @@ let config = {
 				customHeader: true,             // qui solo il nome del mese, senza legenda
 				headerTitleOptions: { month: "long", year: "numeric" },
 				calendarSet: NOMI_CALENDARI,
+				eventSorter: ordinaEventi,
 
 				/* solo le festivita': l'evidenziazione del mese mostrato la
 				   fa il blocco <style> generato sopra */
