@@ -63,7 +63,12 @@
   /* Distanza del blocco NOTE dalla TO DO LIST che sta sopra.
      Le note ora stanno nella regione in alto a destra, quindi scendono
      dall'alto: alzando questo valore le si sposta piu' in basso. */
-  --notes-top-gap: 120px;
+
+  /* Spazio tra la riga bianca del titolo NOTE e il primo messaggio.
+     Piu' basso di quello della TO DO LIST perche' qui titolo e contenuto
+     sono due moduli distinti e si sommano spaziature diverse. */
+  --notes-top-gap: 90px;
+  --notes-title-gap: 4px;
 
   /* Larghezza della tabella delle previsioni dentro il suo riquadro da
      600px: piu' e' alta, piu' le colonne si distanziano. */
@@ -722,7 +727,7 @@ body,
   text-align: center !important;
   border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
   padding-bottom: 8px !important;
-  margin-bottom: 12px !important;
+  margin-bottom: var(--notes-title-gap) !important;
 }
 
 .family-message p {
@@ -760,6 +765,8 @@ body,
 .family-notes .divTable {
   display: block !important;
   width: 100% !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 .family-notes .divTableBody,
@@ -814,11 +821,16 @@ body,
    CALENDARIO PICCOLO (mese successivo)
    ========================================== */
 
+/* Riga bianca sotto il titolo, come TO DO LIST e NOTE:
+   stessi valori di bordo, padding e margine delle altre due sezioni */
 .second-month-calendar .headerTitle {
   text-align: center !important;
   border: none !important;
-  padding: 0 !important;
-  margin: 0 0 6px 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
+  padding: 0 0 8px 0 !important;
+  margin: 0 0 12px 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .CX3_smallCalendar {
