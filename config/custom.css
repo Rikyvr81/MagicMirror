@@ -432,6 +432,7 @@ body,
    senza questo filtro verrebbe ristretta anche la barra del meteo. */
 .region.top.right,
 .region:not(:has(.region)):has(.family-message-box),
+.region:not(:has(.region)):has(.family-notes),
 .region:not(:has(.region)):has(.second-month-calendar) {
   width: var(--right-col-width) !important;
   max-width: var(--right-col-width) !important;
@@ -454,6 +455,7 @@ body,
 .family-message-box,
 .family-message,
 .family-message-title,
+.family-notes,
 .second-month-calendar {
   width: var(--right-col-width) !important;
   max-width: var(--right-col-width) !important;
@@ -673,7 +675,9 @@ body,
 */
 
 /* ==========================================
-   COMUNICAZIONI FAMIGLIA
+   NOTE (titolo statico + contenuto da Todoist)
+   Le classi restano .family-message* per non spezzare le regole
+   della colonna destra: e' cambiato solo il testo del titolo.
    ========================================== */
 
 .family-message {
@@ -702,6 +706,68 @@ body,
   margin-bottom: 10px !important;
   text-shadow: 0 2px 8px rgba(0, 0, 0, .9) !important;
 }
+
+/* ------------------------------------------
+   NOTE - CONTENUTO DINAMICO
+   Seconda istanza di MMM-Todoist (classe .family-notes).
+   Le regole della TO DO LIST non la toccano, perche' sono tutte
+   agganciate a .todo-list: qui ricostruiamo l'aspetto dei
+   paragrafi, senza casella di spunta e con il testo a capo.
+   ------------------------------------------ */
+
+.family-notes {
+  margin-top: 0 !important;
+}
+
+.family-notes .divTable {
+  display: block !important;
+  width: 100% !important;
+}
+
+.family-notes .divTableBody,
+.family-notes .divTableRow {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Ogni messaggio e' un paragrafo, non una riga di tabella */
+.family-notes .divTableCell {
+  display: block !important;
+  padding: 0 !important;
+}
+
+/* Via la cella vuota della spunta e lo spaziatore: qui non servono */
+.family-notes .divTableRow .divTableCell:first-child,
+.family-notes .spacerCell {
+  display: none !important;
+}
+
+/* Testo del messaggio: stessa resa dei vecchi <p> */
+.family-notes .divTableCell.title {
+  font-family: var(--font-primary) !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 22px !important;
+  color: #ffffff !important;
+  text-align: left !important;
+  white-space: normal !important;      /* il testo lungo va a capo */
+  margin-bottom: 10px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .9) !important;
+}
+
+/* Eventuale data di scadenza: in coda al messaggio, piu' piccola */
+.family-notes .divTableCell.dueDate {
+  font-family: var(--font-primary) !important;
+  font-size: 13px !important;
+  color: rgba(255, 255, 255, .60) !important;
+  text-align: left !important;
+  margin-bottom: 10px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .9) !important;
+}
+
+/* Se preferisci non vedere mai le date in questa sezione:
+.family-notes .divTableCell.dueDate { display: none !important; }
+*/
 
 /* ==========================================
    CALENDARIO PICCOLO (mese successivo)
