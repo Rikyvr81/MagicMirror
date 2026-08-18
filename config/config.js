@@ -40,7 +40,7 @@ const CALENDARI = [
 	{
 		name: "turni",
 		label: "Turni",
-		color: "#00838F",          // ciano scuro
+		color: "#26C6DA",          // ciano - reso a BORDO (vedi custom.css)
 		symbol: "clock",
 		url: "https://calendar.google.com/calendar/ical/2b749a933db9a1b6a27becb92f1e2c236c527fb123df06e03f33ac8e46f79dcd%40group.calendar.google.com/private-3f7c509824a09b7a811a92950e96f185/basic.ics"
 	},
@@ -54,7 +54,7 @@ const CALENDARI = [
 	{
 		name: "festivita",
 		label: "Festività",
-		color: "#0B8043",          // verde
+		color: "#4CAF50",          // verde - reso a BORDO (vedi custom.css)
 		symbol: "flag",
 		url: "https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics"
 	}
