@@ -22,8 +22,8 @@
   --gap-modules: 15px;
 
   /* Colonna destra: unica sorgente di verita' per larghezza e distanza dal bordo */
-  --right-col-width: 400px;
-  --right-col-offset: 40px;
+  --right-col-width: 440px;
+  --right-col-offset: 30px;
 
   /* Blocco meteo:
      --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
@@ -37,12 +37,21 @@
    SFONDO
    ========================================== */
 
-body {
+/* Lo sfondo va messo su <html>, non su <body>: MagicMirror applica ai bordi
+   del body dei MARGINI (--gap-body-*), e i margini restano fuori dall'area
+   dipinta dal body, lasciando la cornice nera. Su <html> l'immagine copre
+   invece tutto lo schermo, senza spostare di un pixel il layout. */
+html {
   background-image: url("https://picsum.photos/1920/1080");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-color: #000000;
+}
+
+body {
+  background: transparent !important;
 }
 
 body::before {
