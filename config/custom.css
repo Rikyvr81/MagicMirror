@@ -25,9 +25,12 @@
   --right-col-width: 400px;
   --right-col-offset: 40px;
 
-  /* Distanza del blocco meteo dal bordo inferiore dello schermo:
-     valore piu' basso = meteo piu' in basso */
-  --weather-bottom: 25px;
+  /* Blocco meteo:
+     --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
+     --weather-height = altezza riservata alle due regioni meteo; serve a far
+     partire le due intestazioni (e le loro righe bianche) dalla stessa quota */
+  --weather-bottom: 5px;
+  --weather-height: 150px;
 }
 
 /* ==========================================
@@ -100,11 +103,13 @@ body::before {
 
 .calendar-month-title .date {
   display: block !important;
-  font-size: 42px !important;
-  font-weight: 700 !important;
+  font-family: var(--font-primary) !important;   /* stesso font di SETTEMBRE 2026 */
+  font-size: 42px !important;                    /* dimensione invariata */
+  font-weight: 300 !important;                   /* come il titolo secondario */
   color: white !important;
   text-transform: uppercase !important;
   letter-spacing: 4px !important;
+  text-shadow: none !important;
 }
 
 /* Calendario Google */
@@ -324,16 +329,23 @@ body::before {
 
 /* Posizionamento regioni */
 
+/* Altezza fissa uguale per entrambe: essendo ancorate in basso, senza questo
+   accorgimento il blocco piu' alto farebbe partire la sua intestazione piu'
+   in su, disallineando le due righe bianche */
+.region.bottom.left,
+.region.bottom.center {
+  height: var(--weather-height) !important;
+  bottom: var(--weather-bottom) !important;
+}
+
 .region.bottom.left {
   width: 600px !important;
   left: 17px !important;
-  bottom: var(--weather-bottom) !important;
 }
 
 .region.bottom.center {
   width: 600px !important;
   left: 790px !important;
-  bottom: var(--weather-bottom) !important;
   transform: none !important;
 }
 
