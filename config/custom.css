@@ -291,9 +291,31 @@ body::before {
 }
 
 .todo-list td:first-child,
-.todo-list th:first-child {
+.todo-list th:first-child,
+.todo-list .symbol,
+.todo-list .icon {
   padding-left: 0 !important;
   text-indent: 0 !important;
+  text-align: left !important;
+  /* la prima colonna si stringe sul contenuto invece di occupare
+     una fetta fissa entro cui la casella verrebbe centrata */
+  width: 1% !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* La casella di spunta (spesso uno <span> con larghezza fissa) non deve
+   riservare spazio a sinistra */
+.todo-list td:first-child > *,
+.todo-list th:first-child > *,
+.todo-list .symbol > *,
+.todo-list .symbol span,
+.todo-list .icon span {
+  width: auto !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
 }
 
 .todo-list td:last-child,
@@ -309,6 +331,17 @@ body::before {
 .todo-list .far {
   margin-left: 0 !important;
 }
+
+/* ULTIMA RISORSA - se dopo le regole sopra restasse ancora un rientro,
+   togli il commento e regola il valore finche' la casella di spunta non
+   coincide con l'inizio della riga bianca (valore negativo = sposta a sinistra) */
+/*
+.todo-list .module-content,
+.todo-list table {
+  margin-left: -40px !important;
+  width: calc(100% + 40px) !important;
+}
+*/
 
 /* ==========================================
    COMUNICAZIONI FAMIGLIA
