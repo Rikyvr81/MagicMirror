@@ -132,17 +132,28 @@ body::before {
    COLONNA DESTRA - ALLINEAMENTO GLOBALE
    ========================================== */
 
-/* La regione dell'orologio/to-do e QUALSIASI regione che contenga
-   le comunicazioni o il calendario secondario usano la stessa larghezza
-   e la stessa distanza dal bordo destro */
+/* La regione dell'orologio/to-do e la regione che contiene comunicazioni /
+   calendario secondario usano la stessa larghezza e lo stesso stacco a destra.
+   :not(:has(.region)) esclude le barre contenitore (.region.top.bar,
+   .region.bottom.bar) che in MagicMirror racchiudono le altre regioni:
+   senza questo filtro verrebbe ristretta anche la barra del meteo. */
 .region.top.right,
-.region:has(.family-message-box),
-.region:has(.second-family-calendar-frame) {
+.region:not(:has(.region)):has(.family-message-box),
+.region:not(:has(.region)):has(.second-family-calendar-frame) {
   width: var(--right-col-width) !important;
   max-width: var(--right-col-width) !important;
   right: var(--right-col-offset) !important;
   left: auto !important;
   transform: none !important;
+}
+
+/* Protezione: le barre contenitore non devono mai essere ristrette */
+.region.top.bar,
+.region.bottom.bar {
+  width: auto !important;
+  max-width: none !important;
+  left: 0 !important;
+  right: 0 !important;
 }
 
 /* Fallback: se :has() non fosse supportato, i moduli restano comunque
