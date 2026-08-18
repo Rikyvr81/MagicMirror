@@ -34,6 +34,17 @@
   /* Larghezza del calendario mensile grande */
   --cal-width: 1400px;
 
+  /* Stacco del calendario grande dal bordo superiore (piu' alto = piu' giu') */
+  --cal-top-gap: 28px;
+
+  /* Colore unico per sabato E domenica: il CSS del modulo userebbe
+     due colori diversi (azzurro e rosso) */
+  --weekend-color: #5b9bd5;
+
+  /* Celle dei giorni fuori dal mese corrente */
+  --outmonth-bg: rgba(0, 0, 0, .50);
+  --outmonth-text: rgba(255, 255, 255, .28);
+
   /* Blocco meteo:
      --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
      --weather-height = altezza riservata alle due regioni meteo; serve a far
@@ -134,6 +145,7 @@ body,
 .main-month-calendar {
   width: var(--cal-width) !important;
   margin-left: var(--side-gap) !important;
+  margin-top: var(--cal-top-gap) !important;
 }
 
 /* Titolo del mese generato da customHeader: true */
@@ -178,12 +190,40 @@ body,
 
 /* Celle */
 
-.CX3_basicCalendar .cell {
-  background: var(--cellbgcolor) !important;
+/* ---- Regole comuni alle DUE istanze (selettore .CX3) ---- */
+
+/* Giorni fuori dal mese corrente: invece di sfumarli con opacity, che
+   annacqua tutto, li scuriamo. Cosi' il mese in corso risalta per
+   contrasto invece di essere solo "meno slavato" degli altri. */
+.CX3 .cell:not(.thisMonth) {
+  opacity: 1 !important;
+  background: var(--outmonth-bg) !important;
 }
 
-.CX3_basicCalendar .cell:not(.thisMonth) {
-  opacity: .35 !important;
+.CX3 .cell:not(.thisMonth) .cellDate {
+  color: var(--outmonth-text) !important;
+}
+
+/* Sabato e domenica dello stesso colore, sia nell'intestazione
+   (lunedi'...domenica) sia nei numeri dei giorni.
+   weekday_0 = domenica, weekday_6 = sabato. */
+.CX3 [class*="weekday_0"],
+.CX3 [class*="weekday_0"] .cellDate,
+.CX3 [class*="weekday_6"],
+.CX3 [class*="weekday_6"] .cellDate {
+  color: var(--weekend-color) !important;
+}
+
+/* ...tranne quando quel giorno e' fuori dal mese: allora resta spento */
+.CX3 .cell:not(.thisMonth)[class*="weekday_0"] .cellDate,
+.CX3 .cell:not(.thisMonth)[class*="weekday_6"] .cellDate {
+  color: var(--outmonth-text) !important;
+}
+
+/* ---- Istanza grande ---- */
+
+.CX3_basicCalendar .cell {
+  background: var(--cellbgcolor) !important;
 }
 
 .CX3_basicCalendar .cell.today {
@@ -463,10 +503,6 @@ body,
 
 .CX3_smallCalendar .cell {
   background: var(--cellbgcolor) !important;
-}
-
-.CX3_smallCalendar .cell:not(.thisMonth) {
-  opacity: .30 !important;
 }
 
 .CX3_smallCalendar .cellHeader .cellDate {
