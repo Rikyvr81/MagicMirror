@@ -31,11 +31,19 @@
   --right-col-width: 440px;
   --right-col-offset: var(--side-gap);
 
-  /* Larghezza del calendario mensile grande */
-  --cal-width: 1400px;
+  /* Bordo destro del blocco meteo: .region.bottom.center parte a 790px
+     ed e' larga 600px, quindi termina a 1390px dal bordo interno del body.
+     Legando qui la larghezza del calendario, i due bordi restano allineati
+     anche se un domani spostassi il meteo. */
+  --weather-block-right: 1390px;
+
+  /* Larghezza del calendario mensile grande.
+     Il calendario parte a --side-gap, quindi la larghezza utile e'
+     il bordo destro del meteo meno quello stacco iniziale. */
+  --cal-width: calc(var(--weather-block-right) - var(--side-gap));
 
   /* Stacco del calendario grande dal bordo superiore (piu' alto = piu' giu') */
-  --cal-top-gap: 10px;
+  --cal-top-gap: 4px;
 
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
@@ -137,7 +145,8 @@ body,
    ========================================== */
 
 .region.top.left {
-  width: var(--cal-width) !important;
+  /* la regione deve contenere il margine iniziale piu' il calendario */
+  width: calc(var(--cal-width) + var(--side-gap)) !important;
   text-align: center !important;
   left: 0px !important;
 }
