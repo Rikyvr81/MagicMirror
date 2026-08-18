@@ -474,7 +474,11 @@ body,
 }
 
 /* ==========================================
-   TO DO LIST
+   TO DO LIST (MMM-Todoist)
+   Le regole sono le stesse che usavamo con il modulo calendar:
+   sono volutamente generiche (intestazione, tabella, celle) perche'
+   funzionino anche con il markup di MMM-Todoist. Se qualche
+   dettaglio non tornera', va rifinito guardando il DOM reale.
    ========================================== */
 
 .todo-list {
@@ -572,6 +576,32 @@ body,
 .todo-list .fas,
 .todo-list .far {
   margin-left: 0 !important;
+}
+
+/* Elementi propri di MMM-Todoist: il modulo porta un suo CSS, qui lo
+   riportiamo in linea con il resto della dashboard */
+.todo-list .todoist,
+.todo-list .todoisttable {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.todo-list .title,
+.todo-list .todoisttitle {
+  font-family: var(--font-primary) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, .90) !important;
+}
+
+.todo-list .date,
+.todo-list .duedate,
+.todo-list .todoistdate {
+  font-family: var(--font-primary) !important;
+  font-size: 16px !important;
+  color: rgba(255, 255, 255, .60) !important;
+  text-align: right !important;
+  white-space: nowrap !important;
 }
 
 /* ULTIMA RISORSA - se restasse un rientro, togli il commento e regola il
