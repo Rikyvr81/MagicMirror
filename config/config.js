@@ -20,6 +20,9 @@ let config = {
 			module: "alert"
 		},
 
+		/* ======================================================
+		   OROLOGIO (colonna destra)
+		   ====================================================== */
 		{
 			module: "clock",
 			position: "top_right",
@@ -31,6 +34,9 @@ let config = {
 			}
 		},
 
+		/* ======================================================
+		   METEO
+		   ====================================================== */
 		{
 			module: "weather",
 			position: "bottom_left",
@@ -57,25 +63,71 @@ let config = {
 				maxNumberOfDays: 5
 			}
 		},
+
+		/* ======================================================
+		   FEEDER EVENTI
+		   Questo modulo NON si vede (nascosto da .calendar-feeder nel
+		   custom.css): scarica gli eventi e li trasmette alle due
+		   istanze di MMM-CalendarExt3, che da sole non scaricano nulla.
+		   ====================================================== */
 		{
-			module: "clock",
+			module: "calendar",
 			position: "top_left",
-			classes: "calendar-month-title",
+			classes: "calendar-feeder",
 			config: {
-				showDate: true,
-				dateFormat: "MMMM YYYY",
-				displaySeconds: false
+				broadcastPastEvents: true,   // indispensabile: senza, i giorni passati del mese restano vuoti
+				maximumEntries: 200,         // gli eventi passati occupano slot: tienilo alto
+				maximumNumberOfDays: 120,
+				fetchInterval: 300000,
+				calendars: [
+					{
+						/* >>> DA COMPILARE <<<
+						   Google Calendar -> Impostazioni del calendario ->
+						   "Indirizzo segreto in formato iCal" -> copia qui l'URL */
+						url: "INCOLLA_QUI_INDIRIZZO_SEGRETO_ICAL_DI_rikyvr81",
+						name: "personale",
+						color: "#039BE5",
+						symbol: "calendar-check"
+					},
+					{
+						url: "https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics",
+						name: "festivita",
+						color: "#0B8043",
+						symbol: "flag"
+					}
+				]
 			}
 		},
+
+		/* ======================================================
+		   CALENDARIO MENSILE GRANDE (mese corrente)
+		   ====================================================== */
 		{
-			module: "helloworld",
+			module: "MMM-CalendarExt3",
 			position: "top_left",
-			classes: "main-google-calendar",
+			classes: "main-month-calendar",
 			config: {
-				updateInterval: 300000,
-				text: "<div class='family-calendar-frame'><iframe src='https://calendar.google.com/calendar/embed?src=rikyvr81@gmail.com&color=%23039BE5&src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0' style='border:0' width='1000' height='700' frameborder='0' scrolling='no'></iframe></div>"
+				mode: "month",
+				instanceId: "basicCalendar",
+				locale: "it-IT",
+				monthIndex: 0,                  // 0 = mese corrente
+				firstDayOfWeek: 1,              // settimana da lunedi
+				maxEventLines: 4,
+				fontSize: "16px",
+				eventHeight: "20px",
+				useSymbol: true,
+				useIconify: false,              // usa le icone Font Awesome dei symbol qui sopra
+				showWeekNumber: false,          // niente "CW 34" a lato
+				useWeather: false,              // niente icone meteo dentro le caselle
+				customHeader: true,             // genera <h1 class="headerTitle"> col nome del mese
+				headerTitleOptions: { month: "long", year: "numeric" },
+				calendarSet: ["personale", "festivita"]   // esclude la TO DO LIST
 			}
 		},
+
+		/* ======================================================
+		   TO DO LIST (colonna destra)
+		   ====================================================== */
 		{
 			module: "calendar",
 			position: "top_right",
@@ -85,19 +137,23 @@ let config = {
 				updateInterval: 300000,
 				language: "it",
 				timeFormat: "absolute",
-				maximumEntries: 6, 
+				maximumEntries: 6,
 				displaySymbol: true,
 				fade: false,
 				calendars: [
 					{
 						url: "https://calendar.google.com/calendar/ical/6bb24c0fb7ed698a938c7a81d953e53f82e361c0f061bf25daaff1616cb8fe2d%40group.calendar.google.com/private-0fd6a3516912f9807cdf5c47c1deccd0/basic.ics",
 						symbol: "check-square",
+						name: "todo",        // il nome serve a NON farla comparire nei calendari mensili
 						title: "To-Do"
 					}
 				]
 			}
 		},
-		
+
+		/* ======================================================
+		   COMUNICAZIONI FAMIGLIA (colonna destra)
+		   ====================================================== */
 		{
 			module: "helloworld",
 			position: "bottom_right",
@@ -108,12 +164,12 @@ let config = {
 						<div class="family-message-title">
 							COMUNICAZIONI FAMIGLIA
 						</div>
-		
+
 						<p>
 							Ricordarsi di verificare il materiale scolastico prima dell'inizio delle lezioni
 							e controllare eventuali comunicazioni ricevute dalla scuola durante la settimana.
 						</p>
-		
+
 						<p>
 							Questa settimana è prevista la visita medica annuale.
 							Verificare che tutta la documentazione necessaria sia disponibile e aggiornata.
@@ -122,74 +178,34 @@ let config = {
 				`
 			}
 		},
-		
+
+		/* ======================================================
+		   CALENDARIO PICCOLO (mese successivo)
+		   Seconda istanza dello stesso modulo: nessuna installazione
+		   aggiuntiva, basta un instanceId diverso.
+		   ====================================================== */
 		{
-			module: "helloworld",
+			module: "MMM-CalendarExt3",
 			position: "bottom_right",
-			classes: "second-calendar-month-title",
+			classes: "second-month-calendar",
 			config: {
-				text: (() => {
-					const mesi = [
-						"GENNAIO","FEBBRAIO","MARZO","APRILE",
-						"MAGGIO","GIUGNO","LUGLIO","AGOSTO",
-						"SETTEMBRE","OTTOBRE","NOVEMBRE","DICEMBRE"
-					];
-
-					const oggi = new Date();
-
-					let mese = oggi.getMonth() + 1;
-					let anno = oggi.getFullYear();
-
-					if (mese > 11) {
-						mese = 0;
-						anno++;
-					}
-
-					return `${mesi[mese]} ${anno}`;
-				})()
+				mode: "month",
+				instanceId: "smallCalendar",
+				locale: "it-IT",
+				monthIndex: 1,                  // 1 = mese successivo
+				firstDayOfWeek: 1,
+				maxEventLines: 1,
+				fontSize: "11px",
+				eventHeight: "13px",
+				useSymbol: false,
+				useIconify: false,
+				showWeekNumber: false,
+				useWeather: false,
+				customHeader: true,
+				headerTitleOptions: { month: "long", year: "numeric" },
+				calendarSet: ["personale", "festivita"]
 			}
-		},
-		{
-			module: "helloworld",
-			position: "bottom_right",
-			classes: "second-google-calendar",
-			config: {
-				text: (() => {
-
-					const oggi = new Date();
-
-					let meseSuccessivo = oggi.getMonth() + 1;
-					let anno = oggi.getFullYear();
-
-					if (meseSuccessivo > 11) {
-						meseSuccessivo = 0;
-						anno++;
-					}
-
-					const primoGiorno = new Date(anno, meseSuccessivo, 1);
-					const ultimoGiorno = new Date(anno, meseSuccessivo + 1, 0);
-
-					const yyyymmdd = (data) => {
-						const yyyy = data.getFullYear();
-						const mm = String(data.getMonth() + 1).padStart(2, "0");
-						const dd = String(data.getDate()).padStart(2, "0");
-						return `${yyyy}${mm}${dd}`;
-					};
-
-					const startDate = yyyymmdd(primoGiorno);
-					const endDate = yyyymmdd(ultimoGiorno);
-
-					const calendarUrl =
-						'https://calendar.google.com/calendar/embed?src=it.italian%23holiday@group.v.calendar.google.com&color=%230B8043&ctz=Europe/Rome&mode=MONTH' +
-						`&dates=${startDate}%2F${endDate}` +
-						'&showTitle=0&showNav=0&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0'
-
-					return `
-						<div class="second-family-calendar-frame"><iframe src='${calendarUrl}' style='border:0' width:'430' height:'350' frameborder='0' scrolling='no'</iframe></div>",
-					`;
-				})()
-			}
-		},
+		}
 	]
 };
 
