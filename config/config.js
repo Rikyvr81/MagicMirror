@@ -118,7 +118,20 @@ let config = {
 				useWeather: false,              // niente icone meteo dentro le caselle
 				customHeader: true,             // genera <h1 class="headerTitle"> col nome del mese
 				headerTitleOptions: { month: "long", year: "numeric" },
-				calendarSet: ["personale", "festivita"]   // esclude la TO DO LIST
+				calendarSet: ["personale", "festivita"],   // esclude la TO DO LIST
+
+				/* Marca le celle che contengono una festivita': il CSS usa
+				   la classe .holiday per colorare di rosso il numero del
+				   giorno. Il confronto e' sul "name" assegnato al calendario
+				   nel modulo feeder qui sopra. */
+				manipulateDateCell: (cellDom, events) => {
+					if (
+						Array.isArray(events) &&
+						events.some((ev) => ev.calendarName === "festivita")
+					) {
+						cellDom.classList.add("holiday");
+					}
+				}
 			}
 		},
 
@@ -207,7 +220,7 @@ let config = {
 				   successivo) la logica si ribalterebbe. Qui marchiamo ogni
 				   cella con inView / outOfView confrontandola con il mese
 				   effettivamente visualizzato, e il CSS usa quelle classi. */
-				manipulateDateCell: (cellDom) => {
+				manipulateDateCell: (cellDom, events) => {
 					const now = new Date();
 					// primo giorno del mese successivo (gestisce dicembre -> gennaio)
 					const target = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -220,6 +233,14 @@ let config = {
 						cellDom.classList.contains(wantedYear);
 
 					cellDom.classList.add(isInView ? "inView" : "outOfView");
+
+					// festivita': stessa logica del calendario grande
+					if (
+						Array.isArray(events) &&
+						events.some((ev) => ev.calendarName === "festivita")
+					) {
+						cellDom.classList.add("holiday");
+					}
 				}
 			}
 		}
