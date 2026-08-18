@@ -55,6 +55,11 @@
   /* Stacco del calendario grande dal bordo superiore (piu' alto = piu' giu') */
   --cal-top-gap: 4px;
 
+  /* Sollevamento dell'intera regione in alto a sinistra: titolo, legenda
+     e calendario si muovono insieme, guadagnando spazio prima del meteo.
+     Valore negativo = piu' in alto. */
+  --cal-region-top: -8px;
+
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
   --weekend-color: #4fb8ff;
@@ -191,6 +196,9 @@ body,
   width: calc(var(--cal-width) + var(--side-gap)) !important;
   text-align: center !important;
   left: 0px !important;
+  /* la legenda e' posizionata rispetto a questa regione, quindi si
+     solleva insieme al titolo e al calendario */
+  top: var(--cal-region-top) !important;
 }
 
 .main-month-calendar {
@@ -235,11 +243,15 @@ body,
   z-index: 2 !important;
 }
 
-/* Contenitore: le righe si impilano in verticale, allineate a destra */
+/* Contenitore: si stringe sulla riga piu' larga (la prima) e resta
+   ancorato a destra. Cosi' la seconda riga ha la stessa larghezza della
+   prima e puo' distribuire le sue voci al suo interno. */
 .calendar-legend {
   display: flex !important;
   flex-direction: column !important;
-  align-items: flex-end !important;
+  align-items: stretch !important;
+  width: max-content !important;
+  margin-left: auto !important;
   gap: 3px !important;
   font-family: var(--font-primary) !important;
   font-size: 15px !important;
@@ -249,13 +261,19 @@ body,
   line-height: 1.4 !important;
 }
 
-/* Ogni riga della legenda: voci in fila, allineate a destra */
+/* Ogni riga occupa tutta la larghezza del contenitore e distribuisce le
+   voci da bordo a bordo: la prima voce della seconda riga (Varie) cade
+   quindi esattamente sotto la prima della riga di sopra (Riky), e
+   l'ultima arriva al bordo destro.
+   Sulla riga piu' larga space-between non ha effetto, perche' e' lei a
+   definire la larghezza e non le resta spazio da distribuire. */
 .calendar-legend .legend-row {
   display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: flex-end !important;
+  flex-wrap: nowrap !important;
+  justify-content: space-between !important;
   align-items: center !important;
-  gap: 4px 16px !important;
+  width: 100% !important;
+  gap: 16px !important;
 }
 
 .calendar-legend .legend-item {
