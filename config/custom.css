@@ -223,13 +223,15 @@ body,
 
 /* Giorni fuori dal mese corrente: invece di sfumarli con opacity, che
    annacqua tutto, li scuriamo. Cosi' il mese in corso risalta per
-   contrasto invece di essere solo "meno slavato" degli altri. */
-.CX3 .cell:not(.thisMonth) {
+   contrasto invece di essere solo "meno slavato" degli altri.
+   ATTENZIONE: .thisMonth = mese REALE corrente, quindi vale solo per il
+   calendario grande. Quello piccolo usa inView/outOfView (vedi sotto). */
+.CX3_basicCalendar .cell:not(.thisMonth) {
   opacity: 1 !important;
   background: var(--outmonth-bg) !important;
 }
 
-.CX3 .cell:not(.thisMonth) .cellDate {
+.CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
   color: var(--outmonth-text) !important;
 }
 
@@ -244,8 +246,10 @@ body,
 }
 
 /* ...tranne quando quel giorno e' fuori dal mese: allora resta spento */
-.CX3 .cell:not(.thisMonth)[class*="weekday_0"] .cellDate,
-.CX3 .cell:not(.thisMonth)[class*="weekday_6"] .cellDate {
+.CX3_basicCalendar .cell:not(.thisMonth)[class*="weekday_0"] .cellDate,
+.CX3_basicCalendar .cell:not(.thisMonth)[class*="weekday_6"] .cellDate,
+.CX3_smallCalendar .cell.outOfView[class*="weekday_0"] .cellDate,
+.CX3_smallCalendar .cell.outOfView[class*="weekday_6"] .cellDate {
   color: var(--outmonth-text) !important;
 }
 
@@ -534,6 +538,27 @@ body,
   background: var(--cellbgcolor) !important;
 }
 
+/* Classi assegnate da manipulateDateCell nel config.js: outOfView sono i
+   giorni di agosto/ottobre che riempiono le settimane di bordo, inView i
+   giorni del mese effettivamente mostrato.
+   Se per qualsiasi motivo le classi non venissero applicate, le celle
+   restano semplicemente tutte uguali: nessun effetto invertito. */
+.CX3_smallCalendar .cell.outOfView {
+  background: var(--outmonth-bg) !important;
+}
+
+.CX3_smallCalendar .cell.outOfView .cellDate {
+  color: var(--outmonth-text) !important;
+}
+
+.CX3_smallCalendar .cell.inView {
+  background: var(--cellbgcolor) !important;
+}
+
+.CX3_smallCalendar .cell.inView .cellDate {
+  color: rgba(255, 255, 255, .92) !important;
+}
+
 .CX3_smallCalendar .cellHeader .cellDate {
   font-size: 10px !important;
   font-weight: 300 !important;
@@ -618,4 +643,62 @@ body,
 
 .weather-forecast-box header {
   text-align: right !important;
+}
+
+/* ==========================================================
+   CALENDARI COMPLETAMENTE TRASPARENTI  (blocco di prova)
+   Sta in fondo al file di proposito: essendo l'ultimo, vince
+   sulle regole precedenti. Per tornare indietro basta
+   commentarlo tutto, senza toccare nient'altro.
+   ========================================================== */
+
+/* Pannelli: via il velo scuro, la sfocatura e l'ombra */
+.CX3_basicCalendar,
+.CX3_smallCalendar {
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Celle: nessun fondo, resta solo la griglia.
+   La griglia va alzata un po' di contrasto, altrimenti su sfondi
+   chiari le linee spariscono del tutto. */
+.CX3_basicCalendar,
+.CX3_smallCalendar {
+  --cellbgcolor: transparent;
+  --celllinecolor: rgba(255, 255, 255, .28);
+}
+
+.CX3 .cell,
+.CX3_basicCalendar .cell:not(.thisMonth),
+.CX3_smallCalendar .cell.outOfView,
+.CX3_smallCalendar .cell.inView {
+  background: transparent !important;
+}
+
+/* Senza fondo, i giorni fuori dal mese si distinguono solo per il
+   colore del numero: lo spegniamo di piu' per compensare */
+.CX3_basicCalendar .cell:not(.thisMonth) .cellDate,
+.CX3_smallCalendar .cell.outOfView .cellDate {
+  color: rgba(255, 255, 255, .22) !important;
+}
+
+/* Leggibilita' sopra la foto: il testo ora poggia direttamente
+   sullo sfondo, quindi serve un'ombra */
+.CX3 .cellDate,
+.CX3 .headerTitle,
+.CX3 [class*="weekday_"] {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .95) !important;
+}
+
+/* La cella di oggi era un rettangolo bianco pieno: con tutto
+   trasparente stonerebbe del tutto. Diventa un bordo. */
+.CX3 .cell.today {
+  background: rgba(255, 255, 255, .10) !important;
+  box-shadow: inset 0 0 0 2px var(--weekend-color) !important;
+}
+
+.CX3 .cell.today .cellDate {
+  color: #ffffff !important;
 }
