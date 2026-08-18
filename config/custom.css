@@ -731,6 +731,21 @@ body,
   font-weight: 300 !important;
 }
 
+/* Numeri dei giorni centrati nella cella invece che appoggiati a destra.
+   Il modulo usa un contenitore flessibile, quindi serve sia justify-content
+   sia text-align: il primo agisce sulla disposizione, il secondo sul testo. */
+.CX3_smallCalendar .cellHeader {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.CX3_smallCalendar .cellHeader .cellDate {
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: center !important;
+}
+
 .CX3_smallCalendar .cellHeader .cw {
   display: none !important;
 }
