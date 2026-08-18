@@ -41,6 +41,7 @@ const CALENDARI = [
 		name: "turni",
 		label: "Turni",
 		color: "#26C6DA",          // ciano - reso a BORDO (vedi custom.css)
+		soloBordo: true,           // anche il quadratino in legenda e' a bordo
 		symbol: "clock",
 		url: "https://calendar.google.com/calendar/ical/2b749a933db9a1b6a27becb92f1e2c236c527fb123df06e03f33ac8e46f79dcd%40group.calendar.google.com/private-3f7c509824a09b7a811a92950e96f185/basic.ics"
 	},
@@ -55,6 +56,7 @@ const CALENDARI = [
 		name: "festivita",
 		label: "Festività",
 		color: "#4CAF50",          // verde - reso a BORDO (vedi custom.css)
+		soloBordo: true,
 		symbol: "flag",
 		url: "https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics"
 	}
@@ -73,10 +75,15 @@ const NOMI_CALENDARI = CALENDARI.map((c) => c.name);
    istanza del calendario e mandava in errore il disegno del modulo. */
 const LEGENDA_HTML =
 	'<div class="calendar-legend">' +
-	CALENDARI.map(
-		(c) =>
-			`<span class="legend-item"><span class="legend-dot" style="background:${c.color}"></span>${c.label}</span>`
-	).join("") +
+	CALENDARI.map((c) => {
+		/* i calendari mostrati a bordo nel calendario (turni, festivita')
+		   hanno il quadratino vuoto con il contorno colorato, cosi' la
+		   legenda richiama l'aspetto dell'evento */
+		const stile = c.soloBordo
+			? `background:transparent;border:2px solid ${c.color}`
+			: `background:${c.color}`;
+		return `<span class="legend-item"><span class="legend-dot" style="${stile}"></span>${c.label}</span>`;
+	}).join("") +
 	"</div>";
 
 /* Evidenziazione del mese mostrato dal calendario piccolo.
