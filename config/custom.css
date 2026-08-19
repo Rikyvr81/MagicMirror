@@ -122,7 +122,13 @@
 
   /* Giorni con una festivita': il numero del giorno diventa rosso.
      La marcatura arriva da manipulateDateCell nel config.js. */
-  --holiday-color: #ff5c5c;
+  /* Verde, lo stesso di --outline-festivita usato dai riquadri degli
+     eventi festivi: il numero del giorno e l'evento parlano cosi' la
+     stessa lingua. Scritto per esteso e non come var(--outline-festivita)
+     di proposito: la WebView di Android TV non risolve una variabile che
+     punta a un'altra variabile.
+     Se cambi il verde, cambialo in entrambi i punti. */
+  --holiday-color: #6EE787;
 
   /* Colore della cornice che evidenzia la cella di oggi */
   --today-color: var(--weekend-color);
@@ -515,7 +521,7 @@ body,
    generato dal config.js. */
 .CX3_basicCalendar .cell.thisMonth.holiday .cellDate {
   color: var(--holiday-color) !important;
-  font-weight: 500 !important;
+  font-weight: 700 !important;
 }
 
 /* ---- Istanza grande ---- */
