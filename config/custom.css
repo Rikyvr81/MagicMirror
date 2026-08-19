@@ -145,6 +145,21 @@
 }
 
 /* ==========================================
+   PUNTATORE DEL MOUSE
+   ========================================== */
+
+/* MagicMirror nasconde il cursore con cursor: none nel proprio
+   css/main.css: scelta sensata su uno specchio a parete, scomoda mentre
+   si lavora al layout da computer. Qui lo rendiamo visibile.
+   Sulla chiavetta non fa differenza, non c'e' un mouse collegato.
+   Per tornare al comportamento originale basta commentare il blocco. */
+html,
+body,
+* {
+  cursor: default !important;
+}
+
+/* ==========================================
    SFONDO
    ========================================== */
 
