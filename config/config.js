@@ -123,7 +123,10 @@ const LEGENDA_HTML =
 			const stile = c.soloBordo
 				? `background:transparent;border:2px solid ${c.color}`
 				: `background:${c.color}`;
-			return `<span class="legend-item"><span class="legend-dot" style="${stile}"></span>${c.label}</span>`;
+			/* la classe legend-dot-{nome} permette al foglio di stile di
+			   ricolorare il quadratino quando un tema cambia il colore di
+			   quel calendario, senza dover toccare il config */
+			return `<span class="legend-item"><span class="legend-dot legend-dot-${c.name}" style="${stile}"></span>${c.label}</span>`;
 		}).join("") +
 		"</div>"
 	).join("") +
