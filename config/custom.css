@@ -111,6 +111,11 @@
      6 + 15 = 21: i due bordi inferiori coincidono. */
   --small-cal-bottom: 6px;
 
+  /* Fondo azzurrino delle celle di sabato e domenica. Vale solo per i
+     giorni del mese mostrato: le celle dei mesi adiacenti restano col
+     loro fondo, per non confondere il colpo d'occhio. */
+  --weekend-bg: rgba(79, 184, 255, .10);
+
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
   --weekend-color: #4fb8ff;
@@ -483,6 +488,16 @@ body,
 .CX3 [class*="weekday_6"],
 .CX3 [class*="weekday_6"] .cellDate {
   color: var(--weekend-color) !important;
+}
+
+/* Fondo azzurrino di sabato e domenica, solo nel mese corrente.
+   La condizione .thisMonth e' quella che esclude i giorni di luglio e
+   settembre visibili ai bordi della griglia.
+   Specificita' 4 classi: vince sulla regola del blocco trasparenza che
+   azzera il fondo di tutte le celle. */
+.CX3_basicCalendar .cell.thisMonth[class*="weekday_0"],
+.CX3_basicCalendar .cell.thisMonth[class*="weekday_6"] {
+  background: var(--weekend-bg) !important;
 }
 
 /* ...tranne quando quel giorno e' fuori dal mese: allora resta spento */
