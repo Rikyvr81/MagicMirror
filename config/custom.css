@@ -371,6 +371,17 @@ body,
   min-height: 0 !important;
 }
 
+/* Linea di chiusura sotto l'ultima settimana, uguale nei due calendari.
+   La misura in console dice che i due contenitori terminano allo stesso
+   pixel, ma il bordo inferiore veniva disegnato in modo diverso tra le
+   due istanze: da qui l'impressione che la griglia di destra finisse
+   piu' in alto. Ciascuna istanza usa il proprio --celllinecolor, quindi
+   il colore resta coerente con la sua griglia. */
+.CX3_basicCalendar .week:last-child,
+.CX3_smallCalendar .week:last-child {
+  border-bottom: 1px solid var(--celllinecolor) !important;
+}
+
 /* Celle */
 
 /* ---- Regole comuni alle DUE istanze (selettore .CX3) ---- */
