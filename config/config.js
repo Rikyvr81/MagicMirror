@@ -150,14 +150,19 @@ const STILE_MESE_SUCCESSIVO = (() => {
 
 	const sel = `.CX3_smallCalendar .cell.month_${target.getMonth() + 1}.year_${target.getFullYear()}`;
 
+	/* I colori non sono scritti qui ma presi dalle variabili del
+	   custom.css: cosi' il blocco segue il tema (scuro o chiaro) invece
+	   di imporre il proprio. Essendo iniettato nel DOM, questo stile
+	   vince sul foglio esterno: se contenesse valori fissi, nessun tema
+	   potrebbe sovrascriverlo. */
 	return `<style>
 /* default: tutte le celle spente */
-.CX3_smallCalendar .cell { background: rgba(0, 0, 0, .45) !important; }
-.CX3_smallCalendar .cell .cellDate { color: rgba(255, 255, 255, .22) !important; }
+.CX3_smallCalendar .cell { background: var(--outmonth-bg) !important; }
+.CX3_smallCalendar .cell .cellDate { color: var(--outmonth-text) !important; }
 
 /* celle del mese mostrato: accese */
 ${sel} { background: transparent !important; }
-${sel} .cellDate { color: rgba(255, 255, 255, .92) !important; }
+${sel} .cellDate { color: var(--inmonth-text) !important; }
 
 /* sabato e domenica del mese mostrato */
 ${sel}[class*="weekday_0"] .cellDate,
