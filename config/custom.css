@@ -44,7 +44,7 @@
   /* Oscuramento dello sfondo. Era 0.55: e' il motivo per cui ogni
      immagine sembrava scura, qualunque fosse la sorgente.
      0 = immagine come e'. Alzalo se il testo non si legge su foto chiare. */
-  --veil-opacity: 0;
+  --veil-opacity: 0.35;
 
   /* Larghezza del calendario mensile grande. Ora che il meteo e' nella
      colonna destra, il calendario si prende tutto lo spazio residuo:
@@ -334,7 +334,7 @@ body,
   /* deve coincidere con eventHeight nel config.js.
      Altezza cella = cellheaderheight + maxEventLines x eventheight,
      per 6 righe di settimane: e' la leva principale sull'altezza totale. */
-  --eventheight: 25px;
+  --eventheight: 30px;
 
   width: 100% !important;
   box-sizing: border-box !important;
@@ -446,7 +446,7 @@ body,
 /* (l'evidenziazione di oggi e' definita nel blocco in fondo al file) */
 
 .CX3_basicCalendar .cellHeader .cellDate {
-  font-size: 19px !important;
+  font-size: 22px !important;
   font-weight: 300 !important;
   letter-spacing: .5px !important;
 }
@@ -461,12 +461,11 @@ body,
 
 .CX3_basicCalendar .event {
   border-radius: 4px !important;
-  /* 20px e' il limite dentro --eventheight: 24px: l'interlinea a 22px
-     evita che le lettere con discendenti vengano tagliate. Per salire
-     ancora va alzato eventHeight nel config.js (e --eventheight qui),
-     ma l'altezza della cella e' fissa, quindi si perderebbe una riga. */
-  font-size: 20px !important;
-  line-height: 22px !important;
+  /* 24px dentro --eventheight: 30px. Per salire ancora servono due
+     modifiche insieme: eventHeight nel config.js e --eventheight qui,
+     scendendo a 3 righe per cella. */
+  font-size: 24px !important;
+  line-height: 26px !important;
 }
 
 .CX3_basicCalendar .event .title {
