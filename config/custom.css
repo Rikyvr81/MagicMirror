@@ -61,13 +61,10 @@
      regione (-8) + margine inferiore del body (15) + --small-cal-bottom (10). */
   --cal-height: calc(100vh - 32px);
 
-  /* Altezza del calendario piccolo: essendo ancorato al fondo, aumentarla
-     lo fa crescere verso l'alto. */
-  --small-cal-height: 330px;
-
-  /* Quota della temperatura attuale, che sta in alto a destra
-     accanto all'orologio. */
+  /* Meteo attuale in alto a destra, accanto all'orologio:
+     quota verticale e larghezza massima del blocco. */
   --current-weather-top: 6px;
+  --current-weather-width: 230px;
 
   /* Sollevamento dell'intera regione in alto a sinistra: titolo, legenda
      e calendario si muovono insieme, guadagnando spazio prima del meteo.
@@ -103,6 +100,14 @@
   /* Distanza del blocco NOTE dalla TO DO LIST che sta sopra.
      Le note ora stanno nella regione in alto a destra, quindi scendono
      dall'alto: alzando questo valore le si sposta piu' in basso. */
+
+  /* Colonna destra, banda centrale. Tra la fine delle previsioni e
+     l'inizio di SETTEMBRE 2026 stanno TO DO LIST e NOTE: il primo
+     valore stacca la TO DO LIST dalle previsioni, il secondo riserva a
+     ciascuna delle due sezioni la stessa altezza, cosi' NOTE parte
+     sempre alla stessa quota anche quando la lista e' corta o vuota. */
+  --todo-top-gap: 46px;
+  --section-height: 180px;
 
   /* Spazio tra la riga bianca del titolo NOTE e il primo messaggio.
      Piu' basso di quello della TO DO LIST perche' qui titolo e contenuto
@@ -627,6 +632,9 @@ body,
 
 .todo-list {
   text-align: left !important;
+  margin-top: var(--todo-top-gap) !important;
+  min-height: var(--section-height) !important;
+  box-sizing: border-box !important;
 }
 
 .todo-list header {
@@ -959,17 +967,15 @@ body,
   font-weight: 300 !important;
 }
 
-/* Cresce verso l'alto, perche' la sua regione e' ancorata al fondo */
-.CX3_smallCalendar {
-  display: flex !important;
-  flex-direction: column !important;
-  height: var(--small-cal-height) !important;
-}
-
-.CX3_smallCalendar .week {
-  flex: 1 1 0 !important;
-  min-height: 0 !important;
-}
+/* NOTA: qui NON forziamo l'altezza come nel calendario grande.
+   Lo avevo fatto e il risultato era sbagliato: le settimane si
+   allargavano fino a riempire i 330px imposti, ma gli eventi restano
+   dimensionati e posizionati dal modulo su --eventheight, quindi
+   finivano scollati dalle celle e fuori dai bordi.
+   Nel calendario grande l'effetto non si vede perche' lo scostamento
+   e' di pochi pixel; qui era di quasi venti per riga.
+   L'altezza la decide il modulo: si regola con --cellheaderheight e
+   --eventheight qui sopra. */
 
 /* Riga dei nomi dei giorni (lunedi', martedi', ...).
    La classe .headerContainer.weekGrid non e' documentata nel README del
@@ -1024,7 +1030,7 @@ body,
   top: var(--current-weather-top) !important;
   right: 0 !important;
   width: auto !important;
-  max-width: 60% !important;
+  max-width: var(--current-weather-width) !important;
   margin: 0 !important;
   z-index: 2 !important;
 }
@@ -1035,24 +1041,36 @@ body,
   display: none !important;
 }
 
-/* Le righe vengono impilate a destra e riordinate: prima l'icona con la
-   temperatura, poi vento e tramonto. L'ordine nel DOM del modulo e'
-   l'inverso, quindi lo ribaltiamo con "order" invece di toccare il modulo. */
+/* Temperatura sopra, vento e tramonto sotto.
+   Il modulo emette le righe in ordine inverso (prima vento e tramonto,
+   poi la temperatura) dentro un contenitore che sta UN LIVELLO sotto
+   .module-content: e' il motivo per cui il tentativo precedente con
+   "order" applicato ai figli di .module-content non aveva effetto.
+   column-reverse ribalta l'ordine senza dover conoscere i nomi delle
+   classi delle singole righe. */
 .weather-current-box .module-content {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-end !important;
+}
+
+.weather-current-box .module-content > * {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+  align-items: flex-end !important;
   gap: 2px !important;
+  width: 100% !important;
+}
+
+/* Vento e tramonto: piu' piccoli della temperatura */
+.weather-current-box .normal,
+.weather-current-box .medium {
+  font-size: 18px !important;
+  line-height: 22px !important;
 }
 
 .weather-current-box .large {
-  order: 1 !important;
   margin: 0 !important;
-}
-
-.weather-current-box .module-content > *:not(.large) {
-  order: 2 !important;
-  font-size: 20px !important;
 }
 
 /* La temperatura percepita e' gia' disattivata da showFeelsLike: false
