@@ -447,9 +447,12 @@ body,
 
 .CX3_basicCalendar .event {
   border-radius: 4px !important;
-  /* 18px sta dentro --eventheight: 24px. Se lo alzi ancora, alza anche
-     eventHeight nel config.js, altrimenti il testo viene tagliato. */
-  font-size: 18px !important;
+  /* 20px e' il limite dentro --eventheight: 24px: l'interlinea a 22px
+     evita che le lettere con discendenti vengano tagliate. Per salire
+     ancora va alzato eventHeight nel config.js (e --eventheight qui),
+     ma l'altezza della cella e' fissa, quindi si perderebbe una riga. */
+  font-size: 20px !important;
+  line-height: 22px !important;
 }
 
 .CX3_basicCalendar .event .title {
@@ -1041,13 +1044,13 @@ body,
   display: none !important;
 }
 
-/* Temperatura sopra, vento e tramonto sotto.
-   Il modulo emette le righe in ordine inverso (prima vento e tramonto,
-   poi la temperatura) dentro un contenitore che sta UN LIVELLO sotto
-   .module-content: e' il motivo per cui il tentativo precedente con
-   "order" applicato ai figli di .module-content non aveva effetto.
-   column-reverse ribalta l'ordine senza dover conoscere i nomi delle
-   classi delle singole righe. */
+/* Ordine desiderato: temperatura, poi vento e tramonto, poi percepita.
+   Nel DOM del modulo l'ordine e' vento/tramonto, temperatura, percepita,
+   e le tre righe stanno dentro un contenitore che sta UN LIVELLO sotto
+   .module-content: e' il motivo per cui il primo tentativo con "order"
+   applicato ai figli di .module-content non aveva effetto.
+   Ora il contenitore flessibile e' quello giusto e le righe si
+   riordinano con "order". */
 .weather-current-box .module-content {
   display: flex !important;
   flex-direction: column !important;
@@ -1056,27 +1059,32 @@ body,
 
 .weather-current-box .module-content > * {
   display: flex !important;
-  flex-direction: column-reverse !important;
+  flex-direction: column !important;
   align-items: flex-end !important;
   gap: 2px !important;
   width: 100% !important;
 }
 
-/* Vento e tramonto: piu' piccoli della temperatura */
-.weather-current-box .normal,
-.weather-current-box .medium {
-  font-size: 18px !important;
-  line-height: 22px !important;
-}
-
-.weather-current-box .large {
+.weather-current-box .module-content > * > .large {
+  order: 1 !important;
   margin: 0 !important;
 }
 
-/* La temperatura percepita e' gia' disattivata da showFeelsLike: false
-   nel config; questa e' la rete di sicurezza. */
+/* vento e tramonto */
+.weather-current-box .module-content > * > *:not(.large):not(.feelslike) {
+  order: 2 !important;
+}
+
+/* percepita: ultima, stessa dimensione di vento e tramonto */
+.weather-current-box .module-content > * > .feelslike {
+  order: 3 !important;
+}
+
+.weather-current-box .normal,
+.weather-current-box .medium,
 .weather-current-box .feelslike {
-  display: none !important;
+  font-size: 18px !important;
+  line-height: 22px !important;
 }
 
 /* ==========================================
@@ -1124,6 +1132,16 @@ body,
   width: 100% !important;
   margin: 0 !important;
   transform: none !important;
+}
+
+/* Nomi dei giorni allineati al bordo sinistro della colonna, cioe' alla
+   stessa verticale da cui parte l'orologio. Le temperature restano a
+   destra, quindi la riga si legge da un capo all'altro. */
+.weather-forecast-box table td:first-child,
+.weather-forecast-box table th:first-child {
+  text-align: left !important;
+  padding-left: 0 !important;
+  white-space: nowrap !important;
 }
 
 .weather-current-box .large {
