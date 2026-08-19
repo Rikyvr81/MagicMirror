@@ -362,7 +362,12 @@ let config = {
 			config: {
 				weatherProvider: "openweathermap",
 				apiKey: OWM_KEY,
+				/* apiVersion e weatherEndpoint dichiarati esplicitamente:
+				   OpenWeatherMap ha piu' indirizzi e non tutti sono
+				   accessibili col piano gratuito. Questi due sono quelli
+				   della API 2.5 gratuita, verificati a mano con esito 200. */
 				apiVersion: "2.5",
+				weatherEndpoint: "/weather",
 				type: "current",
 				showFeelsLike: true,         // percepita in piccolo, sotto vento e tramonto
 				/* Il ", IT-34" veniva dal nome localita' restituito dal
@@ -383,7 +388,12 @@ let config = {
 			config: {
 				weatherProvider: "openweathermap",
 				apiKey: OWM_KEY,
+				/* /forecast e' l'endpoint gratuito a intervalli di 3 ore, da
+				   cui il modulo ricava i giorni. NON /forecast/daily, che
+				   richiede un piano a pagamento e risponde 401: e' la causa
+				   piu' probabile del blocco su "Caricamento in corso". */
 				apiVersion: "2.5",
+				weatherEndpoint: "/forecast",
 				type: "forecast",
 				appendLocationNameToHeader: false,
 				lat: 45.3526,
