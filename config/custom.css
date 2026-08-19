@@ -1,3 +1,20 @@
+/* ==========================================================
+   FAMILY HUB - versione stabile del 19 agosto 2026
+   Punto di ripristino: layout a schermo intero 1920x1080.
+
+   Assetto:
+   - calendario mensile a sinistra, agganciato al fondo
+     (--cal-height calcolata su 100vh; cella 156px = 36 + 4x30)
+   - colonna destra: ora + meteo attuale, previsioni (4 giorni),
+     TO DO LIST, NOTE, calendario del mese successivo
+   - sezioni della colonna equidistanti (--section-gap)
+   - pannelli trasparenti, sfondo velato al 55% (--veil-opacity)
+
+   Se modifichi maxEventLines o eventHeight nel config.js, ricalcola
+   --cellheaderheight e il 32 dentro --cal-height: sono i due valori da
+   cui dipende l'allineamento dei due calendari al fondo.
+   ========================================================== */
+
 /* ==========================================
    FAMILY HUB - RICCARDO SANTORO
    Versione per MMM-CalendarExt3 (senza iframe)
