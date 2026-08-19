@@ -401,6 +401,14 @@ body,
   box-shadow: 0 8px 28px rgba(0, 0, 0, .35) !important;
 }
 
+/* Nomi dei giorni (lunedi', martedi', ...) alla stessa dimensione del
+   testo delle previsioni: 20px invece dei 24px che ereditavano da
+   fontSize del config. Misurato in console: il colore era gia' corretto,
+   era il corpo a farli sembrare diversi. */
+.CX3_basicCalendar .weekday {
+  font-size: 20px !important;
+}
+
 /* Le sei settimane si dividono in parti uguali l'altezza rimasta dopo
    titolo e riga dei giorni. min-height: 0 serve o il contenuto impedisce
    alle righe di restringersi. */
