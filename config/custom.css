@@ -1408,15 +1408,24 @@ body,
   /* Turni e festivita' sono resi a contorno, quindi il loro colore fa
      anche da testo. Primo tentativo: entrambi molto scuri, ciano e
      verde, risultato indistinguibili tra loro.
-     Ora i turni sono neri come il testo e le festivita' rosse come il
-     numero del giorno festivo: la distinzione e' netta e il riquadro
-     richiama la data che evidenzia. */
-  --outline-turni: #14161a;
+     Ora le festivita' sono rosse come il numero del giorno festivo e i
+     turni verdi: rosso e verde si distinguono a colpo d'occhio anche da
+     lontano, molto meglio di due scuri della stessa famiglia. */
+  --outline-turni: #1E8E3E;
   --outline-festivita: var(--holiday-color);
 
   --outmonth-bg: rgba(20, 22, 26, .12);
   --outmonth-text: rgba(20, 22, 26, .32);
   --inmonth-text: var(--ink);
+
+  /* Variabili di MagicMirror: le usano le sue classi .normal, .bright e
+     .dimmed, che i moduli della colonna destra applicano di continuo.
+     Erano rimaste bianche, quindi quel testo prendeva il colore solo
+     dalla nostra regola generale e in alcuni punti risultava piu'
+     spento del resto. */
+  --color-text: var(--ink);
+  --color-text-bright: #000000;
+  --color-text-dimmed: var(--ink-soft);
 }
 
 /* Velo: da nero a bianco */
