@@ -416,9 +416,12 @@ let config = {
 				locale: "it-IT",
 				monthIndex: 1,                  // 1 = mese successivo
 				firstDayOfWeek: 1,
-				maxEventLines: 1,
-				fontSize: "13px",
-				eventHeight: "16px",
+				/* 2 righe da 20px con celle piu' alte: il calendario cresce
+				   verso l'alto di circa 160px, e in una cella entrano due
+				   eventi invece di uno. */
+				maxEventLines: 2,
+				fontSize: "16px",
+				eventHeight: "20px",
 				useSymbol: false,
 				useIconify: false,
 				showWeekNumber: false,
