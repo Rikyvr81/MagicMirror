@@ -48,6 +48,11 @@
   --right-col-width: 440px;
   --right-col-offset: var(--side-gap);
 
+  /* Intensita' delle righe della griglia dei calendari. Su un monitor
+     visto da due metri le linee al 28% di bianco risultavano invisibili:
+     0.55 le rende leggibili senza trasformarle in un reticolo pesante. */
+  --grid-line: rgba(255, 255, 255, .55);
+
   /* Oscuramento dello sfondo. Era 0.55: e' il motivo per cui ogni
      immagine sembrava scura, qualunque fosse la sorgente.
      0 = immagine come e'. Alzalo se il testo non si legge su foto chiare. */
@@ -847,10 +852,11 @@ body,
 .todo-list .divTableRow .divTableCell:first-child::before {
   content: "" !important;
   display: inline-block !important;
-  width: 12px !important;
-  height: 12px !important;
+  width: 15px !important;
+  height: 15px !important;
   box-sizing: border-box !important;
-  border: 1px solid rgba(255, 255, 255, .55) !important;
+  /* 2px al 90%: a 1px e al 55% la casella era invisibile sul monitor */
+  border: 2px solid rgba(255, 255, 255, .90) !important;
   border-radius: 3px !important;
   vertical-align: middle !important;
 }
@@ -1286,12 +1292,14 @@ body,
 }
 
 /* Celle: nessun fondo, resta solo la griglia.
-   La griglia va alzata un po' di contrasto, altrimenti su sfondi
-   chiari le linee spariscono del tutto. */
+   ATTENZIONE: essendo l'ultimo blocco del foglio, e' QUESTO il valore
+   di --celllinecolor che vince sui due dichiarati nelle sezioni dei
+   singoli calendari piu' sopra. Per cambiare l'intensita' delle righe
+   si agisce su --grid-line in cima al file. */
 .CX3_basicCalendar,
 .CX3_smallCalendar {
   --cellbgcolor: transparent;
-  --celllinecolor: rgba(255, 255, 255, .28);
+  --celllinecolor: var(--grid-line);
 }
 
 .CX3 .cell {
