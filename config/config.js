@@ -154,21 +154,41 @@ const CALENDARI = [
 
 /* ==========================================================
    CREDENZIALI
-   Chiavi e token stanno in config/segreti.js, non qui: cosi' questo
+   Chiavi e token stanno in config/segreti.json, non qui: cosi' questo
    file si puo' sostituire senza reinserire nulla.
 
-   La lettura funziona in entrambi i contesti in cui MagicMirror carica
-   il config. Nel browser segreti.js e' stato caricato prima e ha
-   definito la variabile globale SEGRETI; con Node, dove quella
-   variabile non esiste, si ripiega su require.
-   Se il file mancasse, restano dei segnaposto e la dashboard parte
-   comunque: sarebbero solo meteo e liste a non caricarsi. */
-const CREDENZIALI =
-	typeof SEGRETI !== "undefined"
-		? SEGRETI
-		: typeof require !== "undefined"
-			? require("./segreti.js")
-			: { todoist: "MANCA_segreti.js", openweathermap: "MANCA_segreti.js" };
+   MagicMirror carica il config in due contesti diversi e la lettura
+   deve funzionare in entrambi:
+   - sul server, dove esiste require: il file JSON viene importato;
+   - nel browser, dove require non esiste: il file viene richiesto con
+     una chiamata sincrona, in modo che i valori siano disponibili
+     quando piu' sotto vengono costruiti i moduli.
+   La chiave del meteo serve proprio nel browser, perche' il modulo
+   meteo interroga il servizio da li'; il token Todoist serve al server.
+
+   Se il file mancasse o fosse malformato, restano stringhe vuote: la
+   dashboard parte comunque e sono solo meteo e liste a non caricarsi.
+   ========================================================== */
+const CREDENZIALI = (() => {
+	const vuote = { todoist: "", openweathermap: "" };
+
+	if (typeof require !== "undefined") {
+		try {
+			return require("./segreti.json");
+		} catch (e) {
+			return vuote;
+		}
+	}
+
+	try {
+		const richiesta = new XMLHttpRequest();
+		richiesta.open("GET", "config/segreti.json", false);   // false = sincrona
+		richiesta.send(null);
+		return JSON.parse(richiesta.responseText);
+	} catch (e) {
+		return vuote;
+	}
+})();
 
 const TODOIST_TOKEN = CREDENZIALI.todoist;
 const OWM_KEY = CREDENZIALI.openweathermap;
