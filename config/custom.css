@@ -1,8 +1,3 @@
-/* Font per il titolo del mese. L'@import deve stare in cima al file,
-   prima di ogni altra regola, altrimenti il browser lo ignora.
-   Carico tre alternative: si sceglie cambiando --font-title. */
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Cormorant+Garamond:wght@300;400;500;600&family=Marcellus&display=swap");
-
 /* ==========================================
    FAMILY HUB - RICCARDO SANTORO
    Versione per MMM-CalendarExt3 (senza iframe)
@@ -15,11 +10,6 @@
   --color-background: #000000;
 
   --font-primary: "Roboto Condensed", "Roboto", sans-serif;
-
-  /* Font del titolo del mese. Alternative gia' caricate:
-     "Cormorant Garamond" -> piu' sottile e affilato, molto elegante
-     "Marcellus"          -> lapidario, ispirato alle iscrizioni romane */
-  --font-title: "Playfair Display", Georgia, serif;
   --font-secondary: "Roboto", sans-serif;
 
   --font-size: 22px;
@@ -57,8 +47,12 @@
   /* Altezza del calendario grande: calcolata sull'altezza della finestra
      cosi' il bordo inferiore cade dove finisce il calendario piccolo,
      qualunque sia la risoluzione.
-     I 32px sono: margine superiore del body (15) + sollevamento della
-     regione (-8) + margine inferiore del body (15) + --small-cal-bottom (10). */
+     Il 32 e' la somma di quanto si perde sopra e sotto:
+       sopra  = margine del body (15) + sollevamento regione (-8)
+                + --cal-top-gap (4)  = 11
+       sotto  = margine del body (15) + --small-cal-bottom (6) = 21
+     11 + 21 = 32. Se cambi uno di quei quattro valori, aggiorna anche
+     questo, altrimenti i due calendari tornano disallineati. */
   --cal-height: calc(100vh - 32px);
 
   /* Meteo attuale in alto a destra, accanto all'orologio:
@@ -86,10 +80,14 @@
      1 = piena visibilita', valori piu' bassi = piu' tenui. */
   --small-cal-event-opacity: .45;
 
-  /* Sollevamento del calendario piccolo (titolo, riga bianca e griglia).
-     La sua regione e' ancorata al fondo dello schermo, quindi qui il
-     valore va nella direzione opposta: piu' alto = piu' in su. */
-  --small-cal-bottom: 10px;
+  /* Distanza del calendario piccolo dal fondo. La sua regione e'
+     ancorata in basso, quindi qui il valore va nella direzione opposta
+     rispetto al calendario grande: piu' alto = piu' in su.
+     I 6px non sono casuali: il calendario grande termina a
+     100vh - 21px (11px di partenza + --cal-height), e la regione del
+     piccolo parte dal bordo interno del body, cioe' 15px dal fondo.
+     6 + 15 = 21: i due bordi inferiori coincidono. */
+  --small-cal-bottom: 6px;
 
   /* Colore unico per sabato E domenica: il CSS del modulo userebbe
      due colori diversi (azzurro e rosso) */
@@ -235,10 +233,7 @@ body,
 /* Titolo del mese (generato da customHeader: true), allineato a sinistra
    per lasciare spazio alla legenda sulla destra */
 /* Stesso carattere della riga della data nell'orologio: Roboto
-   Condensed, peso 400, spaziatura normale. La dimensione resta 48px.
-   Il font serif (--font-title, Playfair Display) e le sue alternative
-   restano caricate in cima al foglio: per tornarci basta rimettere
-   font-family: var(--font-title) qui sotto. */
+   Condensed, peso 400, spaziatura normale. La dimensione resta 48px. */
 .main-month-calendar .headerTitle {
   font-family: var(--font-primary) !important;
   font-size: 48px !important;
