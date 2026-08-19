@@ -194,10 +194,12 @@ body,
    dipinta dal body, lasciando una cornice nera. Su <html> l'immagine copre
    tutto lo schermo, senza spostare di un pixel il layout. */
 html {
-  /* Immagine iniziale. Dopo il caricamento viene sostituita a rotazione
-     dal blocco SFONDO A ROTAZIONE in cima al config.js, che scrive un
-     background-image in linea su questo stesso elemento. */
-  background-image: url("https://picsum.photos/1920/1080");
+  /* Solo il fondo nero: l'immagine la mette il blocco SFONDO A ROTAZIONE
+     in cima al config.js, che scrive un background-image in linea su
+     questo stesso elemento appena viene caricato.
+     Qui NON c'e' piu' un indirizzo fisso: era sempre lo stesso, quindi il
+     browser lo ripescava dalla cache e a ogni ricaricamento si rivedeva
+     la medesima foto. */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
