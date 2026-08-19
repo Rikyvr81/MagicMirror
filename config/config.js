@@ -1,4 +1,51 @@
 /* ==========================================================
+   CORREZIONE ORARIO DI ALBA E TRAMONTO
+
+   Il modulo meteo mostra il tramonto due ore avanti: riceve il dato in
+   tempo universale, gli somma lo scarto del fuso della localita', e poi
+   il browser lo mostra in ora locale sommandolo di nuovo.
+   Verificato: il dato grezzo di OpenWeatherMap convertito da' 20:18,
+   la dashboard mostrava 22:15.
+
+   Non esiste un'opzione per correggerlo, quindi lo sistemiamo dopo il
+   disegno. Lo scarto NON e' scritto come "due ore" ma ricavato dal
+   sistema: a fine ottobre, con il ritorno dell'ora solare, diventa
+   automaticamente un'ora sola.
+
+   La correzione agisce solo dentro .weather-current-box, quindi non puo'
+   toccare l'orologio o altri orari della dashboard.
+   ========================================================== */
+if (typeof document !== "undefined") {
+	const correggiOrari = () => {
+		const riquadro = document.querySelector(".weather-current-box");
+		if (!riquadro) return;
+
+		const scarto = -new Date().getTimezoneOffset();   // 120 d'estate, 60 d'inverno
+
+		riquadro.querySelectorAll("span, div").forEach((elemento) => {
+			if (elemento.children.length) return;              // solo elementi finali
+			if (elemento.dataset.oraCorretta === "1") return;  // gia' sistemato
+
+			const pezzi = elemento.textContent.trim().match(/^(\d{1,2}):(\d{2})$/);
+			if (!pezzi) return;
+
+			let minuti = Number(pezzi[1]) * 60 + Number(pezzi[2]) - scarto;
+			minuti = (minuti + 1440) % 1440;                   // resta dentro le 24 ore
+
+			const ore = String(Math.floor(minuti / 60)).padStart(2, "0");
+			const min = String(minuti % 60).padStart(2, "0");
+
+			elemento.textContent = `${ore}:${min}`;
+			elemento.dataset.oraCorretta = "1";
+		});
+	};
+
+	document.addEventListener("DOMContentLoaded", correggiOrari);
+	/* il modulo ridisegna a ogni aggiornamento, quindi si ricontrolla */
+	setInterval(correggiOrari, 5000);
+}
+
+/* ==========================================================
    SFONDO A ROTAZIONE
    Cambia l'immagine di sfondo a intervalli regolari senza dover
    ricaricare la pagina.
