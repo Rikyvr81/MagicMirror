@@ -56,7 +56,7 @@
   /* Oscuramento dello sfondo. Era 0.55: e' il motivo per cui ogni
      immagine sembrava scura, qualunque fosse la sorgente.
      0 = immagine come e'. Alzalo se il testo non si legge su foto chiare. */
-  --veil-opacity: 0.55;
+  --veil-opacity: 0.68;
 
   /* Larghezza del calendario mensile grande. Ora che il meteo e' nella
      colonna destra, il calendario si prende tutto lo spazio residuo:
@@ -123,11 +123,18 @@
   --today-color: var(--weekend-color);
 
   /* Celle dei giorni fuori dal mese corrente */
-  --outmonth-bg: rgba(0, 0, 0, .45);
-  --outmonth-text: rgba(255, 255, 255, .28);
-  /* usata dallo stile generato dal config.js per i giorni del mese
-     mostrato nel calendario piccolo */
+  /* Celle dei giorni NON appartenenti al mese mostrato.
+     Erano scurite, ma su sfondo nero diventavano invisibili: ora sono
+     schiarite, cosi' si distinguono per contrasto verso l'alto.
+     Valgono per entrambi i calendari: quello piccolo le riceve dallo
+     stile generato dal config.js, che legge queste stesse variabili. */
+  --outmonth-bg: rgba(255, 255, 255, .13);
+  --outmonth-text: rgba(255, 255, 255, .45);
   --inmonth-text: rgba(255, 255, 255, .92);
+
+  /* Opacita' degli eventi che cadono nei giorni fuori dal mese:
+     li rende sbiaditi come se fossero gia' passati. */
+  --outmonth-event-opacity: .40;
 
   /* Distanza del blocco NOTE dalla TO DO LIST che sta sopra.
      Le note ora stanno nella regione in alto a destra, quindi scendono
@@ -399,12 +406,6 @@ body,
   -webkit-backdrop-filter: blur(10px) !important;
   backdrop-filter: blur(10px) !important;
   box-shadow: 0 8px 28px rgba(0, 0, 0, .35) !important;
-}
-
-/* Nomi dei giorni alla stessa dimensione del testo delle previsioni:
-   20px invece dei 24px ereditati da fontSize del config. */
-.CX3_basicCalendar .weekday {
-  font-size: 20px !important;
 }
 
 /* Le sei settimane si dividono in parti uguali l'altezza rimasta dopo
@@ -1315,17 +1316,24 @@ body,
   background: transparent !important;
 }
 
-/* Eccezione: i giorni fuori dal mese tengono un velo scuro, come nel
+/* Eccezione: i giorni fuori dal mese hanno un fondo schiarito, come nel
    calendario piccolo. Deve stare DOPO la regola qui sopra: pari
    specificita', vince la posizione. */
 .CX3_basicCalendar .cell:not(.thisMonth) {
   background: var(--outmonth-bg) !important;
 }
 
-/* Senza fondo, i giorni fuori dal mese si distinguono solo per il
-   colore del numero: lo spegniamo di piu' per compensare */
+/* Numero del giorno nelle celle fuori dal mese: segue la variabile,
+   cosi' resta coerente con il fondo schiarito */
 .CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
-  color: rgba(255, 255, 255, .22) !important;
+  color: var(--outmonth-text) !important;
+}
+
+/* 2) Eventi nei giorni fuori dal mese: sbiaditi, come gli impegni
+   passati. Riguarda il calendario grande, dove si vedono i primi giorni
+   del mese successivo. */
+.CX3_basicCalendar .cell:not(.thisMonth) .event {
+  opacity: var(--outmonth-event-opacity) !important;
 }
 
 /* Leggibilita' sopra la foto: il testo ora poggia direttamente
@@ -1380,283 +1388,4 @@ body,
 .CX3_basicCalendar .cell.today.holiday .cellDate,
 .CX3_smallCalendar .cell.today.holiday .cellDate {
   color: var(--holiday-color) !important;
-}
-
-
-/* La pagina dichiara di essere chiara. Serve contro la "modalita' scura
-   forzata" di Android: la WebView prende una pagina chiara e la inverte
-   da sola, scurendo lo sfondo e schiarendo i testi ma lasciando intatti
-   i colori accentati. E' esattamente il sintomo osservato sulla
-   chiavetta: turni verdi, festivita' rosse e weekend blu corretti,
-   mentre numeri dei giorni e sfondo restavano invertiti.
-   Va disattivata anche in Fully Kiosk, sotto Web Content Settings. */
-:root,
-html,
-body {
-  color-scheme: light !important;
-  forced-color-adjust: none !important;
-}
-
-/* ==========================================================
-   TEMA CHIARO  (prova)
-   ----------------------------------------------------------
-   Inverte la dashboard: sfondo schiarito, testi e linee scuri.
-   Sta in fondo al foglio perche' l'ultima regola vince: per
-   tornare al tema scuro basta commentare TUTTO questo blocco.
-
-   Perche' serve un blocco e non bastano poche variabili: i colori
-   bianchi sono scritti a mano in un centinaio di punti del foglio,
-   quindi vanno sovrascritti qui invece che modificati uno per uno.
-
-   NOTA IMPORTANTE: dentro questo blocco i colori sono scritti per
-   esteso e NON con var(). La WebView di Android TV (Fully Kiosk) non
-   risolve una variabile che punta a un'altra variabile: sulla chiavetta
-   funzionavano i turni verdi, il rosso delle festivita' e il blu del
-   weekend (variabili semplici) mentre restavano bianchi i numeri dei
-   giorni e scuro lo sfondo, perche' dipendevano da --defaultcolor:
-   var(--ink) e simili. Il :root qui sotto resta perche' lo stile
-   generato dal config.js usa var(--outmonth-bg), var(--inmonth-text),
-   var(--weekend-color) e var(--holiday-color): quelle sono catene a un
-   solo livello e la WebView le gestisce.
-   Se aggiungi regole qui, scrivi i colori per esteso.
-   ========================================================== */
-
-:root {
-  --ink: #14161a;                          /* nero dei testi */
-  --ink-soft: rgba(20, 22, 26, .60);       /* testi secondari */
-  --grid-line: rgba(20, 22, 26, .42);      /* righe dei calendari */
-  --veil-light: rgba(255, 255, 255, .74);  /* velo chiaro sullo sfondo */
-
-  /* colori ricalibrati: quelli chiari sparirebbero su fondo bianco */
-  --weekend-color: #1565C0;
-  --holiday-color: #C62828;
-  --today-color: #1565C0;
-  /* Turni e festivita' sono resi a contorno, quindi il loro colore fa
-     anche da testo. Primo tentativo: entrambi molto scuri, ciano e
-     verde, risultato indistinguibili tra loro.
-     Ora le festivita' sono rosse come il numero del giorno festivo e i
-     turni verdi: rosso e verde si distinguono a colpo d'occhio anche da
-     lontano, molto meglio di due scuri della stessa famiglia. */
-  --outline-turni: #1E8E3E;
-  --outline-festivita: #C62828;
-
-  --outmonth-bg: rgba(20, 22, 26, .12);
-  --outmonth-text: rgba(20, 22, 26, .32);
-  --inmonth-text: #14161a;
-
-  /* Variabili di MagicMirror: le usano le sue classi .normal, .bright e
-     .dimmed, che i moduli della colonna destra applicano di continuo.
-     Erano rimaste bianche, quindi quel testo prendeva il colore solo
-     dalla nostra regola generale e in alcuni punti risultava piu'
-     spento del resto. */
-  --color-text: #14161a;
-  --color-text-bright: #000000;
-  --color-text-dimmed: rgba(20, 22, 26, .60);
-}
-
-/* Velo: da nero a bianco */
-body::before {
-  background: rgba(255, 255, 255, .74) !important;
-}
-
-/* Testi e ombre: tutto scuro, via le ombre nere pensate per il testo
-   chiaro su fondo scuro */
-.module,
-.module * {
-  color: #14161a !important;
-  text-shadow: none !important;
-}
-
-/* Le ombre sono dichiarate anche su selettori piu' specifici della
-   regola qui sopra, che quindi vincerebbero: vanno azzerate una per una.
-   Elenco ricavato scandendo il foglio. Su fondo scuro quell'alone
-   staccava il testo dalla foto; su fondo bianco diventa un rilievo
-   sgradevole, ed e' esattamente cio' che si notava sui nomi dei giorni. */
-.calendar-legend .legend-item,
-.family-message,
-.family-message p,
-.family-notes .divTableCell.title,
-.family-notes .divTableCell.dueDate,
-.CX3 .cellDate,
-.CX3 .headerTitle,
-.CX3 [class*="weekday_"] {
-  text-shadow: none !important;
-}
-
-/* Righe di separazione delle sezioni */
-.todo-list header,
-.family-message-title,
-.weather-forecast-box header,
-.second-month-calendar .headerTitle {
-  border-bottom-color: rgba(20, 22, 26, .42) !important;
-}
-
-/* Casella di spunta */
-.todo-list .divTableRow .divTableCell:first-child::before {
-  border-color: rgba(20, 22, 26, .80) !important;
-}
-
-/* Meteo attuale: la sua regola originale forza il bianco su tutto */
-.weather-current-box .module-content,
-.weather-current-box .module-content * {
-  color: #14161a !important;
-}
-
-/* Legenda */
-.calendar-legend .legend-item {
-  color: #14161a !important;
-  text-shadow: none !important;
-}
-
-/* I quadratini di turni e festivita' hanno il colore scritto in linea
-   dal config.js: qui lo sovrascriviamo con quello del tema, altrimenti
-   la legenda mostrerebbe il ciano e il verde chiari mentre gli eventi
-   nel calendario sono ormai scuri. Il bordo passa a 3px perche' a 2px
-   un colore cosi' profondo si legge poco. */
-.calendar-legend .legend-dot-turni {
-  border: 3px solid #1E8E3E !important;
-}
-
-.calendar-legend .legend-dot-festivita {
-  border: 3px solid #C62828 !important;
-}
-
-
-/* ---- Elementi con regola di colore propria ----
-   Questi selettori impongono il bianco con specificita' maggiore della
-   regola generale ".module *" qui sopra, quindi vanno riscritti uno per
-   uno. Sono stati ricavati scandendo il foglio, non a occhio. */
-
-.family-message-title,
-.todo-list header,
-.second-month-calendar .headerTitle,
-.main-month-calendar .headerTitle,
-.weather-current-box header,
-.weather-forecast-box header {
-  color: #14161a !important;
-}
-
-.todo-list .divTableCell.title,
-.family-notes .divTableCell.title,
-.family-message p {
-  color: #14161a !important;
-}
-
-.todo-list .divTableCell.dueDate,
-.family-notes .divTableCell.dueDate {
-  color: rgba(20, 22, 26, .60) !important;
-}
-
-/* Giorni fuori dal mese nel calendario grande: il blocco della
-   trasparenza li spegneva con un bianco al 22% */
-.CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
-  color: rgba(20, 22, 26, .32) !important;
-}
-
-/* Testo delle NOTE identico a quello della TO DO LIST: stesso corpo,
-   stesso peso, stesso colore. Restano diverse solo l'interlinea e il
-   margine, che servono perche' le note vanno a capo su piu' righe. */
-.family-notes .divTableCell.title {
-  font-size: 15px !important;
-  font-weight: 400 !important;
-  color: #14161a !important;
-}
-
-/* Nomi dei giorni (lunedi', martedi', ...) alla stessa intensita' del
-   testo delle previsioni e della legenda: il modulo li disegna con un
-   colore attenuato, che su fondo chiaro li rendeva grigi.
-   Sabato e domenica sono esclusi, altrimenti perderebbero il blu. */
-.CX3 .headerContainer.weekGrid > *:not([class*="weekday_0"]):not([class*="weekday_6"]),
-.CX3 .headerContainer.weekGrid > *:not([class*="weekday_0"]):not([class*="weekday_6"]) * {
-  color: #14161a !important;
-  opacity: 1 !important;
-}
-
-/* ---- Calendari ---- */
-
-/* IMPORTANTE: il numero del giorno non e' testo diretto di .cellDate,
-   ma sta in span figli (.dateParts). La regola ".module *" qui sopra
-   colorava quegli span di nero, vincendo su weekend, festivita' e
-   giorni fuori mese, che agiscono sul contenitore.
-   Con color: inherit gli span tornano a ereditare dal .cellDate, e
-   tutte le regole di colore riprendono a funzionare in un colpo solo:
-   sabato e domenica blu, festivita' rosse, giorni fuori mese spenti,
-   compreso il calendario piccolo. */
-.CX3 .cellDate * {
-  color: inherit !important;
-}
-
-.CX3_basicCalendar,
-.CX3_smallCalendar {
-  --defaultcolor: #14161a;
-  --celllinecolor: rgba(20, 22, 26, .42);
-  --cellbgcolor: transparent;
-}
-
-.CX3 .cell {
-  background: transparent !important;
-}
-
-.CX3_basicCalendar .cell:not(.thisMonth) {
-  background: rgba(20, 22, 26, .12) !important;
-}
-
-.CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
-  color: rgba(20, 22, 26, .32) !important;
-}
-
-.CX3 .cell.today {
-  background: rgba(21, 101, 192, .10) !important;
-  box-shadow:
-    inset 0 0 0 2px #1565C0,
-    inset 0 0 22px rgba(21, 101, 192, .10) !important;
-}
-
-.CX3 .cell.today .cellDate {
-  color: #14161a !important;
-}
-
-.CX3 [class*="weekday_0"],
-.CX3 [class*="weekday_0"] .cellDate,
-.CX3 [class*="weekday_6"],
-.CX3 [class*="weekday_6"] .cellDate {
-  color: #1565C0 !important;
-}
-
-.CX3_basicCalendar .cell.thisMonth.holiday .cellDate {
-  color: #C62828 !important;
-}
-
-/* ---- Eventi ----
-   I riquadri pieni restano colorati: su fondo saturo il testo bianco
-   e' la scelta leggibile, quindi qui lo riaffermiamo dopo la regola
-   generale che ha reso scuro tutto il resto. */
-.CX3 .event,
-.CX3 .event * {
-  color: #ffffff !important;
-  text-shadow: none !important;
-}
-
-/* Il giallo di "varie" fa eccezione: testo scuro */
-.CX3 .event.calendar_varie,
-.CX3 .event.calendar_varie * {
-  color: #1a1a1a !important;
-}
-
-/* Turni e festivita' sono a contorno e seguono il proprio colore.
-   Due tonalita' scure di verde e ciano si confondevano tra loro, quindi
-   li distinguo anche per FORMA: le festivita' hanno un fondo verde
-   tenue, i turni restano a contorno vuoto. */
-.CX3 .event.calendar_turni,
-.CX3 .event.calendar_turni * {
-  color: #1E8E3E !important;
-}
-
-.CX3 .event.calendar_festivita,
-.CX3 .event.calendar_festivita * {
-  color: #C62828 !important;
-}
-
-.CX3 .event.calendar_festivita {
-  background: rgba(27, 94, 32, .16) !important;
 }
