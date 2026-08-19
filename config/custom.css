@@ -1329,10 +1329,14 @@ body,
   color: var(--outmonth-text) !important;
 }
 
-/* 2) Eventi nei giorni fuori dal mese: sbiaditi, come gli impegni
-   passati. Riguarda il calendario grande, dove si vedono i primi giorni
-   del mese successivo. */
-.CX3_basicCalendar .cell:not(.thisMonth) .event {
+/* Eventi nei giorni fuori dal mese: sbiaditi, come gli impegni passati.
+   La classe .fuoriMese e' assegnata da eventTransformer nel config.js.
+   NON si puo' fare con un selettore tipo ".cell:not(.thisMonth) .event":
+   nel DOM gli eventi non sono figli delle celle ma di un contenitore a
+   livello della settimana, e le loro classi non contengono la data.
+   Verificato in console: l'evento del 2 settembre ha come padre
+   .eventContainer.weekGrid.weekGridRow e closest('.cell') e' nullo. */
+.CX3_basicCalendar .event.fuoriMese {
   opacity: var(--outmonth-event-opacity) !important;
 }
 
