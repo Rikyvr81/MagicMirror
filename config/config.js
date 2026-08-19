@@ -173,6 +173,33 @@ ${sel}.holiday .cellDate { color: var(--holiday-color) !important; }
 </style>`;
 })();
 
+/* Marca gli eventi che cadono FUORI dal mese corrente, cosi' il CSS puo'
+   sbiadirli come gli impegni passati.
+   Serve un passaggio dal config perche' nel DOM gli eventi non stanno
+   dentro le celle ma in un contenitore a livello della settimana, e le
+   loro classi non contengono la data: dal solo CSS non c'e' modo di
+   sapere a che giorno appartengono.
+   La classe assegnata con ev.class viene applicata dal modulo
+   all'elemento dell'evento. */
+const marcaFuoriMese = (ev) => {
+	const oggi = new Date();
+	const inizioMese = new Date(oggi.getFullYear(), oggi.getMonth(), 1).valueOf();
+	const inizioMeseDopo = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 1).valueOf();
+
+	/* startDate e' gia' un timestamp quando il modulo ha regolarizzato
+	   l'evento; in caso contrario lo ricaviamo dai campi originali. */
+	const inizio =
+		typeof ev.startDate === "number"
+			? ev.startDate
+			: new Date(ev.startDate || ev.start?.date || ev.start?.dateTime).valueOf();
+
+	if (!Number.isNaN(inizio) && (inizio < inizioMese || inizio >= inizioMeseDopo)) {
+		ev.class = "fuoriMese";
+	}
+
+	return ev;
+};
+
 /* Marca le celle che contengono una festivita': il custom.css usa la
    classe .holiday per colorare di rosso il numero del giorno.
    Funziona perche' queste celle contengono eventi. */
@@ -312,6 +339,7 @@ let config = {
 				headerTitleOptions: { month: "long", year: "numeric" },
 				calendarSet: NOMI_CALENDARI,
 				eventSorter: ordinaEventi,
+				eventTransformer: marcaFuoriMese,
 				manipulateDateCell: marcaFestivita
 			}
 		},
