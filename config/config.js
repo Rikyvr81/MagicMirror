@@ -172,6 +172,25 @@ const CALENDARI = [
 const CREDENZIALI = (() => {
 	const vuote = { todoist: "", openweathermap: "" };
 
+	/* Prima la richiesta al file: e' la via che funziona nel browser.
+	   L'ordine conta. Nel tentativo precedente provavo require per
+	   primo, ma nel browser MagicMirror rende disponibile una funzione
+	   require propria: il codice imboccava quella strada, falliva e
+	   restituiva stringhe vuote. Il sintomo era meteo in "Caricamento
+	   in corso" e liste Todoist su "Loading" e "UNDEFINED". */
+	if (typeof XMLHttpRequest !== "undefined") {
+		try {
+			const richiesta = new XMLHttpRequest();
+			richiesta.open("GET", "config/segreti.json", false);   // false = sincrona
+			richiesta.send(null);
+			const dati = JSON.parse(richiesta.responseText);
+			if (dati && dati.todoist) return dati;
+		} catch (e) {
+			/* si prosegue col tentativo successivo */
+		}
+	}
+
+	/* Sul server XMLHttpRequest non esiste: si importa il file */
 	if (typeof require !== "undefined") {
 		try {
 			return require("./segreti.json");
@@ -180,14 +199,7 @@ const CREDENZIALI = (() => {
 		}
 	}
 
-	try {
-		const richiesta = new XMLHttpRequest();
-		richiesta.open("GET", "config/segreti.json", false);   // false = sincrona
-		richiesta.send(null);
-		return JSON.parse(richiesta.responseText);
-	} catch (e) {
-		return vuote;
-	}
+	return vuote;
 })();
 
 const TODOIST_TOKEN = CREDENZIALI.todoist;
