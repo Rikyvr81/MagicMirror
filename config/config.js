@@ -154,81 +154,27 @@ const CALENDARI = [
 
 /* ==========================================================
    CREDENZIALI
-   Chiavi e token stanno in config/segreti.json, non qui: cosi' questo
-   file si puo' sostituire senza reinserire nulla.
+   Le due costanti qui sotto sono l'unico punto da compilare, e sono
+   usate da tutti i moduli che ne hanno bisogno: i due meteo leggono
+   OWM_KEY, la TO DO LIST e le NOTE leggono TODOIST_TOKEN.
 
-   MagicMirror carica il config in due contesti diversi e la lettura
-   deve funzionare in entrambi:
-   - sul server, dove esiste require: il file JSON viene importato;
-   - nel browser, dove require non esiste: il file viene richiesto con
-     una chiamata sincrona, in modo che i valori siano disponibili
-     quando piu' sotto vengono costruiti i moduli.
-   La chiave del meteo serve proprio nel browser, perche' il modulo
-   meteo interroga il servizio da li'; il token Todoist serve al server.
-
-   Se il file mancasse o fosse malformato, restano stringhe vuote: la
-   dashboard parte comunque e sono solo meteo e liste a non caricarsi.
+   Nota per il futuro: abbiamo provato a spostarle in un file separato
+   (config/segreti.json) per non doverle reinserire a ogni sostituzione
+   del config, ma non ha funzionato. Il file era servito correttamente e
+   la richiesta funzionava dalla console, mentre i valori arrivavano
+   vuoti ai moduli: il config viene evidentemente valutato in un
+   contesto in cui nessuna delle vie tentate era percorribile.
+   Se un domani ci si riprova, il punto da chiarire per primo e' DOVE
+   viene eseguito questo file.
    ========================================================== */
-const CREDENZIALI = (() => {
-	const vuote = { todoist: "", openweathermap: "" };
 
-	const leggi = (testo) => {
-		try {
-			const dati = JSON.parse(testo);
-			return dati && dati.todoist ? dati : null;
-		} catch (e) {
-			return null;
-		}
-	};
+/* Todoist -> Impostazioni -> Integrazioni -> Sviluppatore -> API token */
+const TODOIST_TOKEN = "b5165897484eaae9d7d53d4f5d6378886a331bb5";
 
-	/* --- percorso browser --- */
-	if (typeof XMLHttpRequest !== "undefined") {
-		/* due percorsi: relativo e assoluto. Il primo dipende da dove il
-		   browser ritiene di essere, il secondo no. */
-		for (const percorso of ["config/segreti.json", "/config/segreti.json"]) {
-			try {
-				const richiesta = new XMLHttpRequest();
-				richiesta.open("GET", percorso, false);   // false = sincrona
-				richiesta.send(null);
-				if (richiesta.status === 200) {
-					const dati = leggi(richiesta.responseText);
-					if (dati) return dati;
-				}
-			} catch (e) {
-				/* si prova il percorso successivo */
-			}
-		}
-	}
-
-	/* --- percorso server ---
-	   Prima con fs e un percorso assoluto costruito da __dirname: e' il
-	   modo piu' affidabile, perche' non dipende da come il caricatore di
-	   MagicMirror risolve i percorsi relativi. Poi, come ripiego, il
-	   require diretto del JSON. */
-	if (typeof require !== "undefined") {
-		try {
-			const fs = require("fs");
-			const path = require("path");
-			const base = typeof __dirname !== "undefined" ? __dirname : ".";
-			const dati = leggi(fs.readFileSync(path.join(base, "segreti.json"), "utf8"));
-			if (dati) return dati;
-		} catch (e) {
-			/* si prova il ripiego */
-		}
-
-		try {
-			const dati = require("./segreti.json");
-			if (dati && dati.todoist) return dati;
-		} catch (e) {
-			/* nessuna via disponibile */
-		}
-	}
-
-	return vuote;
-})();
-
-const TODOIST_TOKEN = CREDENZIALI.todoist;
-const OWM_KEY = CREDENZIALI.openweathermap;
+/* openweathermap.org -> profilo -> API keys (piano gratuito, API 2.5).
+   Una chiave appena creata richiede fino a due ore per attivarsi: nel
+   frattempo il meteo resta su "Caricamento in corso". */
+const OWM_KEY = "91004786c2db7dc4fb96cbe0adc4d4a5";
 
 /* Progetti Todoist */
 const PROGETTO_TODO = "6hHmrPHvXCJqHhHC";                  // "To Do List"
