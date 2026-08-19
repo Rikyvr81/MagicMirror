@@ -299,7 +299,7 @@ let config = {
 				broadcastPastEvents: true,   // senza questo i giorni passati del mese restano vuoti
 				maximumEntries: 400,         // 7 calendari + eventi passati: serve spazio abbondante
 				maximumNumberOfDays: 120,
-				fetchInterval: 300000,
+				fetchInterval: 10 * 60 * 1000,   // 10 minuti, come le liste Todoist
 				calendars: CALENDARI.map((c) => ({
 					url: c.url,
 					name: c.name,
