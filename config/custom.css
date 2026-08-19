@@ -63,7 +63,9 @@
 
   /* Meteo attuale in alto a destra, accanto all'orologio:
      quota verticale e larghezza massima del blocco. */
-  --current-weather-top: 6px;
+  /* 38px = altezza della riga della data: il blocco meteo parte quindi
+     alla stessa quota dell'ora, non della data. */
+  --current-weather-top: 38px;
   --current-weather-width: 230px;
 
   /* Sollevamento dell'intera regione in alto a sinistra: titolo, legenda
@@ -325,7 +327,7 @@ body,
   /* deve coincidere con eventHeight nel config.js.
      Altezza cella = cellheaderheight + maxEventLines x eventheight,
      per 6 righe di settimane: e' la leva principale sull'altezza totale. */
-  --eventheight: 24px;
+  --eventheight: 25px;
 
   width: 100% !important;
   box-sizing: border-box !important;
@@ -354,6 +356,11 @@ body,
    titolo e riga dei giorni. min-height: 0 serve o il contenuto impedisce
    alle righe di restringersi. */
 .CX3_basicCalendar .week {
+  /* height: auto annulla un'eventuale altezza imposta dal modulo, che
+     altrimenti impedisce alla riga di crescere e lascia spazio vuoto in
+     fondo: era il motivo per cui il calendario grande finiva ~40px piu'
+     in alto del piccolo. */
+  height: auto !important;
   flex: 1 1 0 !important;
   min-height: 0 !important;
 }
