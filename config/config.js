@@ -220,7 +220,7 @@ let config = {
 			config: {
 				weatherProvider: "openmeteo",
 				type: "current",
-				showFeelsLike: false,        // la temperatura percepita non serve piu'
+				showFeelsLike: true,         // percepita in piccolo, sotto vento e tramonto
 				/* Il ", IT-34" veniva dal nome localita' restituito dal
 				   servizio, che il modulo accoda all'intestazione. Qui
 				   disattiviamo l'accodamento e scriviamo il titolo per
