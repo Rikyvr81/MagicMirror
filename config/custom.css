@@ -68,6 +68,12 @@
   --current-weather-top: 38px;
   --current-weather-width: 230px;
 
+  /* Stacco dell'ora dalla riga della data */
+  --clock-time-top: 8px;
+
+  /* Stacco delle previsioni dal blocco ora + meteo attuale */
+  --forecast-top-gap: 16px;
+
   /* Sollevamento dell'intera regione in alto a sinistra: titolo, legenda
      e calendario si muovono insieme, guadagnando spazio prima del meteo.
      Valore negativo = piu' in alto. */
@@ -622,14 +628,25 @@ body,
   text-align: left !important;
 }
 
+/* La data si distende su tutta la larghezza della colonna: justify con
+   text-align-last distribuisce le parole da bordo a bordo, quindi
+   "mercoledi', 19 agosto 2026" arriva esattamente al margine destro
+   qualunque sia la sua lunghezza (che cambia ogni giorno).
+   Se preferisci il testo compatto, commenta le due righe di justify e
+   togli il commento a font-size: 34px. */
 .main-clock .date {
   font-size: 28px;
   line-height: 32px;
+  width: 100% !important;
+  text-align: justify !important;
+  text-align-last: justify !important;
+  /* font-size: 34px !important; */
 }
 
 .main-clock .time {
   font-size: 82px;
   line-height: 84px;
+  margin-top: var(--clock-time-top) !important;
 }
 
 /* ==========================================
@@ -1094,6 +1111,15 @@ body,
   line-height: 22px !important;
 }
 
+/* Vento, tramonto e percepita nello stesso bianco dei gradi: il modulo
+   li marca come "dimmed", che li spegne al 50%. Qui annulliamo sia il
+   colore sia l'eventuale opacita' ridotta, icone comprese. */
+.weather-current-box .module-content,
+.weather-current-box .module-content * {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
 /* ==========================================
    METEO ATTUALE / PREVISIONI
    ========================================== */
@@ -1104,7 +1130,7 @@ body,
 .weather-forecast-box {
   width: 100% !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
+  margin: var(--forecast-top-gap) 0 0 0 !important;
   font-size: 20px !important;
 }
 
