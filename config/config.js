@@ -174,7 +174,7 @@ const TODOIST_TOKEN = "b5165897484eaae9d7d53d4f5d6378886a331bb5";
 /* openweathermap.org -> profilo -> API keys (piano gratuito, API 2.5).
    Una chiave appena creata richiede fino a due ore per attivarsi: nel
    frattempo il meteo resta su "Caricamento in corso". */
-const OWM_KEY = "91004786c2db7dc4fb96cbe0adc4d4a5";
+const OWM_KEY = "4bd3e85d4cb8457cd3d0bf6f0e6a68aa";
 
 /* Progetti Todoist */
 const PROGETTO_TODO = "6hHmrPHvXCJqHhHC";                  // "To Do List"
