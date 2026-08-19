@@ -999,11 +999,13 @@ body,
   font-size: 15px !important;
   font-weight: 400 !important;
   line-height: 22px !important;
-  color: #ffffff !important;
+  /* stesso bianco al 90% della TO DO LIST, e nessuna ombra: la aveva
+     solo questo blocco, ed era la differenza che si notava */
+  color: rgba(255, 255, 255, .90) !important;
   text-align: left !important;
   white-space: normal !important;      /* il testo lungo va a capo */
   margin-bottom: 10px !important;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, .9) !important;
+  text-shadow: none !important;
 }
 
 /* Eventuale data di scadenza: in coda al messaggio, piu' piccola */
@@ -1013,7 +1015,7 @@ body,
   color: rgba(255, 255, 255, .60) !important;
   text-align: left !important;
   margin-bottom: 10px !important;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, .9) !important;
+  text-shadow: none !important;
 }
 
 /* Se preferisci non vedere mai le date in questa sezione:
@@ -1342,10 +1344,17 @@ body,
 
 /* Leggibilita' sopra la foto: il testo ora poggia direttamente
    sullo sfondo, quindi serve un'ombra */
+/* Nota: i nomi dei giorni (.weekday_*) sono stati TOLTI da questo elenco.
+   Portavano un'ombra che gli altri testi della colonna destra non hanno,
+   e il contorno scuro attorno alle lettere si notava. Restano numeri dei
+   giorni e titolo del mese, che poggiano direttamente sulla foto. */
 .CX3 .cellDate,
-.CX3 .headerTitle,
-.CX3 [class*="weekday_"] {
+.CX3 .headerTitle {
   text-shadow: 0 1px 4px rgba(0, 0, 0, .95) !important;
+}
+
+.CX3 [class*="weekday_"] {
+  text-shadow: none !important;
 }
 
 /* ----------------------------------------------------------
