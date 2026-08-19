@@ -214,7 +214,7 @@ let config = {
 		   ====================================================== */
 		{
 			module: "weather",
-			position: "bottom_left",
+			position: "top_right",
 			classes: "weather-current-box",
 			header: "Meteo Villafranca di Verona",
 			config: {
@@ -232,7 +232,7 @@ let config = {
 
 		{
 			module: "weather",
-			position: "bottom_center",
+			position: "top_right",
 			classes: "weather-forecast-box",
 			header: "Previsioni Villafranca di Verona",
 			config: {
@@ -282,9 +282,12 @@ let config = {
 				locale: "it-IT",
 				monthIndex: 0,                  // 0 = mese corrente
 				firstDayOfWeek: 1,              // settimana da lunedi
-				maxEventLines: 4,
-				fontSize: "16px",
-				eventHeight: "20px",
+				/* Tarati per riempire l'altezza a schermo intero (1080px):
+				   altezza cella = cellheaderheight + maxEventLines x eventHeight.
+				   Con 5 righe da 24px le sei settimane occupano ~900px. */
+				maxEventLines: 5,
+				fontSize: "20px",
+				eventHeight: "24px",
 				useSymbol: false,               // niente icone negli eventi
 				useIconify: false,              // usa le icone Font Awesome dei symbol
 				showWeekNumber: false,          // niente "CW 34" a lato
