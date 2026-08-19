@@ -172,30 +172,55 @@ const CALENDARI = [
 const CREDENZIALI = (() => {
 	const vuote = { todoist: "", openweathermap: "" };
 
-	/* Prima la richiesta al file: e' la via che funziona nel browser.
-	   L'ordine conta. Nel tentativo precedente provavo require per
-	   primo, ma nel browser MagicMirror rende disponibile una funzione
-	   require propria: il codice imboccava quella strada, falliva e
-	   restituiva stringhe vuote. Il sintomo era meteo in "Caricamento
-	   in corso" e liste Todoist su "Loading" e "UNDEFINED". */
-	if (typeof XMLHttpRequest !== "undefined") {
+	const leggi = (testo) => {
 		try {
-			const richiesta = new XMLHttpRequest();
-			richiesta.open("GET", "config/segreti.json", false);   // false = sincrona
-			richiesta.send(null);
-			const dati = JSON.parse(richiesta.responseText);
-			if (dati && dati.todoist) return dati;
+			const dati = JSON.parse(testo);
+			return dati && dati.todoist ? dati : null;
 		} catch (e) {
-			/* si prosegue col tentativo successivo */
+			return null;
+		}
+	};
+
+	/* --- percorso browser --- */
+	if (typeof XMLHttpRequest !== "undefined") {
+		/* due percorsi: relativo e assoluto. Il primo dipende da dove il
+		   browser ritiene di essere, il secondo no. */
+		for (const percorso of ["config/segreti.json", "/config/segreti.json"]) {
+			try {
+				const richiesta = new XMLHttpRequest();
+				richiesta.open("GET", percorso, false);   // false = sincrona
+				richiesta.send(null);
+				if (richiesta.status === 200) {
+					const dati = leggi(richiesta.responseText);
+					if (dati) return dati;
+				}
+			} catch (e) {
+				/* si prova il percorso successivo */
+			}
 		}
 	}
 
-	/* Sul server XMLHttpRequest non esiste: si importa il file */
+	/* --- percorso server ---
+	   Prima con fs e un percorso assoluto costruito da __dirname: e' il
+	   modo piu' affidabile, perche' non dipende da come il caricatore di
+	   MagicMirror risolve i percorsi relativi. Poi, come ripiego, il
+	   require diretto del JSON. */
 	if (typeof require !== "undefined") {
 		try {
-			return require("./segreti.json");
+			const fs = require("fs");
+			const path = require("path");
+			const base = typeof __dirname !== "undefined" ? __dirname : ".";
+			const dati = leggi(fs.readFileSync(path.join(base, "segreti.json"), "utf8"));
+			if (dati) return dati;
 		} catch (e) {
-			return vuote;
+			/* si prova il ripiego */
+		}
+
+		try {
+			const dati = require("./segreti.json");
+			if (dati && dati.todoist) return dati;
+		} catch (e) {
+			/* nessuna via disponibile */
 		}
 	}
 
