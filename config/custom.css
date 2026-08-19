@@ -125,6 +125,9 @@
   /* Celle dei giorni fuori dal mese corrente */
   --outmonth-bg: rgba(0, 0, 0, .45);
   --outmonth-text: rgba(255, 255, 255, .28);
+  /* usata dallo stile generato dal config.js per i giorni del mese
+     mostrato nel calendario piccolo */
+  --inmonth-text: rgba(255, 255, 255, .92);
 
   /* Distanza del blocco NOTE dalla TO DO LIST che sta sopra.
      Le note ora stanno nella regione in alto a destra, quindi scendono
@@ -1371,4 +1374,143 @@ body,
 .CX3_basicCalendar .cell.today.holiday .cellDate,
 .CX3_smallCalendar .cell.today.holiday .cellDate {
   color: var(--holiday-color) !important;
+}
+
+
+/* ==========================================================
+   TEMA CHIARO  (prova)
+   ----------------------------------------------------------
+   Inverte la dashboard: sfondo schiarito, testi e linee scuri.
+   Sta in fondo al foglio perche' l'ultima regola vince: per
+   tornare al tema scuro basta commentare TUTTO questo blocco.
+
+   Perche' serve un blocco e non bastano poche variabili: i colori
+   bianchi sono scritti a mano in un centinaio di punti del foglio,
+   quindi vanno sovrascritti qui invece che modificati uno per uno.
+   ========================================================== */
+
+:root {
+  --ink: #14161a;                          /* nero dei testi */
+  --ink-soft: rgba(20, 22, 26, .60);       /* testi secondari */
+  --grid-line: rgba(20, 22, 26, .42);      /* righe dei calendari */
+  --veil-light: rgba(255, 255, 255, .74);  /* velo chiaro sullo sfondo */
+
+  /* colori ricalibrati: quelli chiari sparirebbero su fondo bianco */
+  --weekend-color: #1565C0;
+  --holiday-color: #C62828;
+  --today-color: #1565C0;
+  --outline-turni: #00838F;
+  --outline-festivita: #2E7D32;
+
+  --outmonth-bg: rgba(20, 22, 26, .12);
+  --outmonth-text: rgba(20, 22, 26, .32);
+  --inmonth-text: var(--ink);
+}
+
+/* Velo: da nero a bianco */
+body::before {
+  background: var(--veil-light) !important;
+}
+
+/* Testi e ombre: tutto scuro, via le ombre nere pensate per il chiaro
+   su fondo scuro */
+.module,
+.module * {
+  color: var(--ink) !important;
+  text-shadow: none !important;
+}
+
+/* Righe di separazione delle sezioni */
+.todo-list header,
+.family-message-title,
+.weather-forecast-box header,
+.second-month-calendar .headerTitle {
+  border-bottom-color: var(--grid-line) !important;
+}
+
+/* Casella di spunta */
+.todo-list .divTableRow .divTableCell:first-child::before {
+  border-color: rgba(20, 22, 26, .80) !important;
+}
+
+/* Meteo attuale: la sua regola originale forza il bianco su tutto */
+.weather-current-box .module-content,
+.weather-current-box .module-content * {
+  color: var(--ink) !important;
+}
+
+/* Legenda */
+.calendar-legend .legend-item {
+  color: var(--ink) !important;
+  text-shadow: none !important;
+}
+
+/* ---- Calendari ---- */
+
+.CX3_basicCalendar,
+.CX3_smallCalendar {
+  --defaultcolor: var(--ink);
+  --celllinecolor: var(--grid-line);
+  --cellbgcolor: transparent;
+}
+
+.CX3 .cell {
+  background: transparent !important;
+}
+
+.CX3_basicCalendar .cell:not(.thisMonth) {
+  background: var(--outmonth-bg) !important;
+}
+
+.CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
+  color: var(--outmonth-text) !important;
+}
+
+.CX3 .cell.today {
+  background: rgba(21, 101, 192, .10) !important;
+  box-shadow:
+    inset 0 0 0 2px var(--today-color),
+    inset 0 0 22px rgba(21, 101, 192, .10) !important;
+}
+
+.CX3 .cell.today .cellDate {
+  color: var(--ink) !important;
+}
+
+.CX3 [class*="weekday_0"],
+.CX3 [class*="weekday_0"] .cellDate,
+.CX3 [class*="weekday_6"],
+.CX3 [class*="weekday_6"] .cellDate {
+  color: var(--weekend-color) !important;
+}
+
+.CX3_basicCalendar .cell.thisMonth.holiday .cellDate {
+  color: var(--holiday-color) !important;
+}
+
+/* ---- Eventi ----
+   I riquadri pieni restano colorati: su fondo saturo il testo bianco
+   e' la scelta leggibile, quindi qui lo riaffermiamo dopo la regola
+   generale che ha reso scuro tutto il resto. */
+.CX3 .event,
+.CX3 .event * {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+/* Il giallo di "varie" fa eccezione: testo scuro */
+.CX3 .event.calendar_varie,
+.CX3 .event.calendar_varie * {
+  color: #1a1a1a !important;
+}
+
+/* Turni e festivita' sono a contorno: seguono il proprio colore */
+.CX3 .event.calendar_turni,
+.CX3 .event.calendar_turni * {
+  color: var(--outline-turni) !important;
+}
+
+.CX3 .event.calendar_festivita,
+.CX3 .event.calendar_festivita * {
+  color: var(--outline-festivita) !important;
 }
