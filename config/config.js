@@ -152,17 +152,26 @@ const CALENDARI = [
 	}
 ];
 
-/* Chiave OpenWeatherMap: definita una volta sola e usata da entrambi i
-   moduli meteo, cosi' quando la rigeneri c'e' un solo punto da
-   aggiornare. Piano gratuito, API 2.5.
-   Nota: una chiave appena creata richiede fino a due ore per essere
-   attivata; nel frattempo le richieste tornano un errore di
-   autorizzazione e il meteo resta su "Caricamento in corso". */
-const OWM_KEY = "91004786c2db7dc4fb96cbe0adc4d4a5";
+/* ==========================================================
+   CREDENZIALI
+   Chiavi e token stanno in config/segreti.js, non qui: cosi' questo
+   file si puo' sostituire senza reinserire nulla.
 
-/* Token Todoist: definito una volta sola e riusato da tutte le istanze
-   del modulo, cosi' quando lo rigeneri c'e' un solo punto da aggiornare. */
-const TODOIST_TOKEN = "b5165897484eaae9d7d53d4f5d6378886a331bb5";   // >>> UNICO PUNTO DA COMPILARE <<<
+   La lettura funziona in entrambi i contesti in cui MagicMirror carica
+   il config. Nel browser segreti.js e' stato caricato prima e ha
+   definito la variabile globale SEGRETI; con Node, dove quella
+   variabile non esiste, si ripiega su require.
+   Se il file mancasse, restano dei segnaposto e la dashboard parte
+   comunque: sarebbero solo meteo e liste a non caricarsi. */
+const CREDENZIALI =
+	typeof SEGRETI !== "undefined"
+		? SEGRETI
+		: typeof require !== "undefined"
+			? require("./segreti.js")
+			: { todoist: "MANCA_segreti.js", openweathermap: "MANCA_segreti.js" };
+
+const TODOIST_TOKEN = CREDENZIALI.todoist;
+const OWM_KEY = CREDENZIALI.openweathermap;
 
 /* Progetti Todoist */
 const PROGETTO_TODO = "6hHmrPHvXCJqHhHC";                  // "To Do List"
