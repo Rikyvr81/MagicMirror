@@ -135,7 +135,14 @@ if (typeof document !== "undefined") {
 		}
 	};
 
-	document.addEventListener("DOMContentLoaded", cambiaSfondo);
+	/* Si chiama subito, senza attendere DOMContentLoaded: MagicMirror
+	   carica il config DOPO che quell'evento e' passato, quindi un
+	   ascoltatore non scatterebbe mai e il primo cambio arriverebbe solo
+	   dopo mezz'ora. Nel frattempo si vedeva sempre la stessa immagine,
+	   quella scritta nel custom.css, ripescata dalla cache.
+	   Agiamo su documentElement, che esiste da subito: non serve
+	   aspettare che il resto della pagina sia pronto. */
+	cambiaSfondo();
 	setInterval(cambiaSfondo, SFONDO_INTERVALLO);
 }
 
