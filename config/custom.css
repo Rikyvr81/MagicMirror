@@ -329,7 +329,10 @@ body,
   --defaultcolor: rgba(255, 255, 255, .92);
   --celllinecolor: rgba(255, 255, 255, .18);   /* griglia un filo piu' marcata */
   --cellbgcolor: rgba(255, 255, 255, .05);     /* trasparenza reale delle celle */
-  --cellheaderheight: 30px;
+  /* 36 non e' un valore estetico: serve a far combaciare l'altezza della
+     cella con quella della riga (36 + 4 x 30 = 156). Se cambi
+     maxEventLines o eventHeight, ricalcolalo. */
+  --cellheaderheight: 36px;
   /* deve coincidere con eventHeight nel config.js.
      Altezza cella = cellheaderheight + maxEventLines x eventheight,
      per 6 righe di settimane: e' la leva principale sull'altezza totale. */
@@ -371,20 +374,19 @@ body,
   min-height: 0 !important;
 }
 
-/* Le celle devono riempire l'altezza della riga.
-   Misurato in console: le due radici finivano entrambe a 1059, ma
-   l'ultima cella del calendario grande si fermava a 1053. Le righe si
-   allargano con la distribuzione flessibile (.week con flex: 1 1 0)
-   mentre le celle mantenevano l'altezza calcolata dal modulo, lasciando
-   6px vuoti in fondo: era quello il disallineamento visibile, perche'
-   il bordo che si vede e' quello della cella, non del contenitore.
-   NOTA: qui prima avevo aggiunto una linea di chiusura sotto l'ultima
-   settimana, ma il bordo c'era gia' e il risultato era un doppio bordo. */
-.CX3_basicCalendar .cell {
-  height: 100% !important;
-  min-height: 100% !important;
-  align-self: stretch !important;
-}
+/* Storia dei tentativi su questo punto, per non ripeterli:
+   1) linea di chiusura sotto l'ultima settimana -> il bordo c'era gia',
+      risultato: doppio bordo;
+   2) height: 100% sulle celle -> nessun effetto, il modulo impone la
+      propria altezza e vince.
+   La soluzione e' aritmetica. Misurato in console: la riga (.week) e'
+   alta 156px perche' la distribuzione flessibile le assegna un sesto
+   dello spazio, mentre la cella era 150 (30 di intestazione + 4 righe
+   evento da 30). I 6px di scarto restavano vuoti in fondo, ed e' li'
+   che si vedeva il disallineamento, perche' il bordo visibile e' quello
+   della cella e non del contenitore.
+   Portando --cellheaderheight da 30 a 36 la cella diventa 156 e
+   combacia con la riga: 36 + 4 x 30 = 156. */
 
 /* Celle */
 
