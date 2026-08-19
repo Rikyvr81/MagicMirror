@@ -1445,6 +1445,38 @@ body::before {
   text-shadow: none !important;
 }
 
+
+/* ---- Elementi con regola di colore propria ----
+   Questi selettori impongono il bianco con specificita' maggiore della
+   regola generale ".module *" qui sopra, quindi vanno riscritti uno per
+   uno. Sono stati ricavati scandendo il foglio, non a occhio. */
+
+.family-message-title,
+.todo-list header,
+.second-month-calendar .headerTitle,
+.main-month-calendar .headerTitle,
+.weather-current-box header,
+.weather-forecast-box header {
+  color: var(--ink) !important;
+}
+
+.todo-list .divTableCell.title,
+.family-notes .divTableCell.title,
+.family-message p {
+  color: var(--ink) !important;
+}
+
+.todo-list .divTableCell.dueDate,
+.family-notes .divTableCell.dueDate {
+  color: var(--ink-soft) !important;
+}
+
+/* Giorni fuori dal mese nel calendario grande: il blocco della
+   trasparenza li spegneva con un bianco al 22% */
+.CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
+  color: var(--outmonth-text) !important;
+}
+
 /* ---- Calendari ---- */
 
 .CX3_basicCalendar,
