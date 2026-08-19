@@ -54,6 +54,21 @@
   /* Stacco del calendario grande dal bordo superiore (piu' alto = piu' giu') */
   --cal-top-gap: 4px;
 
+  /* Altezza del calendario grande: calcolata sull'altezza della finestra
+     cosi' il bordo inferiore cade dove finisce il calendario piccolo,
+     qualunque sia la risoluzione.
+     I 32px sono: margine superiore del body (15) + sollevamento della
+     regione (-8) + margine inferiore del body (15) + --small-cal-bottom (10). */
+  --cal-height: calc(100vh - 32px);
+
+  /* Altezza del calendario piccolo: essendo ancorato al fondo, aumentarla
+     lo fa crescere verso l'alto. */
+  --small-cal-height: 330px;
+
+  /* Quota della temperatura attuale, che sta in alto a destra
+     accanto all'orologio. */
+  --current-weather-top: 6px;
+
   /* Sollevamento dell'intera regione in alto a sinistra: titolo, legenda
      e calendario si muovono insieme, guadagnando spazio prima del meteo.
      Valore negativo = piu' in alto. */
@@ -312,12 +327,30 @@ body,
   border-radius: 14px !important;
   overflow: visible !important;   /* vedi nota sulle intestazioni ritagliate */
 
+  /* Riempimento verticale: invece di indovinare l'altezza delle righe,
+     fissiamo l'altezza totale e lasciamo che le settimane si dividano
+     lo spazio in parti uguali (regola .week piu' sotto). Cosi' il bordo
+     inferiore resta agganciato al fondo a qualunque risoluzione.
+     Se la griglia risultasse deformata, bastano da togliere queste tre
+     righe e si torna all'altezza calcolata dal modulo. */
+  display: flex !important;
+  flex-direction: column !important;
+  height: var(--cal-height) !important;
+
   /* velo scuro al posto del fondo bianco dell'iframe:
      alza l'alfa se lo sfondo fotografico disturba la lettura */
   background: rgba(0, 0, 0, .18) !important;
   -webkit-backdrop-filter: blur(10px) !important;
   backdrop-filter: blur(10px) !important;
   box-shadow: 0 8px 28px rgba(0, 0, 0, .35) !important;
+}
+
+/* Le sei settimane si dividono in parti uguali l'altezza rimasta dopo
+   titolo e riga dei giorni. min-height: 0 serve o il contenuto impedisce
+   alle righe di restringersi. */
+.CX3_basicCalendar .week {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
 }
 
 /* Celle */
@@ -559,11 +592,19 @@ body,
   box-sizing: border-box !important;
 }
 
-/* Orologio */
+/* ----------------------------------------------------------
+   RIGA SUPERIORE: orologio a sinistra, temperatura a destra
+   L'orologio resta nel flusso; il meteo attuale viene tolto dal
+   flusso e appoggiato in alto a destra della colonna, cosi' i due
+   convivono sulla stessa riga e le previsioni salgono subito sotto
+   l'orologio invece di accodarsi.
+   Il riferimento e' .region.top.right, che MagicMirror posiziona
+   in modo assoluto.
+   ---------------------------------------------------------- */
 
 .main-clock {
-  margin-bottom: 35px !important;
-  text-align: center !important;
+  margin-bottom: 18px !important;
+  text-align: left !important;
 }
 
 .main-clock .date {
@@ -885,12 +926,12 @@ body,
 }
 
 .CX3_smallCalendar {
-  --fontsize: 11px;
+  --fontsize: 13px;
   --defaultcolor: rgba(255, 255, 255, .92);
-  --celllinecolor: rgba(255, 255, 255, .12);
+  --celllinecolor: rgba(255, 255, 255, .16);
   --cellbgcolor: rgba(255, 255, 255, .05);
-  --cellheaderheight: 18px;
-  --eventheight: 13px;
+  --cellheaderheight: 22px;
+  --eventheight: 16px;   /* deve coincidere con eventHeight nel config.js */
 
   width: 100% !important;
   box-sizing: border-box !important;
@@ -914,8 +955,20 @@ body,
    month_N / year_N che il modulo assegna sempre. */
 
 .CX3_smallCalendar .cellHeader .cellDate {
-  font-size: 10px !important;
+  font-size: 13px !important;
   font-weight: 300 !important;
+}
+
+/* Cresce verso l'alto, perche' la sua regione e' ancorata al fondo */
+.CX3_smallCalendar {
+  display: flex !important;
+  flex-direction: column !important;
+  height: var(--small-cal-height) !important;
+}
+
+.CX3_smallCalendar .week {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
 }
 
 /* Riga dei nomi dei giorni (lunedi', martedi', ...).
@@ -963,10 +1016,58 @@ body,
    quindi vuote e non hanno bisogno di regole. */
 
 /* ==========================================
+   METEO ATTUALE (in alto a destra, accanto all'orologio)
+   ========================================== */
+
+.weather-current-box {
+  position: absolute !important;
+  top: var(--current-weather-top) !important;
+  right: 0 !important;
+  width: auto !important;
+  max-width: 60% !important;
+  margin: 0 !important;
+  z-index: 2 !important;
+}
+
+/* Il titolo "METEO VILLAFRANCA..." qui e' superfluo: la localita' e'
+   gia' scritta nell'intestazione delle previsioni poco sotto. */
+.weather-current-box header {
+  display: none !important;
+}
+
+/* Le righe vengono impilate a destra e riordinate: prima l'icona con la
+   temperatura, poi vento e tramonto. L'ordine nel DOM del modulo e'
+   l'inverso, quindi lo ribaltiamo con "order" invece di toccare il modulo. */
+.weather-current-box .module-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 2px !important;
+}
+
+.weather-current-box .large {
+  order: 1 !important;
+  margin: 0 !important;
+}
+
+.weather-current-box .module-content > *:not(.large) {
+  order: 2 !important;
+  font-size: 20px !important;
+}
+
+/* La temperatura percepita e' gia' disattivata da showFeelsLike: false
+   nel config; questa e' la rete di sicurezza. */
+.weather-current-box .feelslike {
+  display: none !important;
+}
+
+/* ==========================================
    METEO ATTUALE / PREVISIONI
    ========================================== */
 
-.weather-current-box,
+/* Solo le previsioni seguono la larghezza della colonna: il meteo
+   attuale e' fuori dal flusso, in alto a destra, e si dimensiona sul
+   proprio contenuto (vedi il blocco METEO ATTUALE piu' sopra). */
 .weather-forecast-box {
   width: 100% !important;
   box-sizing: border-box !important;
@@ -974,29 +1075,18 @@ body,
   font-size: 20px !important;
 }
 
-/* Contenuto del meteo attuale centrato nella sua meta' di schermo.
-   Il selettore * serve perche' il modulo annida temperatura e valore
-   percepito in contenitori con un allineamento proprio, che vinceva
-   sulla regola applicata al solo riquadro esterno. */
+/* Il meteo attuale e' allineato a destra, non piu' centrato:
+   le vecchie regole di centratura valevano quando occupava mezza
+   larghezza di schermo in fondo alla pagina. */
 .weather-current-box,
 .weather-current-box * {
-  text-align: center !important;
+  text-align: right !important;
 }
 
-/* Se qualche riga e' un contenitore flessibile, text-align non basta */
 .weather-current-box .large,
 .weather-current-box .medium,
-.weather-current-box .normal,
-.weather-current-box .feelslike,
-.weather-current-box .weather-current {
-  justify-content: center !important;
-}
-
-/* Eventuale tabella interna centrata come blocco */
-.weather-current-box table {
-  width: auto !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+.weather-current-box .normal {
+  justify-content: flex-end !important;
 }
 
 /* Le previsioni restano incolonnate a destra DENTRO le celle, cosi'
@@ -1018,19 +1108,18 @@ body,
   transform: none !important;
 }
 
-.weather-current-box .large,
-.weather-forecast-box .large {
-  font-size: 40px !important;
-  line-height: 44px !important;
+.weather-current-box .large {
+  font-size: 44px !important;
+  line-height: 46px !important;
 }
 
 /* ==========================================
    INTESTAZIONI METEO
    ========================================== */
 
-/* Intestazioni uniformate a quelle di TO DO LIST, NOTE e SETTEMBRE:
-   stessa larghezza della colonna e stessa riga bianca da 1px */
-.weather-current-box header,
+/* Intestazione delle previsioni, uniformata a TO DO LIST, NOTE e
+   SETTEMBRE: stessa larghezza della colonna e riga bianca da 1px.
+   Quella del meteo attuale e' nascosta (vedi blocco METEO ATTUALE). */
 .weather-forecast-box header {
   color: white !important;
   font-size: 18px !important;
@@ -1042,8 +1131,7 @@ body,
   letter-spacing: 1px;
 }
 
-/* Entrambe le intestazioni centrate sopra la propria riga bianca */
-.weather-current-box header,
+/* Intestazione centrata sopra la propria riga bianca */
 .weather-forecast-box header {
   text-align: center !important;
 }
