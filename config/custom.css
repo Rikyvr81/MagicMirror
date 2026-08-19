@@ -1405,8 +1405,12 @@ body,
   --weekend-color: #1565C0;
   --holiday-color: #C62828;
   --today-color: #1565C0;
-  --outline-turni: #00838F;
-  --outline-festivita: #2E7D32;
+  /* Turni e festivita' sono resi a contorno, quindi il loro colore fa
+     anche da testo: su fondo chiaro serve un tono molto profondo.
+     Il ciano e il verde precedenti erano leggibili sul nero ma
+     sbiadivano sul bianco velato. */
+  --outline-turni: #00464B;
+  --outline-festivita: #14431A;
 
   --outmonth-bg: rgba(20, 22, 26, .12);
   --outmonth-text: rgba(20, 22, 26, .32);
@@ -1465,6 +1469,19 @@ body::before {
 .calendar-legend .legend-item {
   color: var(--ink) !important;
   text-shadow: none !important;
+}
+
+/* I quadratini di turni e festivita' hanno il colore scritto in linea
+   dal config.js: qui lo sovrascriviamo con quello del tema, altrimenti
+   la legenda mostrerebbe il ciano e il verde chiari mentre gli eventi
+   nel calendario sono ormai scuri. Il bordo passa a 3px perche' a 2px
+   un colore cosi' profondo si legge poco. */
+.calendar-legend .legend-dot-turni {
+  border: 3px solid var(--outline-turni) !important;
+}
+
+.calendar-legend .legend-dot-festivita {
+  border: 3px solid var(--outline-festivita) !important;
 }
 
 
