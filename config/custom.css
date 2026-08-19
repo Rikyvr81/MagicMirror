@@ -41,16 +41,15 @@
   --right-col-width: 440px;
   --right-col-offset: var(--side-gap);
 
-  /* Bordo destro del blocco meteo: .region.bottom.center parte a 790px
-     ed e' larga 600px, quindi termina a 1390px dal bordo interno del body.
-     Legando qui la larghezza del calendario, i due bordi restano allineati
-     anche se un domani spostassi il meteo. */
-  --weather-block-right: 1390px;
+  /* Oscuramento dello sfondo. Era 0.55: e' il motivo per cui ogni
+     immagine sembrava scura, qualunque fosse la sorgente.
+     0 = immagine come e'. Alzalo se il testo non si legge su foto chiare. */
+  --veil-opacity: 0;
 
-  /* Larghezza del calendario mensile grande.
-     Il calendario parte a --side-gap, quindi la larghezza utile e'
-     il bordo destro del meteo meno quello stacco iniziale. */
-  --cal-width: calc(var(--weather-block-right) - var(--side-gap));
+  /* Larghezza del calendario mensile grande. Ora che il meteo e' nella
+     colonna destra, il calendario si prende tutto lo spazio residuo:
+     1920 - margini del body (40) - colonna destra (440) - stacchi. */
+  --cal-width: 1390px;
 
   /* Stacco del calendario grande dal bordo superiore (piu' alto = piu' giu') */
   --cal-top-gap: 4px;
@@ -93,26 +92,13 @@
   /* Spazio tra la riga bianca del titolo NOTE e il primo messaggio.
      Piu' basso di quello della TO DO LIST perche' qui titolo e contenuto
      sono due moduli distinti e si sommano spaziature diverse. */
-  --notes-top-gap: 90px;
+  --notes-top-gap: 26px;
   --notes-title-gap: 4px;
 
-  /* Larghezza della tabella delle previsioni dentro il suo riquadro da
-     600px: piu' e' alta, piu' le colonne si distanziano. */
-  --forecast-width: 520px;
-
-  /* Spostamento a sinistra delle previsioni. Serve perche' la prima
-     colonna (i nomi dei giorni) e' allineata a destra e lascia uno spazio
-     vuoto sul lato sinistro della tabella: il blocco risulta cosi'
-     centrato come tabella ma spostato a destra come contenuto visibile.
-     Alza il valore per spostarlo ancora piu' a sinistra. */
-  --forecast-shift: 45px;
-
-  /* Blocco meteo:
-     --weather-bottom = distanza dal bordo inferiore (piu' basso = piu' giu')
-     --weather-height = altezza riservata alle due regioni meteo; serve a far
-     partire le due intestazioni (e le loro righe bianche) dalla stessa quota */
-  --weather-bottom: 12px;
-  --weather-height: 150px;
+  /* Le variabili --forecast-width, --forecast-shift, --weather-bottom e
+     --weather-height sono state rimosse: servivano quando il meteo stava
+     in fondo allo schermo dentro due riquadri da 600px. Ora e' nella
+     colonna destra e segue la larghezza di quella. */
 }
 
 /* ==========================================
@@ -142,7 +128,7 @@ body::before {
   position: fixed;
   inset: 0;
 
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, var(--veil-opacity));
 
   pointer-events: none;
 
@@ -311,14 +297,15 @@ body,
    si regola da config.js con quei tre valori, non con un height fisso
    (che taglierebbe l'ultima settimana). */
 .CX3_basicCalendar {
-  --fontsize: 16px;
+  --fontsize: 20px;
   --defaultcolor: rgba(255, 255, 255, .92);
-  --celllinecolor: rgba(255, 255, 255, .14);   /* griglia tenue */
+  --celllinecolor: rgba(255, 255, 255, .18);   /* griglia un filo piu' marcata */
   --cellbgcolor: rgba(255, 255, 255, .05);     /* trasparenza reale delle celle */
-  --cellheaderheight: 26px;
-  --eventheight: 18px;   /* leva principale per l'ALTEZZA totale:
-                            altezza cella = cellheaderheight + 4 x eventheight,
-                            per 6 righe di settimane. Ridurlo accorcia molto. */
+  --cellheaderheight: 30px;
+  /* deve coincidere con eventHeight nel config.js.
+     Altezza cella = cellheaderheight + maxEventLines x eventheight,
+     per 6 righe di settimane: e' la leva principale sull'altezza totale. */
+  --eventheight: 24px;
 
   width: 100% !important;
   box-sizing: border-box !important;
@@ -407,7 +394,7 @@ body,
 /* (l'evidenziazione di oggi e' definita nel blocco in fondo al file) */
 
 .CX3_basicCalendar .cellHeader .cellDate {
-  font-size: 15px !important;
+  font-size: 19px !important;
   font-weight: 300 !important;
   letter-spacing: .5px !important;
 }
@@ -422,10 +409,9 @@ body,
 
 .CX3_basicCalendar .event {
   border-radius: 4px !important;
-  /* 16px e' il massimo compatibile con --eventheight: 18px.
-     Per salire oltre va alzato anche --eventheight, e in quel caso il
-     calendario cresce: servirebbe scendere a maxEventLines: 3. */
-  font-size: 16px !important;
+  /* 18px sta dentro --eventheight: 24px. Se lo alzi ancora, alza anche
+     eventHeight nel config.js, altrimenti il testo viene tagliato. */
+  font-size: 18px !important;
 }
 
 .CX3_basicCalendar .event .title {
@@ -972,25 +958,9 @@ body,
    METEO - POSIZIONAMENTO REGIONI
    ========================================== */
 
-/* Altezza fissa uguale per entrambe: essendo ancorate in basso, senza questo
-   accorgimento il blocco piu' alto farebbe partire la sua intestazione piu'
-   in su, disallineando le due righe bianche */
-.region.bottom.left,
-.region.bottom.center {
-  height: var(--weather-height) !important;
-  bottom: var(--weather-bottom) !important;
-}
-
-.region.bottom.left {
-  width: 600px !important;
-  left: 17px !important;
-}
-
-.region.bottom.center {
-  width: 600px !important;
-  left: 790px !important;
-  transform: none !important;
-}
+/* Il meteo non sta piu' nelle regioni in basso: e' passato nella colonna
+   destra, sotto l'orologio. Le regioni bottom_left e bottom_center sono
+   quindi vuote e non hanno bisogno di regole. */
 
 /* ==========================================
    METEO ATTUALE / PREVISIONI
@@ -998,7 +968,8 @@ body,
 
 .weather-current-box,
 .weather-forecast-box {
-  width: 600px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
   margin: 0 !important;
   font-size: 20px !important;
 }
@@ -1038,31 +1009,34 @@ body,
    Era piu' stretta del riquadro e restava appoggiata al bordo destro:
    width auto + margini automatici la spostano verso sinistra quanto
    serve per risultare centrata sotto l'intestazione. */
+/* Nella colonna destra la tabella riempie la larghezza disponibile:
+   le vecchie --forecast-width e --forecast-shift servivano a centrarla
+   dentro un riquadro da 600px e non hanno piu' senso. */
 .weather-forecast-box table {
-  width: var(--forecast-width) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  /* transform invece di un margine: non altera il calcolo della
-     larghezza, quindi la spaziatura tra le colonne resta identica */
-  transform: translateX(calc(-1 * var(--forecast-shift))) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
 }
 
 .weather-current-box .large,
 .weather-forecast-box .large {
-  font-size: 46px !important;
-  line-height: 48px !important;
+  font-size: 40px !important;
+  line-height: 44px !important;
 }
 
 /* ==========================================
    INTESTAZIONI METEO
    ========================================== */
 
+/* Intestazioni uniformate a quelle di TO DO LIST, NOTE e SETTEMBRE:
+   stessa larghezza della colonna e stessa riga bianca da 1px */
 .weather-current-box header,
 .weather-forecast-box header {
   color: white !important;
   font-size: 18px !important;
-  width: 600px !important;
-  border-bottom: 2px solid rgba(255, 255, 255, .40) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
   padding-bottom: 6px !important;
   margin-bottom: 10px !important;
   letter-spacing: 1px;
