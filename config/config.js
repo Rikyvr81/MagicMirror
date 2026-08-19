@@ -286,9 +286,12 @@ let config = {
 				/* Tarati per riempire l'altezza a schermo intero (1080px):
 				   altezza cella = cellheaderheight + maxEventLines x eventHeight.
 				   Con 5 righe da 24px le sei settimane occupano ~900px. */
-				maxEventLines: 5,
-				fontSize: "20px",
-				eventHeight: "25px",
+				/* 4 righe da 30px invece di 5 da 25: la cella resta alta
+				   uguale (30 + 4x30 = 150) ma ogni evento ha 5px in piu'
+				   di respiro, che servono al testo a 24px. */
+				maxEventLines: 4,
+				fontSize: "24px",
+				eventHeight: "30px",
 				useSymbol: false,               // niente icone negli eventi
 				useIconify: false,              // usa le icone Font Awesome dei symbol
 				showWeekNumber: false,          // niente "CW 34" a lato
