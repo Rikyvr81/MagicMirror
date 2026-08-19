@@ -401,10 +401,8 @@ body,
   box-shadow: 0 8px 28px rgba(0, 0, 0, .35) !important;
 }
 
-/* Nomi dei giorni (lunedi', martedi', ...) alla stessa dimensione del
-   testo delle previsioni: 20px invece dei 24px che ereditavano da
-   fontSize del config. Misurato in console: il colore era gia' corretto,
-   era il corpo a farli sembrare diversi. */
+/* Nomi dei giorni alla stessa dimensione del testo delle previsioni:
+   20px invece dei 24px ereditati da fontSize del config. */
 .CX3_basicCalendar .weekday {
   font-size: 20px !important;
 }
@@ -1420,11 +1418,27 @@ body::before {
   background: var(--veil-light) !important;
 }
 
-/* Testi e ombre: tutto scuro, via le ombre nere pensate per il chiaro
-   su fondo scuro */
+/* Testi e ombre: tutto scuro, via le ombre nere pensate per il testo
+   chiaro su fondo scuro */
 .module,
 .module * {
   color: var(--ink) !important;
+  text-shadow: none !important;
+}
+
+/* Le ombre sono dichiarate anche su selettori piu' specifici della
+   regola qui sopra, che quindi vincerebbero: vanno azzerate una per una.
+   Elenco ricavato scandendo il foglio. Su fondo scuro quell'alone
+   staccava il testo dalla foto; su fondo bianco diventa un rilievo
+   sgradevole, ed e' esattamente cio' che si notava sui nomi dei giorni. */
+.calendar-legend .legend-item,
+.family-message,
+.family-message p,
+.family-notes .divTableCell.title,
+.family-notes .divTableCell.dueDate,
+.CX3 .cellDate,
+.CX3 .headerTitle,
+.CX3 [class*="weekday_"] {
   text-shadow: none !important;
 }
 
