@@ -242,7 +242,7 @@ let config = {
 				appendLocationNameToHeader: false,
 				lat: 45.3526,
 				lon: 10.8445,
-				maxNumberOfDays: 5
+				maxNumberOfDays: 4        // oggi, domani e due giorni
 			}
 		},
 
