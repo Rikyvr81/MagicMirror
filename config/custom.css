@@ -1393,6 +1393,18 @@ body,
    Perche' serve un blocco e non bastano poche variabili: i colori
    bianchi sono scritti a mano in un centinaio di punti del foglio,
    quindi vanno sovrascritti qui invece che modificati uno per uno.
+
+   NOTA IMPORTANTE: dentro questo blocco i colori sono scritti per
+   esteso e NON con var(). La WebView di Android TV (Fully Kiosk) non
+   risolve una variabile che punta a un'altra variabile: sulla chiavetta
+   funzionavano i turni verdi, il rosso delle festivita' e il blu del
+   weekend (variabili semplici) mentre restavano bianchi i numeri dei
+   giorni e scuro lo sfondo, perche' dipendevano da --defaultcolor:
+   var(--ink) e simili. Il :root qui sotto resta perche' lo stile
+   generato dal config.js usa var(--outmonth-bg), var(--inmonth-text),
+   var(--weekend-color) e var(--holiday-color): quelle sono catene a un
+   solo livello e la WebView le gestisce.
+   Se aggiungi regole qui, scrivi i colori per esteso.
    ========================================================== */
 
 :root {
@@ -1412,32 +1424,32 @@ body,
      turni verdi: rosso e verde si distinguono a colpo d'occhio anche da
      lontano, molto meglio di due scuri della stessa famiglia. */
   --outline-turni: #1E8E3E;
-  --outline-festivita: var(--holiday-color);
+  --outline-festivita: #C62828;
 
   --outmonth-bg: rgba(20, 22, 26, .12);
   --outmonth-text: rgba(20, 22, 26, .32);
-  --inmonth-text: var(--ink);
+  --inmonth-text: #14161a;
 
   /* Variabili di MagicMirror: le usano le sue classi .normal, .bright e
      .dimmed, che i moduli della colonna destra applicano di continuo.
      Erano rimaste bianche, quindi quel testo prendeva il colore solo
      dalla nostra regola generale e in alcuni punti risultava piu'
      spento del resto. */
-  --color-text: var(--ink);
+  --color-text: #14161a;
   --color-text-bright: #000000;
-  --color-text-dimmed: var(--ink-soft);
+  --color-text-dimmed: rgba(20, 22, 26, .60);
 }
 
 /* Velo: da nero a bianco */
 body::before {
-  background: var(--veil-light) !important;
+  background: rgba(255, 255, 255, .74) !important;
 }
 
 /* Testi e ombre: tutto scuro, via le ombre nere pensate per il testo
    chiaro su fondo scuro */
 .module,
 .module * {
-  color: var(--ink) !important;
+  color: #14161a !important;
   text-shadow: none !important;
 }
 
@@ -1462,7 +1474,7 @@ body::before {
 .family-message-title,
 .weather-forecast-box header,
 .second-month-calendar .headerTitle {
-  border-bottom-color: var(--grid-line) !important;
+  border-bottom-color: rgba(20, 22, 26, .42) !important;
 }
 
 /* Casella di spunta */
@@ -1473,12 +1485,12 @@ body::before {
 /* Meteo attuale: la sua regola originale forza il bianco su tutto */
 .weather-current-box .module-content,
 .weather-current-box .module-content * {
-  color: var(--ink) !important;
+  color: #14161a !important;
 }
 
 /* Legenda */
 .calendar-legend .legend-item {
-  color: var(--ink) !important;
+  color: #14161a !important;
   text-shadow: none !important;
 }
 
@@ -1488,11 +1500,11 @@ body::before {
    nel calendario sono ormai scuri. Il bordo passa a 3px perche' a 2px
    un colore cosi' profondo si legge poco. */
 .calendar-legend .legend-dot-turni {
-  border: 3px solid var(--outline-turni) !important;
+  border: 3px solid #1E8E3E !important;
 }
 
 .calendar-legend .legend-dot-festivita {
-  border: 3px solid var(--outline-festivita) !important;
+  border: 3px solid #C62828 !important;
 }
 
 
@@ -1507,24 +1519,24 @@ body::before {
 .main-month-calendar .headerTitle,
 .weather-current-box header,
 .weather-forecast-box header {
-  color: var(--ink) !important;
+  color: #14161a !important;
 }
 
 .todo-list .divTableCell.title,
 .family-notes .divTableCell.title,
 .family-message p {
-  color: var(--ink) !important;
+  color: #14161a !important;
 }
 
 .todo-list .divTableCell.dueDate,
 .family-notes .divTableCell.dueDate {
-  color: var(--ink-soft) !important;
+  color: rgba(20, 22, 26, .60) !important;
 }
 
 /* Giorni fuori dal mese nel calendario grande: il blocco della
    trasparenza li spegneva con un bianco al 22% */
 .CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
-  color: var(--outmonth-text) !important;
+  color: rgba(20, 22, 26, .32) !important;
 }
 
 /* Testo delle NOTE identico a quello della TO DO LIST: stesso corpo,
@@ -1533,7 +1545,7 @@ body::before {
 .family-notes .divTableCell.title {
   font-size: 15px !important;
   font-weight: 400 !important;
-  color: var(--ink) !important;
+  color: #14161a !important;
 }
 
 /* Nomi dei giorni (lunedi', martedi', ...) alla stessa intensita' del
@@ -1542,7 +1554,7 @@ body::before {
    Sabato e domenica sono esclusi, altrimenti perderebbero il blu. */
 .CX3 .headerContainer.weekGrid > *:not([class*="weekday_0"]):not([class*="weekday_6"]),
 .CX3 .headerContainer.weekGrid > *:not([class*="weekday_0"]):not([class*="weekday_6"]) * {
-  color: var(--ink) !important;
+  color: #14161a !important;
   opacity: 1 !important;
 }
 
@@ -1562,8 +1574,8 @@ body::before {
 
 .CX3_basicCalendar,
 .CX3_smallCalendar {
-  --defaultcolor: var(--ink);
-  --celllinecolor: var(--grid-line);
+  --defaultcolor: #14161a;
+  --celllinecolor: rgba(20, 22, 26, .42);
   --cellbgcolor: transparent;
 }
 
@@ -1572,33 +1584,33 @@ body::before {
 }
 
 .CX3_basicCalendar .cell:not(.thisMonth) {
-  background: var(--outmonth-bg) !important;
+  background: rgba(20, 22, 26, .12) !important;
 }
 
 .CX3_basicCalendar .cell:not(.thisMonth) .cellDate {
-  color: var(--outmonth-text) !important;
+  color: rgba(20, 22, 26, .32) !important;
 }
 
 .CX3 .cell.today {
   background: rgba(21, 101, 192, .10) !important;
   box-shadow:
-    inset 0 0 0 2px var(--today-color),
+    inset 0 0 0 2px #1565C0,
     inset 0 0 22px rgba(21, 101, 192, .10) !important;
 }
 
 .CX3 .cell.today .cellDate {
-  color: var(--ink) !important;
+  color: #14161a !important;
 }
 
 .CX3 [class*="weekday_0"],
 .CX3 [class*="weekday_0"] .cellDate,
 .CX3 [class*="weekday_6"],
 .CX3 [class*="weekday_6"] .cellDate {
-  color: var(--weekend-color) !important;
+  color: #1565C0 !important;
 }
 
 .CX3_basicCalendar .cell.thisMonth.holiday .cellDate {
-  color: var(--holiday-color) !important;
+  color: #C62828 !important;
 }
 
 /* ---- Eventi ----
@@ -1623,12 +1635,12 @@ body::before {
    tenue, i turni restano a contorno vuoto. */
 .CX3 .event.calendar_turni,
 .CX3 .event.calendar_turni * {
-  color: var(--outline-turni) !important;
+  color: #1E8E3E !important;
 }
 
 .CX3 .event.calendar_festivita,
 .CX3 .event.calendar_festivita * {
-  color: var(--outline-festivita) !important;
+  color: #C62828 !important;
 }
 
 .CX3 .event.calendar_festivita {
