@@ -1477,6 +1477,25 @@ body::before {
   color: var(--outmonth-text) !important;
 }
 
+/* Testo delle NOTE identico a quello della TO DO LIST: stesso corpo,
+   stesso peso, stesso colore. Restano diverse solo l'interlinea e il
+   margine, che servono perche' le note vanno a capo su piu' righe. */
+.family-notes .divTableCell.title {
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  color: var(--ink) !important;
+}
+
+/* Nomi dei giorni (lunedi', martedi', ...) alla stessa intensita' del
+   testo delle previsioni e della legenda: il modulo li disegna con un
+   colore attenuato, che su fondo chiaro li rendeva grigi.
+   Sabato e domenica sono esclusi, altrimenti perderebbero il blu. */
+.CX3 .headerContainer.weekGrid > *:not([class*="weekday_0"]):not([class*="weekday_6"]),
+.CX3 .headerContainer.weekGrid > *:not([class*="weekday_0"]):not([class*="weekday_6"]) * {
+  color: var(--ink) !important;
+  opacity: 1 !important;
+}
+
 /* ---- Calendari ---- */
 
 .CX3_basicCalendar,
