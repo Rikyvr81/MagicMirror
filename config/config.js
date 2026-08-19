@@ -152,6 +152,14 @@ const CALENDARI = [
 	}
 ];
 
+/* Chiave OpenWeatherMap: definita una volta sola e usata da entrambi i
+   moduli meteo, cosi' quando la rigeneri c'e' un solo punto da
+   aggiornare. Piano gratuito, API 2.5.
+   Nota: una chiave appena creata richiede fino a due ore per essere
+   attivata; nel frattempo le richieste tornano un errore di
+   autorizzazione e il meteo resta su "Caricamento in corso". */
+const OWM_KEY = "91004786c2db7dc4fb96cbe0adc4d4a5";
+
 /* Token Todoist: definito una volta sola e riusato da tutte le istanze
    del modulo, cosi' quando lo rigeneri c'e' un solo punto da aggiornare. */
 const TODOIST_TOKEN = "b5165897484eaae9d7d53d4f5d6378886a331bb5";   // >>> UNICO PUNTO DA COMPILARE <<<
@@ -340,7 +348,9 @@ let config = {
 			classes: "weather-current-box",
 			header: "Meteo Villafranca di Verona",
 			config: {
-				weatherProvider: "openmeteo",
+				weatherProvider: "openweathermap",
+				apiKey: OWM_KEY,
+				apiVersion: "2.5",
 				type: "current",
 				showFeelsLike: true,         // percepita in piccolo, sotto vento e tramonto
 				/* Il ", IT-34" veniva dal nome localita' restituito dal
@@ -359,7 +369,9 @@ let config = {
 			classes: "weather-forecast-box",
 			header: "Previsioni Villafranca di Verona",
 			config: {
-				weatherProvider: "openmeteo",
+				weatherProvider: "openweathermap",
+				apiKey: OWM_KEY,
+				apiVersion: "2.5",
 				type: "forecast",
 				appendLocationNameToHeader: false,
 				lat: 45.3526,
