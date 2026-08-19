@@ -110,18 +110,17 @@
      Le note ora stanno nella regione in alto a destra, quindi scendono
      dall'alto: alzando questo valore le si sposta piu' in basso. */
 
-  /* Colonna destra, banda centrale. Tra la fine delle previsioni e
-     l'inizio di SETTEMBRE 2026 stanno TO DO LIST e NOTE: il primo
-     valore stacca la TO DO LIST dalle previsioni, il secondo riserva a
-     ciascuna delle due sezioni la stessa altezza, cosi' NOTE parte
-     sempre alla stessa quota anche quando la lista e' corta o vuota. */
-  --todo-top-gap: 26px;
-  --section-height: 120px;
+  /* Stacco uniforme tra le sezioni della colonna destra: previsioni,
+     TO DO LIST e NOTE si susseguono nel flusso naturale, ciascuna
+     distanziata dalla precedente dello stesso valore.
+     Sostituisce le vecchie --todo-top-gap e --section-height: quella
+     riservava alla TO DO LIST un'altezza fissa, e con la lista corta
+     lasciava un grosso buco prima delle NOTE. */
+  --section-gap: 26px;
 
   /* Spazio tra la riga bianca del titolo NOTE e il primo messaggio.
      Piu' basso di quello della TO DO LIST perche' qui titolo e contenuto
      sono due moduli distinti e si sommano spaziature diverse. */
-  --notes-top-gap: 26px;
   --notes-title-gap: 4px;
 
   /* Le variabili --forecast-width, --forecast-shift, --weather-bottom e
@@ -235,11 +234,16 @@ body,
 
 /* Titolo del mese (generato da customHeader: true), allineato a sinistra
    per lasciare spazio alla legenda sulla destra */
+/* Stesso carattere della riga della data nell'orologio: Roboto
+   Condensed, peso 400, spaziatura normale. La dimensione resta 48px.
+   Il font serif (--font-title, Playfair Display) e le sue alternative
+   restano caricate in cima al foglio: per tornarci basta rimettere
+   font-family: var(--font-title) qui sotto. */
 .main-month-calendar .headerTitle {
-  font-family: var(--font-title) !important;
-  font-size: 48px !important;          /* i serif hanno occhio piu' piccolo: +6px */
-  font-weight: 500 !important;
-  letter-spacing: 1px !important;      /* i serif non amano spaziature larghe */
+  font-family: var(--font-primary) !important;
+  font-size: 48px !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
   text-transform: capitalize !important;   /* "Agosto 2026" */
   text-align: left !important;
   color: #ffffff !important;
@@ -670,8 +674,8 @@ body,
 
 .todo-list {
   text-align: left !important;
-  margin-top: var(--todo-top-gap) !important;
-  min-height: var(--section-height) !important;
+  margin-top: var(--section-gap) !important;
+  min-height: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -889,14 +893,15 @@ body,
   margin-top: 0 !important;
 }
 
-/* Il titolo NOTE porta lo stacco dalla TO DO LIST.
+/* Il titolo NOTE porta lo stesso stacco che la TO DO LIST ha dalle
+   previsioni, cosi' le tre sezioni sono equidistanti.
    margin-bottom: 0 e' necessario perche' MagicMirror inserisce
    --gap-modules (15px) tra un modulo e il successivo: sommandosi ai
    12px del titolo, lo spazio sotto la riga bianca risultava molto
    maggiore di quello della TO DO LIST, dove intestazione ed elenco
    appartengono allo stesso modulo. */
 .family-message-box {
-  margin-top: var(--notes-top-gap) !important;
+  margin-top: var(--section-gap) !important;
   margin-bottom: 0 !important;
 }
 
