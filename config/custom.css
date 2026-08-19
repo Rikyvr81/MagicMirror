@@ -68,8 +68,9 @@
   --current-weather-top: 38px;
   --current-weather-width: 230px;
 
-  /* Stacco dell'ora dalla riga della data */
+  /* Stacco dell'ora dalla riga della data e suo rientro da sinistra */
   --clock-time-top: 8px;
+  --clock-time-left: 16px;
 
   /* Stacco delle previsioni dal blocco ora + meteo attuale */
   --forecast-top-gap: 16px;
@@ -634,19 +635,30 @@ body,
    qualunque sia la sua lunghezza (che cambia ogni giorno).
    Se preferisci il testo compatto, commenta le due righe di justify e
    togli il commento a font-size: 34px. */
+.main-clock .module-content {
+  width: 100% !important;
+}
+
 .main-clock .date {
   font-size: 28px;
   line-height: 32px;
+  /* display: block e la larghezza sul contenitore erano indispensabili:
+     senza, l'elemento si stringe sul testo e il justify non ha spazio
+     su cui distribuire le parole. */
+  display: block !important;
   width: 100% !important;
   text-align: justify !important;
   text-align-last: justify !important;
-  /* font-size: 34px !important; */
+  /* Alternativa, se lo spazio tra le parole ti sembra eccessivo:
+     commenta le due righe di justify e togli il commento qui sotto.
+  font-size: 34px !important; */
 }
 
 .main-clock .time {
   font-size: 82px;
   line-height: 84px;
   margin-top: var(--clock-time-top) !important;
+  padding-left: var(--clock-time-left) !important;
 }
 
 /* ==========================================
@@ -1081,12 +1093,17 @@ body,
   align-items: flex-end !important;
 }
 
+/* Il contenitore si stringe sulla riga piu' larga, che e' quella della
+   temperatura: con align-items: center le due righe sotto risultano
+   quindi centrate esattamente rispetto a icona e gradi.
+   Il blocco resta appoggiato a destra grazie a align-items: flex-end
+   sul livello superiore. */
 .weather-current-box .module-content > * {
   display: flex !important;
   flex-direction: column !important;
-  align-items: flex-end !important;
+  align-items: center !important;
   gap: 2px !important;
-  width: 100% !important;
+  width: max-content !important;
 }
 
 .weather-current-box .module-content > * > .large {
@@ -1134,18 +1151,17 @@ body,
   font-size: 20px !important;
 }
 
-/* Il meteo attuale e' allineato a destra, non piu' centrato:
-   le vecchie regole di centratura valevano quando occupava mezza
-   larghezza di schermo in fondo alla pagina. */
+/* Dentro il blocco le righe sono centrate tra loro; e' il blocco intero
+   che resta appoggiato al bordo destro della colonna. */
 .weather-current-box,
 .weather-current-box * {
-  text-align: right !important;
+  text-align: center !important;
 }
 
 .weather-current-box .large,
 .weather-current-box .medium,
 .weather-current-box .normal {
-  justify-content: flex-end !important;
+  justify-content: center !important;
 }
 
 /* Le previsioni restano incolonnate a destra DENTRO le celle, cosi'
