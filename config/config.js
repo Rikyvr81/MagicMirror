@@ -1,9 +1,83 @@
 /* ==========================================================
+   SFONDO A ROTAZIONE
+   Cambia l'immagine di sfondo a intervalli regolari senza dover
+   ricaricare la pagina.
+
+   Funziona perche' MagicMirror serve config.js al browser come
+   script: il codice qui dentro viene eseguito nella pagina. La
+   guardia su "document" e' necessaria perche' lo stesso file viene
+   letto anche da Node sul server, dove document non esiste.
+
+   L'immagine viene prima scaricata in memoria e sostituita solo a
+   caricamento completato: senza questo accorgimento si vedrebbe un
+   lampo di sfondo vuoto a ogni cambio.
+   ========================================================== */
+const SFONDO_INTERVALLO = 30 * 60 * 1000;   // 30 minuti
+
+if (typeof document !== "undefined") {
+	const cambiaSfondo = () => {
+		/* il parametro finale serve solo a forzare un'immagine nuova:
+		   senza, il browser riuserebbe quella gia' in cache */
+		const url = `https://picsum.photos/1920/1080?t=${Date.now()}`;
+		const pre = new Image();
+		pre.onload = () => {
+			document.documentElement.style.backgroundImage = `url("${url}")`;
+		};
+		pre.src = url;
+	};
+
+	document.addEventListener("DOMContentLoaded", cambiaSfondo);
+	setInterval(cambiaSfondo, SFONDO_INTERVALLO);
+}
+
+/* ==========================================================
    FAMILY HUB - config della versione stabile del 19 agosto 2026
    Da usare in coppia con il custom.css di pari data: i valori
    maxEventLines / fontSize / eventHeight dei due calendari sono
    coordinati con le variabili del foglio di stile.
    ========================================================== */
+
+/* Osservanze da NON mostrare: il calendario "Festivita' in Italia" di
+   Google contiene sia le feste civili sia le ricorrenze religiose e
+   popolari. Qui teniamo le sole festivita' nazionali (Capodanno,
+   Epifania, Pasqua e Pasquetta, Liberazione, Primo Maggio, Repubblica,
+   Ferragosto, Ognissanti, Immacolata, Natale, Santo Stefano) ed
+   escludiamo il resto.
+
+   "Assunzione" e' esclusa perche' duplica Ferragosto: sono lo stesso
+   giorno, una come ricorrenza religiosa e una come festa civile. Se
+   preferisci il nome religioso, scambia le due voci.
+
+   E' un elenco per esclusione: se nel corso dell'anno vedessi comparire
+   un'osservanza che non ti interessa, basta aggiungerne il nome qui. */
+const OSSERVANZE_ESCLUSE = [
+	"Assunzione",
+	"Vigilia di Natale",
+	"Vigilia di Capodanno",
+	"San Silvestro",
+	"Commemorazione dei defunti",
+	"Giorno della Memoria",
+	"Giorno del Ricordo",
+	"San Valentino",
+	"Festa della donna",
+	"San Giuseppe",
+	"Festa del papà",
+	"Festa della mamma",
+	"Festa dei nonni",
+	"Carnevale",
+	"Martedì grasso",
+	"Mercoledì delle Ceneri",
+	"Domenica delle Palme",
+	"Giovedì santo",
+	"Venerdì santo",
+	"Sabato santo",
+	"Ascensione",
+	"Pentecoste",
+	"Corpus Domini",
+	"Halloween",
+	"Unità nazionale",
+	"Forze Armate"
+];
 
 /* ==========================================================
    ELENCO UNICO DEI CALENDARI
@@ -65,7 +139,9 @@ const CALENDARI = [
 		color: "#6EE787",          // verde brillante - reso a BORDO (vedi custom.css)
 		soloBordo: true,
 		symbol: "flag",
-		url: "https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics"
+		url: "https://calendar.google.com/calendar/ical/it.italian%23holiday%40group.v.calendar.google.com/public/basic.ics",
+		/* solo le festivita' nazionali: vedi OSSERVANZE_ESCLUSE sopra */
+		excludedEvents: OSSERVANZE_ESCLUSE
 	}
 ];
 
@@ -300,11 +376,16 @@ let config = {
 				maximumEntries: 400,         // 7 calendari + eventi passati: serve spazio abbondante
 				maximumNumberOfDays: 120,
 				fetchInterval: 10 * 60 * 1000,   // 10 minuti, come le liste Todoist
+				/* Qui si copiano solo i campi che il modulo calendar
+				   conosce. Attenzione: ogni nuova proprieta' aggiunta
+				   all'elenco CALENDARI va riportata anche qui, altrimenti
+				   viene semplicemente ignorata. */
 				calendars: CALENDARI.map((c) => ({
 					url: c.url,
 					name: c.name,
 					color: c.color,
-					symbol: c.symbol
+					symbol: c.symbol,
+					...(c.excludedEvents ? { excludedEvents: c.excludedEvents } : {})
 				}))
 			}
 		},
