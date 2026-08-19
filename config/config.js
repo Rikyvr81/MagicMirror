@@ -123,10 +123,7 @@ const LEGENDA_HTML =
 			const stile = c.soloBordo
 				? `background:transparent;border:2px solid ${c.color}`
 				: `background:${c.color}`;
-			/* la classe legend-dot-{nome} permette al foglio di stile di
-			   ricolorare il quadratino quando un tema cambia il colore di
-			   quel calendario, senza dover toccare il config */
-			return `<span class="legend-item"><span class="legend-dot legend-dot-${c.name}" style="${stile}"></span>${c.label}</span>`;
+			return `<span class="legend-item"><span class="legend-dot" style="${stile}"></span>${c.label}</span>`;
 		}).join("") +
 		"</div>"
 	).join("") +
@@ -153,11 +150,11 @@ const STILE_MESE_SUCCESSIVO = (() => {
 
 	const sel = `.CX3_smallCalendar .cell.month_${target.getMonth() + 1}.year_${target.getFullYear()}`;
 
-	/* I colori non sono scritti qui ma presi dalle variabili del
-	   custom.css: cosi' il blocco segue il tema (scuro o chiaro) invece
-	   di imporre il proprio. Essendo iniettato nel DOM, questo stile
-	   vince sul foglio esterno: se contenesse valori fissi, nessun tema
-	   potrebbe sovrascriverlo. */
+	/* I colori arrivano dalle variabili del custom.css invece di essere
+	   scritti qui: cosi' i giorni fuori dal mese si regolano da un punto
+	   solo per entrambi i calendari. Essendo iniettato nel DOM, questo
+	   stile vince sul foglio esterno, quindi con valori fissi non
+	   sarebbe modificabile dal CSS. */
 	return `<style>
 /* default: tutte le celle spente */
 .CX3_smallCalendar .cell { background: var(--outmonth-bg) !important; }
