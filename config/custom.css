@@ -1383,6 +1383,20 @@ body,
 }
 
 
+/* La pagina dichiara di essere chiara. Serve contro la "modalita' scura
+   forzata" di Android: la WebView prende una pagina chiara e la inverte
+   da sola, scurendo lo sfondo e schiarendo i testi ma lasciando intatti
+   i colori accentati. E' esattamente il sintomo osservato sulla
+   chiavetta: turni verdi, festivita' rosse e weekend blu corretti,
+   mentre numeri dei giorni e sfondo restavano invertiti.
+   Va disattivata anche in Fully Kiosk, sotto Web Content Settings. */
+:root,
+html,
+body {
+  color-scheme: light !important;
+  forced-color-adjust: none !important;
+}
+
 /* ==========================================================
    TEMA CHIARO  (prova)
    ----------------------------------------------------------
