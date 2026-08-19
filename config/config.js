@@ -1,4 +1,11 @@
 /* ==========================================================
+   FAMILY HUB - config della versione stabile del 19 agosto 2026
+   Da usare in coppia con il custom.css di pari data: i valori
+   maxEventLines / fontSize / eventHeight dei due calendari sono
+   coordinati con le variabili del foglio di stile.
+   ========================================================== */
+
+/* ==========================================================
    ELENCO UNICO DEI CALENDARI
    Definiti una volta sola: da qui vengono generati sia l'elenco
    del modulo feeder, sia il filtro calendarSet, sia la legenda
