@@ -395,6 +395,11 @@ let config = {
 				apiVersion: "2.5",
 				weatherEndpoint: "/forecast",
 				type: "forecast",
+				/* nome del giorno per esteso invece dell'abbreviazione:
+				   "venerdi'" al posto di "ven". Il predefinito e' "ddd".
+				   Oggi e domani restano tali: quelle due voci il modulo le
+				   traduce a parte, non le formatta come data. */
+				forecastDateFormat: "dddd",
 				appendLocationNameToHeader: false,
 				lat: 45.3526,
 				lon: 10.8445,
