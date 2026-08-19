@@ -48,29 +48,91 @@ if (typeof document !== "undefined") {
 /* ==========================================================
    SFONDO A ROTAZIONE
    Cambia l'immagine di sfondo a intervalli regolari senza dover
-   ricaricare la pagina.
+   ricaricare la pagina, pescando a caso tra le sorgenti elencate qui
+   sotto. Nessuna richiede registrazione o chiave.
 
-   Funziona perche' MagicMirror serve config.js al browser come
-   script: il codice qui dentro viene eseguito nella pagina. La
-   guardia su "document" e' necessaria perche' lo stesso file viene
-   letto anche da Node sul server, dove document non esiste.
+   Funziona perche' MagicMirror serve config.js al browser come script:
+   il codice qui dentro viene eseguito nella pagina. La guardia su
+   "document" e' necessaria perche' lo stesso file viene letto anche da
+   Node sul server, dove document non esiste.
 
    L'immagine viene prima scaricata in memoria e sostituita solo a
    caricamento completato: senza questo accorgimento si vedrebbe un
-   lampo di sfondo vuoto a ogni cambio.
+   lampo di sfondo vuoto a ogni cambio. Se una sorgente non risponde si
+   passa alla successiva, e in caso di fallimento totale resta
+   l'immagine precedente invece di un fondo nero.
    ========================================================== */
 const SFONDO_INTERVALLO = 30 * 60 * 1000;   // 30 minuti
 
+/* Per togliere una categoria basta commentarne la riga.
+   - "json" significa che il servizio risponde con dei dati da cui va
+     estratto l'indirizzo dell'immagine;
+   - "diretto" che l'indirizzo E' GIA' l'immagine. */
+const SFONDO_SORGENTI = [
+	{
+		nome: "gatti",
+		tipo: "json",
+		url: () => "https://api.thecatapi.com/v1/images/search",
+		estrai: (dati) => (Array.isArray(dati) && dati[0] ? dati[0].url : null)
+	},
+	{
+		nome: "cani",
+		tipo: "json",
+		url: () => "https://api.thedogapi.com/v1/images/search",
+		estrai: (dati) => (Array.isArray(dati) && dati[0] ? dati[0].url : null)
+	},
+	{
+		nome: "natura",
+		tipo: "diretto",
+		/* il parametro finale serve solo a forzare un'immagine diversa a
+		   ogni giro, altrimenti il browser riuserebbe quella in cache */
+		url: () => `https://loremflickr.com/1920/1080/nature,forest,mountain,lake/all?lock=${Date.now()}`
+	},
+	{
+		nome: "paesaggi casuali",
+		tipo: "diretto",
+		url: () => `https://picsum.photos/1920/1080?t=${Date.now()}`
+	}
+];
+
 if (typeof document !== "undefined") {
-	const cambiaSfondo = () => {
-		/* il parametro finale serve solo a forzare un'immagine nuova:
-		   senza, il browser riuserebbe quella gia' in cache */
-		const url = `https://picsum.photos/1920/1080?t=${Date.now()}`;
-		const pre = new Image();
-		pre.onload = () => {
-			document.documentElement.style.backgroundImage = `url("${url}")`;
-		};
-		pre.src = url;
+	const applica = (indirizzo) =>
+		new Promise((risolvi, rifiuta) => {
+			const pre = new Image();
+			pre.onload = () => {
+				document.documentElement.style.backgroundImage = `url("${indirizzo}")`;
+				risolvi();
+			};
+			pre.onerror = () => rifiuta(new Error("immagine non caricata"));
+			pre.src = indirizzo;
+		});
+
+	const provaSorgente = async (sorgente) => {
+		if (sorgente.tipo === "json") {
+			const risposta = await fetch(sorgente.url());
+			const dati = await risposta.json();
+			const indirizzo = sorgente.estrai(dati);
+			if (!indirizzo) throw new Error("nessun indirizzo nei dati");
+			return applica(indirizzo);
+		}
+		return applica(sorgente.url());
+	};
+
+	const cambiaSfondo = async () => {
+		/* si parte da una sorgente casuale e, se non risponde, si prosegue
+		   in ordine con le altre: un servizio momentaneamente giu' non
+		   lascia lo schermo vuoto */
+		const partenza = Math.floor(Math.random() * SFONDO_SORGENTI.length);
+
+		for (let i = 0; i < SFONDO_SORGENTI.length; i++) {
+			const sorgente = SFONDO_SORGENTI[(partenza + i) % SFONDO_SORGENTI.length];
+			try {
+				await provaSorgente(sorgente);
+				return;
+			} catch (e) {
+				/* si passa alla sorgente successiva */
+			}
+		}
 	};
 
 	document.addEventListener("DOMContentLoaded", cambiaSfondo);
