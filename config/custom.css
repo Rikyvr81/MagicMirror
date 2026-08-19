@@ -1406,11 +1406,13 @@ body,
   --holiday-color: #C62828;
   --today-color: #1565C0;
   /* Turni e festivita' sono resi a contorno, quindi il loro colore fa
-     anche da testo: su fondo chiaro serve un tono molto profondo.
-     Il ciano e il verde precedenti erano leggibili sul nero ma
-     sbiadivano sul bianco velato. */
-  --outline-turni: #00464B;
-  --outline-festivita: #14431A;
+     anche da testo. Primo tentativo: entrambi molto scuri, ciano e
+     verde, risultato indistinguibili tra loro.
+     Ora i turni sono neri come il testo e le festivita' rosse come il
+     numero del giorno festivo: la distinzione e' netta e il riquadro
+     richiama la data che evidenzia. */
+  --outline-turni: #14161a;
+  --outline-festivita: var(--holiday-color);
 
   --outmonth-bg: rgba(20, 22, 26, .12);
   --outmonth-text: rgba(20, 22, 26, .32);
@@ -1537,6 +1539,18 @@ body::before {
 
 /* ---- Calendari ---- */
 
+/* IMPORTANTE: il numero del giorno non e' testo diretto di .cellDate,
+   ma sta in span figli (.dateParts). La regola ".module *" qui sopra
+   colorava quegli span di nero, vincendo su weekend, festivita' e
+   giorni fuori mese, che agiscono sul contenitore.
+   Con color: inherit gli span tornano a ereditare dal .cellDate, e
+   tutte le regole di colore riprendono a funzionare in un colpo solo:
+   sabato e domenica blu, festivita' rosse, giorni fuori mese spenti,
+   compreso il calendario piccolo. */
+.CX3 .cellDate * {
+  color: inherit !important;
+}
+
 .CX3_basicCalendar,
 .CX3_smallCalendar {
   --defaultcolor: var(--ink);
@@ -1594,7 +1608,10 @@ body::before {
   color: #1a1a1a !important;
 }
 
-/* Turni e festivita' sono a contorno: seguono il proprio colore */
+/* Turni e festivita' sono a contorno e seguono il proprio colore.
+   Due tonalita' scure di verde e ciano si confondevano tra loro, quindi
+   li distinguo anche per FORMA: le festivita' hanno un fondo verde
+   tenue, i turni restano a contorno vuoto. */
 .CX3 .event.calendar_turni,
 .CX3 .event.calendar_turni * {
   color: var(--outline-turni) !important;
@@ -1603,4 +1620,8 @@ body::before {
 .CX3 .event.calendar_festivita,
 .CX3 .event.calendar_festivita * {
   color: var(--outline-festivita) !important;
+}
+
+.CX3 .event.calendar_festivita {
+  background: rgba(27, 94, 32, .16) !important;
 }
