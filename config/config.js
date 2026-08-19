@@ -59,11 +59,7 @@ const OSSERVANZE_ESCLUSE = [
 	"Giorno della Memoria",
 	"Giorno del Ricordo",
 	"San Valentino",
-	"Festa della donna",
 	"San Giuseppe",
-	"Festa del papà",
-	"Festa della mamma",
-	"Festa dei nonni",
 	"Carnevale",
 	"Martedì grasso",
 	"Mercoledì delle Ceneri",
@@ -76,7 +72,18 @@ const OSSERVANZE_ESCLUSE = [
 	"Corpus Domini",
 	"Halloween",
 	"Unità nazionale",
-	"Forze Armate"
+	"Forze Armate",
+
+	/* Ricorrenze dei santi: sono osservanze, non giorni festivi.
+	   I tre filtri coprono in un colpo tutti i patroni che Google
+	   inserisce nel corso dell'anno (San Francesco il 4 ottobre,
+	   Sant'Ambrogio il 7 dicembre e simili) senza doverli elencare.
+	   Nota il dettaglio che li rende sicuri: "San " ha lo spazio finale,
+	   quindi NON intercetta "Santo Stefano", che e' festivita' nazionale
+	   e resta visibile. Lo stesso vale per "Ognissanti". */
+	"San ",
+	"Santa ",
+	"Sant'"
 ];
 
 /* ==========================================================
@@ -562,3 +569,34 @@ let config = {
 
 /*************** DO NOT EDIT THE LINE BELOW ***************/
 if (typeof module !== "undefined") { module.exports = config; }
+/* ==========================================================
+   SFONDO A ROTAZIONE
+   Cambia l'immagine di sfondo a intervalli regolari senza dover
+   ricaricare la pagina.
+
+   Funziona perche' MagicMirror serve config.js al browser come
+   script: il codice qui dentro viene eseguito nella pagina. La
+   guardia su "document" e' necessaria perche' lo stesso file viene
+   letto anche da Node sul server, dove document non esiste.
+
+   L'immagine viene prima scaricata in memoria e sostituita solo a
+   caricamento completato: senza questo accorgimento si vedrebbe un
+   lampo di sfondo vuoto a ogni cambio.
+   ========================================================== */
+const SFONDO_INTERVALLO = 30 * 60 * 1000;   // 30 minuti
+
+if (typeof document !== "undefined") {
+	const cambiaSfondo = () => {
+		/* il parametro finale serve solo a forzare un'immagine nuova:
+		   senza, il browser riuserebbe quella gia' in cache */
+		const url = `https://picsum.photos/1920/1080?t=${Date.now()}`;
+		const pre = new Image();
+		pre.onload = () => {
+			document.documentElement.style.backgroundImage = `url("${url}")`;
+		};
+		pre.src = url;
+	};
+
+	document.addEventListener("DOMContentLoaded", cambiaSfondo);
+	setInterval(cambiaSfondo, SFONDO_INTERVALLO);
+}
