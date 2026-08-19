@@ -288,7 +288,7 @@ let config = {
 				   Con 5 righe da 24px le sei settimane occupano ~900px. */
 				maxEventLines: 5,
 				fontSize: "20px",
-				eventHeight: "24px",
+				eventHeight: "25px",
 				useSymbol: false,               // niente icone negli eventi
 				useIconify: false,              // usa le icone Font Awesome dei symbol
 				showWeekNumber: false,          // niente "CW 34" a lato
