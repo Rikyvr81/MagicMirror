@@ -69,7 +69,7 @@ const SFONDO_INTERVALLO = 30 * 60 * 1000;   // 30 minuti
      estratto l'indirizzo dell'immagine;
    - "diretto" che l'indirizzo E' GIA' l'immagine. */
 const SFONDO_SORGENTI = [
-	{
+	/*{
 		nome: "gatti",
 		tipo: "json",
 		url: () => "https://api.thecatapi.com/v1/images/search",
@@ -80,7 +80,7 @@ const SFONDO_SORGENTI = [
 		tipo: "json",
 		url: () => "https://api.thedogapi.com/v1/images/search",
 		estrai: (dati) => (Array.isArray(dati) && dati[0] ? dati[0].url : null)
-	},
+	},*/
 	{
 		nome: "natura",
 		tipo: "diretto",
