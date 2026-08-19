@@ -371,11 +371,20 @@ body,
   min-height: 0 !important;
 }
 
-/* NOTA: qui avevo aggiunto una linea di chiusura sotto l'ultima
-   settimana, pensando che una delle due istanze non la disegnasse.
-   Sbagliato: il bordo c'era gia' in entrambe e il risultato era un
-   doppio bordo. I due calendari terminano allo stesso pixel (verificato
-   in console: 924 entrambi), quindi qui non serve nulla. */
+/* Le celle devono riempire l'altezza della riga.
+   Misurato in console: le due radici finivano entrambe a 1059, ma
+   l'ultima cella del calendario grande si fermava a 1053. Le righe si
+   allargano con la distribuzione flessibile (.week con flex: 1 1 0)
+   mentre le celle mantenevano l'altezza calcolata dal modulo, lasciando
+   6px vuoti in fondo: era quello il disallineamento visibile, perche'
+   il bordo che si vede e' quello della cella, non del contenitore.
+   NOTA: qui prima avevo aggiunto una linea di chiusura sotto l'ultima
+   settimana, ma il bordo c'era gia' e il risultato era un doppio bordo. */
+.CX3_basicCalendar .cell {
+  height: 100% !important;
+  min-height: 100% !important;
+  align-self: stretch !important;
+}
 
 /* Celle */
 
