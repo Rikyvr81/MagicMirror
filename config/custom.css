@@ -44,7 +44,7 @@
   /* Oscuramento dello sfondo. Era 0.55: e' il motivo per cui ogni
      immagine sembrava scura, qualunque fosse la sorgente.
      0 = immagine come e'. Alzalo se il testo non si legge su foto chiare. */
-  --veil-opacity: 0.35;
+  --veil-opacity: 0.55;
 
   /* Larghezza del calendario mensile grande. Ora che il meteo e' nella
      colonna destra, il calendario si prende tutto lo spazio residuo:
@@ -115,8 +115,8 @@
      valore stacca la TO DO LIST dalle previsioni, il secondo riserva a
      ciascuna delle due sezioni la stessa altezza, cosi' NOTE parte
      sempre alla stessa quota anche quando la lista e' corta o vuota. */
-  --todo-top-gap: 46px;
-  --section-height: 180px;
+  --todo-top-gap: 26px;
+  --section-height: 120px;
 
   /* Spazio tra la riga bianca del titolo NOTE e il primo messaggio.
      Piu' basso di quello della TO DO LIST perche' qui titolo e contenuto
@@ -972,12 +972,12 @@ body,
 }
 
 .CX3_smallCalendar {
-  --fontsize: 13px;
+  --fontsize: 16px;
   --defaultcolor: rgba(255, 255, 255, .92);
   --celllinecolor: rgba(255, 255, 255, .16);
   --cellbgcolor: rgba(255, 255, 255, .05);
-  --cellheaderheight: 22px;
-  --eventheight: 16px;   /* deve coincidere con eventHeight nel config.js */
+  --cellheaderheight: 26px;
+  --eventheight: 20px;   /* deve coincidere con eventHeight nel config.js */
 
   width: 100% !important;
   box-sizing: border-box !important;
@@ -1001,7 +1001,7 @@ body,
    month_N / year_N che il modulo assegna sempre. */
 
 .CX3_smallCalendar .cellHeader .cellDate {
-  font-size: 13px !important;
+  font-size: 16px !important;
   font-weight: 300 !important;
 }
 
@@ -1046,7 +1046,7 @@ body,
 
 .CX3_smallCalendar .event {
   border-radius: 3px !important;
-  font-size: 10px !important;
+  font-size: 14px !important;
   /* eventi in secondo piano, come quelli passati */
   opacity: var(--small-cal-event-opacity) !important;
 }
