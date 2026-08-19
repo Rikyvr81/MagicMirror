@@ -95,7 +95,17 @@ const SFONDO_SORGENTI = [
 	}
 ];
 
-if (typeof document !== "undefined") {
+/* La guardia su __sfondoAvviato e' necessaria perche' questo file viene
+   valutato piu' di una volta nella pagina: senza di essa partivano piu'
+   rotazioni insieme e a ogni ricaricamento si vedevano scorrere quattro
+   immagini di seguito, una per ciascuna copia in esecuzione. */
+if (typeof document !== "undefined" && !window.__sfondoAvviato) {
+	window.__sfondoAvviato = true;
+
+	/* evita che due cambi si sovrappongano, per esempio se il timer scatta
+	   mentre un'immagine e' ancora in scaricamento */
+	let inCorso = false;
+
 	const applica = (indirizzo) =>
 		new Promise((risolvi, rifiuta) => {
 			const pre = new Image();
@@ -119,19 +129,26 @@ if (typeof document !== "undefined") {
 	};
 
 	const cambiaSfondo = async () => {
+		if (inCorso) return;
+		inCorso = true;
+
 		/* si parte da una sorgente casuale e, se non risponde, si prosegue
 		   in ordine con le altre: un servizio momentaneamente giu' non
 		   lascia lo schermo vuoto */
 		const partenza = Math.floor(Math.random() * SFONDO_SORGENTI.length);
 
-		for (let i = 0; i < SFONDO_SORGENTI.length; i++) {
-			const sorgente = SFONDO_SORGENTI[(partenza + i) % SFONDO_SORGENTI.length];
-			try {
-				await provaSorgente(sorgente);
-				return;
-			} catch (e) {
-				/* si passa alla sorgente successiva */
+		try {
+			for (let i = 0; i < SFONDO_SORGENTI.length; i++) {
+				const sorgente = SFONDO_SORGENTI[(partenza + i) % SFONDO_SORGENTI.length];
+				try {
+					await provaSorgente(sorgente);
+					return;      // riuscita: nessun altro tentativo
+				} catch (e) {
+					/* si passa alla sorgente successiva */
+				}
 			}
+		} finally {
+			inCorso = false;
 		}
 	};
 
