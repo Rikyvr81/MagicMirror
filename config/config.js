@@ -323,7 +323,7 @@ ${sel}[class*="weekday_0"],
 ${sel}[class*="weekday_6"] { background: var(--weekend-bg) !important; }
 
 /* festivita': dopo il weekend, per prevalere a pari specificita' */
-${sel}.holiday .cellDate { color: var(--holiday-color) !important; }
+${sel}.holiday .cellDate { color: var(--holiday-color) !important; font-weight: 700 !important; }
 </style>`;
 })();
 
