@@ -629,12 +629,6 @@ body,
   text-align: left !important;
 }
 
-/* La data si distende su tutta la larghezza della colonna: justify con
-   text-align-last distribuisce le parole da bordo a bordo, quindi
-   "mercoledi', 19 agosto 2026" arriva esattamente al margine destro
-   qualunque sia la sua lunghezza (che cambia ogni giorno).
-   Se preferisci il testo compatto, commenta le due righe di justify e
-   togli il commento a font-size: 34px. */
 /* Il modulo clock incapsula data e ora dentro un contenitore .clockGrid
    che e' una GRIGLIA: le sue celle si stringono sul contenuto, quindi la
    data non aveva larghezza su cui distribuirsi e il justify non produceva
@@ -648,19 +642,16 @@ body,
   box-sizing: border-box !important;
 }
 
+/* Data allineata a sinistra, spaziatura normale.
+   Nota per il futuro: distenderla da bordo a bordo con text-align:
+   justify e' tecnicamente possibile ma illeggibile, perche' quattro
+   parole su 440px lasciano buchi enormi tra una e l'altra. */
 .main-clock .date {
   font-size: 28px;
   line-height: 32px;
-  /* display: block e la larghezza sul contenitore erano indispensabili:
-     senza, l'elemento si stringe sul testo e il justify non ha spazio
-     su cui distribuire le parole. */
   display: block !important;
   width: 100% !important;
-  text-align: justify !important;
-  text-align-last: justify !important;
-  /* Alternativa, se lo spazio tra le parole ti sembra eccessivo:
-     commenta le due righe di justify e togli il commento qui sotto.
-  font-size: 34px !important; */
+  text-align: left !important;
 }
 
 .main-clock .time {
