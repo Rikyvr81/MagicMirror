@@ -314,9 +314,13 @@ const STILE_MESE_SUCCESSIVO = (() => {
 ${sel} { background: transparent !important; }
 ${sel} .cellDate { color: var(--inmonth-text) !important; }
 
-/* sabato e domenica del mese mostrato */
+/* sabato e domenica del mese mostrato: numero blu e fondo azzurrino.
+   Le celle dei mesi adiacenti non sono toccate, perche' il selettore
+   include il mese e l'anno visualizzati. */
 ${sel}[class*="weekday_0"] .cellDate,
 ${sel}[class*="weekday_6"] .cellDate { color: var(--weekend-color) !important; }
+${sel}[class*="weekday_0"],
+${sel}[class*="weekday_6"] { background: var(--weekend-bg) !important; }
 
 /* festivita': dopo il weekend, per prevalere a pari specificita' */
 ${sel}.holiday .cellDate { color: var(--holiday-color) !important; }
@@ -415,6 +419,7 @@ let config = {
 				   della API 2.5 gratuita, verificati a mano con esito 200. */
 				apiVersion: "2.5",
 				weatherEndpoint: "/weather",
+				updateInterval: 30 * 60 * 1000,   // mezz'ora: la quota e' limitata
 				type: "current",
 				showFeelsLike: true,         // percepita in piccolo, sotto vento e tramonto
 				/* Il ", IT-34" veniva dal nome localita' restituito dal
@@ -441,6 +446,7 @@ let config = {
 				   piu' probabile del blocco su "Caricamento in corso". */
 				apiVersion: "2.5",
 				weatherEndpoint: "/forecast",
+				updateInterval: 30 * 60 * 1000,   // mezz'ora
 				type: "forecast",
 				/* nome del giorno per esteso invece dell'abbreviazione:
 				   "venerdi'" al posto di "ven". Il predefinito e' "ddd".
