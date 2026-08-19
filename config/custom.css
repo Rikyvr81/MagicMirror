@@ -69,8 +69,8 @@
   --current-weather-width: 230px;
 
   /* Stacco dell'ora dalla riga della data e suo rientro da sinistra */
-  --clock-time-top: 8px;
-  --clock-time-left: 16px;
+  --clock-time-top: 16px;
+  --clock-time-left: 34px;
 
   /* Stacco delle previsioni dal blocco ora + meteo attuale */
   --forecast-top-gap: 16px;
@@ -635,8 +635,17 @@ body,
    qualunque sia la sua lunghezza (che cambia ogni giorno).
    Se preferisci il testo compatto, commenta le due righe di justify e
    togli il commento a font-size: 34px. */
-.main-clock .module-content {
+/* Il modulo clock incapsula data e ora dentro un contenitore .clockGrid
+   che e' una GRIGLIA: le sue celle si stringono sul contenuto, quindi la
+   data non aveva larghezza su cui distribuirsi e il justify non produceva
+   effetto. Appiattendo la griglia a blocco, data e ora restano impilate
+   come prima ma occupano tutta la larghezza della colonna. */
+.main-clock .module-content,
+.main-clock .clockGrid,
+.main-clock .module-content > * {
+  display: block !important;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .main-clock .date {
