@@ -1254,12 +1254,16 @@ body,
 
 /* Nomi dei giorni allineati al bordo sinistro della colonna, cioe' alla
    stessa verticale da cui parte l'orologio. Le temperature restano a
-   destra, quindi la riga si legge da un capo all'altro. */
+   destra, quindi la riga si legge da un capo all'altro.
+   capitalize mette l'iniziale maiuscola: il modulo restituisce i nomi
+   in minuscolo ("venerdi'"), qui diventano "Venerdi'". Vale per tutti i
+   giorni, e non tocca "Oggi" e "Domani", che sono gia' cosi'. */
 .weather-forecast-box table td:first-child,
 .weather-forecast-box table th:first-child {
   text-align: left !important;
   padding-left: 0 !important;
   white-space: nowrap !important;
+  text-transform: capitalize !important;
 }
 
 .weather-current-box .large {
