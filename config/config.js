@@ -220,6 +220,7 @@ let config = {
 			config: {
 				weatherProvider: "openmeteo",
 				type: "current",
+				showFeelsLike: false,        // la temperatura percepita non serve piu'
 				/* Il ", IT-34" veniva dal nome localita' restituito dal
 				   servizio, che il modulo accoda all'intestazione. Qui
 				   disattiviamo l'accodamento e scriviamo il titolo per
@@ -413,8 +414,8 @@ let config = {
 				monthIndex: 1,                  // 1 = mese successivo
 				firstDayOfWeek: 1,
 				maxEventLines: 1,
-				fontSize: "11px",
-				eventHeight: "13px",
+				fontSize: "13px",
+				eventHeight: "16px",
 				useSymbol: false,
 				useIconify: false,
 				showWeekNumber: false,
