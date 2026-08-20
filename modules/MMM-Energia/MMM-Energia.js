@@ -636,23 +636,42 @@ Module.register("MMM-Energia", {
 		   In immissione la barra e' invece tutta verde: li' non
 		   siamo su quella scala, siamo dall'altra parte dello
 		   zero. */
-		misuratore.classList.add("energy-meter-scala");
+		/* IL GRADIENTE SI RITAGLIA, NON SI COPRE
+		   Il primo tentativo metteva il gradiente sull'intera
+		   barra e ci sovrapponeva due maschere grigie sui tratti
+		   non raggiunti. Non funzionava: quel grigio e'
+		   semitrasparente, per lasciar vedere la fotografia sotto,
+		   e quindi lasciava trasparire anche il gradiente. La
+		   barra appariva sempre tutta colorata, qualunque fosse il
+		   consumo.
+		   Qui invece si ritaglia una finestra larga quanto il
+		   tratto fra lo zero e il valore attuale, e dentro ci si
+		   mette il gradiente dell'INTERA scala, riposizionato in
+		   modo che il pezzo visibile sia esattamente quello giusto.
+		   Fuori dalla finestra resta il fondo grigio della barra,
+		   senza nulla sopra. */
+		const larghezza = fine - inizio;
 
-		/* Due maschere, una per lato: coprono la parte di scala
-		   non raggiunta e lasciano scoperto solo il tratto fra lo
-		   zero e il valore attuale. Sotto resta il gradiente, che
-		   e' dipinto sull'intera scala, quindi il colore che vedi
-		   e' quello del punto in cui ti trovi e trascolora invece
-		   di scattare da una soglia all'altra. */
-		const sinistra = document.createElement("div");
-		sinistra.className = "energy-meter-mask energy-meter-mask-left";
-		sinistra.style.width = `${inizio}%`;
-		misuratore.appendChild(sinistra);
+		if (larghezza > 0) {
+			const finestra = document.createElement("div");
+			finestra.className = "energy-meter-window";
+			finestra.style.left = `${inizio}%`;
+			finestra.style.width = `${larghezza}%`;
 
-		const destra = document.createElement("div");
-		destra.className = "energy-meter-mask energy-meter-mask-right";
-		destra.style.width = `${100 - fine}%`;
-		misuratore.appendChild(destra);
+			/* Il gradiente e' largo quanto l'intera scala: se la
+			   finestra ne mostra un ventesimo, il gradiente dentro
+			   di essa deve essere venti volte piu' largo, e
+			   spostato a sinistra di quanto la finestra dista
+			   dall'origine. Cosi' i colori restano ancorati ai
+			   valori e non si stirano insieme alla finestra. */
+			const scalaColori = document.createElement("div");
+			scalaColori.className = "energy-meter-scala";
+			scalaColori.style.width = `${(100 / larghezza) * 100}%`;
+			scalaColori.style.left = `${(-inizio / larghezza) * 100}%`;
+
+			finestra.appendChild(scalaColori);
+			misuratore.appendChild(finestra);
+		}
 
 		/* Trattino dello zero, sopra tutto: e' il riferimento che
 		   rende leggibile il resto. */
