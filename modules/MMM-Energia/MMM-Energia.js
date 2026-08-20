@@ -455,6 +455,19 @@ Module.register("MMM-Energia", {
 		return v.toLocaleString("it-IT", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 	},
 
+	/* MEDIA GIORNALIERA A SEI DECIMALI
+	   Tre decimali non bastavano: fra due giorni consecutivi la
+	   media puo' differire oltre la terza cifra - 0,180890 contro
+	   0,180905 - e a video il numero sembrava immobile. Sei cifre
+	   sono anche quelle che usa il portale del fornitore, quindi
+	   il confronto e' diretto, cifra per cifra.
+	   Resta solo per la media: la fascia migliore tiene tre
+	   decimali, perche' li' serve un ordine di grandezza da
+	   leggere al volo, non una corrispondenza da verificare. */
+	euroPreciso: function (v) {
+		return v.toLocaleString("it-IT", { minimumFractionDigits: 6, maximumFractionDigits: 6 });
+	},
+
 	/* ------------------------------------------------------
 	   AIUTI DI FORMATO PER LA POTENZA
 	   ------------------------------------------------------ */
@@ -539,24 +552,52 @@ Module.register("MMM-Energia", {
 		const media = validi.reduce((a, b) => a + b, 0) / validi.length;
 		const adesso = this.config.giorno === 0 ? new Date().getHours() : -1;
 
-		const titolo = document.createElement("div");
+		/* ETICHETTA ACCANTO ALL'ORARIO
+		   Da quando la riga sotto porta il costo dell'ora in corso,
+		   l'orario grande era rimasto senza didascalia: chi guarda
+		   la parete senza sapere com'e' fatto il riquadro leggeva
+		   "12:00 - 15:00" senza capire cosa fosse.
+		   L'etichetta sta di FIANCO e non sopra perche' sopra
+		   costerebbe una riga di altezza e sfaserebbe le due
+		   colonne; su due righe corte occupa l'altezza che il
+		   numero ha gia'. */
+		const riga = document.createElement("div");
+		riga.className = "energy-best-row";
+
+		const tag = document.createElement("span");
+		tag.className = "energy-best-tag";
+		tag.textContent = "Fascia consigliata";
+		riga.appendChild(tag);
+
+		const titolo = document.createElement("span");
 		titolo.className = "energy-best-hours";
 		titolo.textContent = migliore
 			? `${this.oraDue(migliore.ora)} – ${this.oraDue(migliore.ora + this.config.finestra)}`
 			: "—";
-		col.appendChild(titolo);
+		riga.appendChild(titolo);
 
-		/* La riga sotto dice COSA sia quell'orario. Sta qui e non
-		   sopra il numero grande per non spendere altezza, e
-		   perche' cosi' la colonna assume la stessa forma di
-		   quella accanto: numero grande, riga che lo spiega,
-		   barra, scala, nota. E' quella simmetria a tenere
-		   allineate le due colonne senza regole di allineamento. */
+		col.appendChild(riga);
+
+		/* La riga sotto porta il costo dell'ORA IN CORSO, che e'
+		   l'unico dato del riquadro a cambiare durante la
+		   giornata: il numero grande sopra e' la fascia migliore e
+		   resta fisso fino a mezzanotte.
+		   Sei decimali come nella media, cosi' il confronto col
+		   portale del fornitore e' diretto; a 14px la riga misura
+		   circa 175px e ne ha 205 a disposizione.
+		   Se stessimo guardando DOMANI - giorno: 1 - un "costo
+		   attuale" non avrebbe senso, e si torna a descrivere la
+		   fascia migliore. */
 		const sotto = document.createElement("div");
 		sotto.className = "energy-best-avg";
-		sotto.textContent = migliore
-			? `fascia migliore: ${this.euro(migliore.media)} €/kWh di media`
-			: "";
+
+		if (adesso >= 0 && ore[adesso] !== null) {
+			sotto.textContent = `costo attuale: ${this.euroPreciso(ore[adesso])} €/kWh`;
+		} else if (migliore) {
+			sotto.textContent = `fascia migliore: ${this.euro(migliore.media)} €/kWh`;
+		} else {
+			sotto.textContent = "";
+		}
 		col.appendChild(sotto);
 
 		const barra = document.createElement("div");
@@ -583,8 +624,8 @@ Module.register("MMM-Energia", {
 		   non coincide con quello dell'app del fornitore. */
 		col.appendChild(this.nota(
 			this.fonte === "zonale"
-				? `Media ${this.euro(media)} €/kWh · zonale`
-				: `Media ${this.euro(media)} €/kWh`
+				? `Media ${this.euroPreciso(media)} €/kWh · zonale`
+				: `Media ${this.euroPreciso(media)} €/kWh`
 		));
 		return col;
 	},
@@ -615,7 +656,14 @@ Module.register("MMM-Energia", {
 		const immissione = consumo < 0;
 		const lettura = this.potenza(consumo);
 
-		const numero = document.createElement("div");
+		/* Stessa struttura della colonna accanto - una riga di
+		   altezza fissa che contiene il numero grande - cosi' le
+		   due restano allineate anche ora che a sinistra c'e'
+		   un'etichetta in piu'. */
+		const riga = document.createElement("div");
+		riga.className = "energy-best-row";
+
+		const numero = document.createElement("span");
 		numero.className = `energy-now ${this.livello(consumo)}`;
 		numero.textContent = lettura.numero;
 
@@ -623,7 +671,9 @@ Module.register("MMM-Energia", {
 		unita.className = "energy-now-unit";
 		unita.textContent = ` ${lettura.unita}`;
 		numero.appendChild(unita);
-		col.appendChild(numero);
+
+		riga.appendChild(numero);
+		col.appendChild(riga);
 
 		/* Sotto il numero grande va la PRODUZIONE, nello stesso
 		   posto in cui la colonna accanto scrive il prezzo della
