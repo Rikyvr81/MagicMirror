@@ -1399,7 +1399,18 @@ body,
      ascissa. Con griglie diverse i due tratti coinciderebbero
      solo per caso, e nessuna correzione locale potrebbe
      rimediare. */
-  --col-gap: 16px;
+  --col-gap: 0px;
+
+  /* Respiro fra il separatore verticale e il contenuto, UGUALE
+     sui due lati. Prima il distacco fra le colonne era un vuoto
+     di 16px e solo la colonna di destra aveva un rientro, per
+     staccarsi dalla linea: il contenuto a destra risultava cosi'
+     piu' stretto di quello a sinistra di quei 14px, e le due
+     meta' sembravano diverse pur essendo le colonne identiche.
+     Ora il vuoto e' zero e sono i rientri a fare il distacco,
+     uno per parte: le colonne restano pari E il contenuto pure,
+     con il separatore esattamente a meta'. */
+  --col-pad: 15px;
 
   /* Stacco dalle NOTE. Volutamente piu' stretto di
      --section-gap (26px): qui lo spazio verticale e' contato.
@@ -1476,10 +1487,17 @@ body,
 }
 
 /* Una linea sottile separa le due misure: sono due grandezze
-   diverse, non due parti dello stesso numero. */
+   diverse, non due parti dello stesso numero.
+   I rientri sono simmetrici - uno per lato - cosi' le due meta'
+   hanno la stessa larghezza utile e il separatore cade a meta'
+   esatta, in colonna con quello fra TO DO LIST e NOTE. */
+.energy-col-costo {
+  padding-right: var(--col-pad) !important;
+}
+
 .energy-col-consumo {
   border-left: 1px solid rgba(255, 255, 255, .20) !important;
-  padding-left: 14px !important;
+  padding-left: var(--col-pad) !important;
 }
 
 /* ----------------------------------------------------------
@@ -1865,6 +1883,9 @@ body,
   grid-row: 3 / span 2 !important;
   width: auto !important;
   max-width: none !important;
+  /* gemello del rientro che la colonna di destra ha dopo il
+     separatore: e' cio' che rende uguali le due meta' */
+  padding-right: var(--col-pad) !important;
 }
 
 /* Colonna di destra: titolo e contenuto delle NOTE, impilati */
@@ -1942,7 +1963,7 @@ body,
 .region.top.right .family-message-box,
 .region.top.right .family-notes {
   border-left: 1px solid rgba(255, 255, 255, .20) !important;
-  padding-left: 14px !important;
+  padding-left: var(--col-pad) !important;
 }
 
 /* Nella mezza colonna il testo delle note va a capo molto piu'
