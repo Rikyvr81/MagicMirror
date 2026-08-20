@@ -1563,6 +1563,13 @@ body,
   white-space: nowrap !important;
 }
 
+/* Riga dell'eta' della misura: compare solo quando il dato e'
+   piu' vecchio della soglia. Colore d'avviso perche' dice che
+   quel numero non e' piu' attuale. */
+.energy-note-vecchia {
+  color: var(--energy-media) !important;
+}
+
 /* Stato di attesa e di errore. Il testo va a capo: i messaggi
    del cloud Shelly possono essere lunghi, e vederli per intero
    e' l'unico modo per capire cosa non va senza aprire i log. */

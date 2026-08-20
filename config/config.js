@@ -732,6 +732,17 @@ let config = {
 					canaleConsumo: 0,
 					canaleProduzione: 1,
 
+					/* La pinza del fotovoltaico risultava montata
+					   al contrario: un impianto non consuma, quindi
+					   una produzione negativa e' un verso sbagliato.
+					   Invertire il segno qui equivale a rigirare la
+					   pinza, senza aprire il quadro.
+					   Sul canale della rete il segno NON si tocca:
+					   li' il negativo e' informazione vera e
+					   significa che stai immettendo. */
+					invertiConsumo: false,
+					invertiProduzione: true,
+
 					/* Valore a cui la barra risulta piena, in watt */
 					fondoScala: 3000
 				}
