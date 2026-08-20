@@ -69,7 +69,7 @@ const SFONDO_INTERVALLO = 30 * 60 * 1000;   // 30 minuti
      estratto l'indirizzo dell'immagine;
    - "diretto" che l'indirizzo E' GIA' l'immagine. */
 const SFONDO_SORGENTI = [
-	/*{
+	{
 		nome: "gatti",
 		tipo: "json",
 		url: () => "https://api.thecatapi.com/v1/images/search",
@@ -80,7 +80,7 @@ const SFONDO_SORGENTI = [
 		tipo: "json",
 		url: () => "https://api.thedogapi.com/v1/images/search",
 		estrai: (dati) => (Array.isArray(dati) && dati[0] ? dati[0].url : null)
-	},*/
+	},
 	{
 		nome: "natura",
 		tipo: "diretto",
@@ -95,17 +95,7 @@ const SFONDO_SORGENTI = [
 	}
 ];
 
-/* La guardia su __sfondoAvviato e' necessaria perche' questo file viene
-   valutato piu' di una volta nella pagina: senza di essa partivano piu'
-   rotazioni insieme e a ogni ricaricamento si vedevano scorrere quattro
-   immagini di seguito, una per ciascuna copia in esecuzione. */
-if (typeof document !== "undefined" && !window.__sfondoAvviato) {
-	window.__sfondoAvviato = true;
-
-	/* evita che due cambi si sovrappongano, per esempio se il timer scatta
-	   mentre un'immagine e' ancora in scaricamento */
-	let inCorso = false;
-
+if (typeof document !== "undefined") {
 	const applica = (indirizzo) =>
 		new Promise((risolvi, rifiuta) => {
 			const pre = new Image();
@@ -129,26 +119,19 @@ if (typeof document !== "undefined" && !window.__sfondoAvviato) {
 	};
 
 	const cambiaSfondo = async () => {
-		if (inCorso) return;
-		inCorso = true;
-
 		/* si parte da una sorgente casuale e, se non risponde, si prosegue
 		   in ordine con le altre: un servizio momentaneamente giu' non
 		   lascia lo schermo vuoto */
 		const partenza = Math.floor(Math.random() * SFONDO_SORGENTI.length);
 
-		try {
-			for (let i = 0; i < SFONDO_SORGENTI.length; i++) {
-				const sorgente = SFONDO_SORGENTI[(partenza + i) % SFONDO_SORGENTI.length];
-				try {
-					await provaSorgente(sorgente);
-					return;      // riuscita: nessun altro tentativo
-				} catch (e) {
-					/* si passa alla sorgente successiva */
-				}
+		for (let i = 0; i < SFONDO_SORGENTI.length; i++) {
+			const sorgente = SFONDO_SORGENTI[(partenza + i) % SFONDO_SORGENTI.length];
+			try {
+				await provaSorgente(sorgente);
+				return;
+			} catch (e) {
+				/* si passa alla sorgente successiva */
 			}
-		} finally {
-			inCorso = false;
 		}
 	};
 
@@ -161,6 +144,245 @@ if (typeof document !== "undefined" && !window.__sfondoAvviato) {
 	   aspettare che il resto della pagina sia pronto. */
 	cambiaSfondo();
 	setInterval(cambiaSfondo, SFONDO_INTERVALLO);
+}
+
+/* ==========================================================
+   COSTO DELL'ENERGIA NELL'ARCO DELLA GIORNATA
+
+   Mostra, per le 24 ore di OGGI, quali sono le ore a costo
+   basso, medio e alto, e qual e' la finestra migliore in cui
+   concentrare i consumi.
+
+   PERCHE' I DATI DI OGGI SONO GIA' NOTI STAMATTINA
+   Il prezzo dell'energia si forma in un'asta che si chiude il
+   giorno prima verso le 13:00: alle 13 di ieri erano gia'
+   fissate tutte le 24 ore di oggi. Non e' quindi un dato
+   storico, ma il prezzo effettivo delle ore che devono ancora
+   arrivare. Dalle 13:00 di oggi sono disponibili anche le ore
+   di domani (vedi ENERGIA_GIORNO qui sotto).
+
+   PERCHE' QUESTA FONTE E NON IL GME
+   Questo codice viene eseguito dal BROWSER, non da Node: puo'
+   quindi chiamare solo servizi che accettano richieste da un
+   altro dominio. L'archivio ufficiale del GME non lo fa e
+   richiederebbe un modulo con node_helper lato server.
+   api.energy-charts.info (Fraunhofer ISE) non chiede alcuna
+   registrazione, risponde in JSON e accetta le richieste dal
+   browser.
+
+   ATTENZIONE AL SIGNIFICATO DEL NUMERO
+   La zona IT-NORTH e' il prezzo ZONALE del nord Italia, che non
+   coincide col PUN nazionale mostrato dall'app del fornitore:
+   sono vicini ma non identici, quindi la media in euro puo'
+   scostarsi di qualche millesimo. La suddivisione in fasce, che
+   e' la parte utile, resta corretta.
+   E' comunque il prezzo all'INGROSSO: la bolletta ci aggiunge
+   spread del fornitore, oneri, trasporto e IVA. Serve a dire
+   QUANDO conviene consumare, non quanto si paghera'.
+   ========================================================== */
+
+/* Zona di offerta. Villafranca di Verona sta nel nord. */
+const ENERGIA_ZONA = "IT-NORTH";
+
+/* Ogni quanto si ricontrolla il prezzo. I dati del giorno non
+   cambiano piu' una volta pubblicati, quindi un giro all'ora e'
+   abbondante: serve solo a intercettare il cambio di giornata. */
+const ENERGIA_AGGIORNAMENTO = 60 * 60 * 1000;
+
+/* Quanto dura la "fascia migliore" cercata, in ore. A 3 e' la
+   stessa finestra che usa l'app del fornitore. Alzalo a 4 o 5 se
+   ti interessa un intervallo piu' lungo in cui far partire piu'
+   elettrodomestici. */
+const ENERGIA_FINESTRA = 3;
+
+/* 0 = oggi, 1 = domani. Domani e' disponibile solo dopo le 13:00
+   circa: prima di quell'ora il pannello resterebbe in attesa. */
+const ENERGIA_GIORNO = 0;
+
+if (typeof document !== "undefined") {
+	/* Data in formato AAAA-MM-GG costruita sui campi LOCALI.
+	   toISOString() non va bene: converte in tempo universale e
+	   d'estate, dopo le 22:00, restituirebbe il giorno dopo. */
+	const dataLocale = (d) =>
+		`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+	const oraDue = (h) => `${String(h).padStart(2, "0")}:00`;
+
+	const euro = (v) =>
+		v.toLocaleString("it-IT", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+
+	/* ------------------------------------------------------
+	   SCARICO E RIDUZIONE A 24 ORE
+	   Il servizio puo' rispondere sia a passo orario sia a passo
+	   di 15 minuti, a seconda della zona e del periodo. Invece di
+	   dare per scontato il passo, raggruppiamo per ora locale e
+	   facciamo la media: il codice funziona in entrambi i casi e
+	   non si rompe se il mercato cambia granularita'.
+	   ------------------------------------------------------ */
+	const scaricaPrezzi = async () => {
+		const base = new Date();
+		const giorno = new Date(base.getFullYear(), base.getMonth(), base.getDate() + ENERGIA_GIORNO);
+		const giornoDopo = new Date(giorno.getFullYear(), giorno.getMonth(), giorno.getDate() + 1);
+
+		const url =
+			`https://api.energy-charts.info/price?bzn=${ENERGIA_ZONA}` +
+			`&start=${dataLocale(giorno)}&end=${dataLocale(giornoDopo)}`;
+
+		const risposta = await fetch(url);
+		if (!risposta.ok) throw new Error(`risposta ${risposta.status}`);
+
+		const dati = await risposta.json();
+
+		/* il campo dei valori ha cambiato nome nel tempo: li
+		   accettiamo entrambi invece di inseguire la versione */
+		const valori = dati.price || dati.data || [];
+		const istanti = dati.unix_seconds || [];
+		if (!istanti.length) throw new Error("nessun dato");
+
+		const somma = new Array(24).fill(0);
+		const conta = new Array(24).fill(0);
+		const etichetta = dataLocale(giorno);
+
+		istanti.forEach((secondi, i) => {
+			const valore = valori[i];
+			if (valore === null || valore === undefined) return;
+
+			const istante = new Date(secondi * 1000);
+			/* il servizio puo' restituire anche code del giorno
+			   prima o dopo: teniamo solo il giorno che ci interessa */
+			if (dataLocale(istante) !== etichetta) return;
+
+			somma[istante.getHours()] += valore;
+			conta[istante.getHours()]++;
+		});
+
+		/* da EUR/MWh a euro al kWh: diviso mille */
+		const ore = somma.map((s, h) => (conta[h] ? s / conta[h] / 1000 : null));
+
+		if (ore.every((v) => v === null)) throw new Error("giorno non ancora pubblicato");
+		return ore;
+	};
+
+	/* ------------------------------------------------------
+	   FASCE
+	   Le tre fasce non hanno soglie fisse in euro: sarebbero
+	   inutili, perche' una giornata cara avrebbe TUTTE le ore
+	   sopra soglia e si colorerebbe di rosso per intero.
+	   Dividiamo invece le 24 ore della giornata in tre gruppi da
+	   otto: le otto piu' economiche, le otto intermedie, le otto
+	   piu' care. La lettura resta sempre relativa alla giornata,
+	   che e' quello che serve per decidere quando accendere la
+	   lavastoviglie.
+	   ------------------------------------------------------ */
+	const calcolaFasce = (ore) => {
+		const validi = ore.filter((v) => v !== null).slice().sort((a, b) => a - b);
+		if (!validi.length) return ore.map(() => null);
+
+		const sogliaBassa = validi[Math.floor(validi.length / 3)];
+		const sogliaAlta = validi[Math.floor((validi.length * 2) / 3)];
+
+		return ore.map((v) => {
+			if (v === null) return null;
+			if (v <= sogliaBassa) return "bassa";
+			if (v <= sogliaAlta) return "media";
+			return "alta";
+		});
+	};
+
+	/* Finestra continua di ENERGIA_FINESTRA ore con la media piu'
+	   bassa. Si scorre l'intera giornata, comprese le ore gia'
+	   passate: se il momento migliore era stamattina e' bene
+	   saperlo, invece di vedersi proporre il meno peggio di
+	   quello che resta. */
+	const miglioreFinestra = (ore) => {
+		let migliore = null;
+
+		for (let h = 0; h + ENERGIA_FINESTRA <= 24; h++) {
+			const fetta = ore.slice(h, h + ENERGIA_FINESTRA);
+			if (fetta.some((v) => v === null)) continue;
+
+			const media = fetta.reduce((a, b) => a + b, 0) / ENERGIA_FINESTRA;
+			if (!migliore || media < migliore.media) migliore = { ora: h, media };
+		}
+
+		return migliore;
+	};
+
+	/* ------------------------------------------------------
+	   DISEGNO
+	   ------------------------------------------------------ */
+	const disegnaEnergia = (ore) => {
+		const pannello = document.querySelector(".energy-panel");
+		if (!pannello) return;
+
+		if (!ore) {
+			pannello.innerHTML = '<div class="energy-avviso">Prezzi non disponibili</div>';
+			return;
+		}
+
+		const fasce = calcolaFasce(ore);
+		const migliore = miglioreFinestra(ore);
+		const validi = ore.filter((v) => v !== null);
+		const media = validi.reduce((a, b) => a + b, 0) / validi.length;
+		const adesso = ENERGIA_GIORNO === 0 ? new Date().getHours() : -1;
+
+		const barre = fasce
+			.map((f, h) => {
+				const classi = ["energy-seg"];
+				if (f) classi.push(`energy-${f}`);
+				if (h === adesso) classi.push("energy-adesso");
+				return `<span class="${classi.join(" ")}"></span>`;
+			})
+			.join("");
+
+		const testaMigliore = migliore
+			? `<span class="energy-best-hours">${oraDue(migliore.ora)} &ndash; ${oraDue(migliore.ora + ENERGIA_FINESTRA)}</span>
+			   <span class="energy-best-avg">${euro(migliore.media)} &euro;/kWh</span>`
+			: '<span class="energy-best-hours">&mdash;</span>';
+
+		pannello.innerHTML = `
+			<div class="energy-best">${testaMigliore}</div>
+			<div class="energy-bar">${barre}</div>
+			<div class="energy-ticks"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+			<div class="energy-foot">
+				<span class="energy-media-testo">Media ${euro(media)} &euro;/kWh</span>
+				<span class="energy-legend">
+					<i class="energy-bassa"></i>bassa<i class="energy-media-dot"></i>media<i class="energy-alta"></i>alta
+				</span>
+			</div>
+		`;
+	};
+
+	/* ------------------------------------------------------
+	   CICLO
+	   Gira ogni minuto ma scarica solo una volta all'ora: il giro
+	   frequente serve a spostare il segnalino dell'ora corrente e
+	   a ridisegnare quando il modulo compare nel DOM, cosa che
+	   avviene dopo l'esecuzione di questo file.
+	   ------------------------------------------------------ */
+	let prezziEnergia = null;
+	let ultimoScaricoEnergia = 0;
+
+	const cicloEnergia = async () => {
+		if (!document.querySelector(".energy-panel")) return;
+
+		if (!prezziEnergia || Date.now() - ultimoScaricoEnergia > ENERGIA_AGGIORNAMENTO) {
+			try {
+				prezziEnergia = await scaricaPrezzi();
+				ultimoScaricoEnergia = Date.now();
+			} catch (e) {
+				/* si tiene l'ultimo dato buono e si riprova al giro
+				   successivo: meglio un prezzo di un'ora fa che un
+				   riquadro vuoto */
+				if (!prezziEnergia) ultimoScaricoEnergia = 0;
+			}
+		}
+
+		disegnaEnergia(prezziEnergia);
+	};
+
+	cicloEnergia();
+	setInterval(cicloEnergia, 60 * 1000);
 }
 
 /* ==========================================================
@@ -704,6 +926,31 @@ let config = {
 				maxTitleLength: 250,
 				wrapEvents: true,
 				maxTitleLines: 4
+			}
+		},
+
+		/* ======================================================
+		   COSTO ENERGIA (colonna destra, tra NOTE e SETTEMBRE)
+		   Il riquadro e' vuoto: lo riempie il blocco "COSTO
+		   DELL'ENERGIA" in cima a questo file, che scarica i
+		   prezzi e disegna dentro .energy-panel.
+		   La posizione nella colonna dipende dall'ordine in
+		   questo array: spostando il blocco piu' su o piu' giu'
+		   si sposta anche il riquadro.
+		   ====================================================== */
+		{
+			module: "helloworld",
+			position: "top_right",
+			classes: "energy-box",
+			config: {
+				text: `
+					<div class="energy-block">
+						<div class="energy-header">COSTO ENERGIA OGGI</div>
+						<div class="energy-panel">
+							<div class="energy-avviso">Caricamento in corso</div>
+						</div>
+					</div>
+				`
 			}
 		},
 
