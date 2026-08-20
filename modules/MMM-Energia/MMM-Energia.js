@@ -109,6 +109,26 @@ Module.register("MMM-Energia", {
 			   dell'indicatore dell'app. */
 			fondoScala: 3000,
 
+			/* SOGLIE DI COLORE DEL CONSUMO
+			   Il numero grande cambia colore secondo quanto stai
+			   assorbendo, cosi' il livello si coglie prima ancora
+			   di leggere la cifra.
+			   Sotto zero e' verde: non stai consumando, stai
+			   immettendo, ed e' lo stesso verde della fascia oraria
+			   migliore perche' dice la stessa cosa - questo e' un
+			   buon momento.
+			   Ogni valore di "fino" e' il limite SUPERIORE in watt,
+			   e l'elenco va letto dall'alto: si prende la prima
+			   soglia non superata. Per cambiare i livelli basta
+			   toccare questi numeri. */
+			soglie: [
+				{ fino: 500, classe: "energy-livello-giallo" },
+				{ fino: 1000, classe: "energy-livello-arancio" },
+				{ fino: 3000, classe: "energy-livello-rosso" }
+			],
+			classeImmissione: "energy-livello-verde",
+			classeOltre: "energy-livello-viola",
+
 			/* Il cloud Shelly aggiorna lo stato ogni mezzo minuto
 			   circa: chiedere piu' spesso non darebbe un dato piu'
 			   fresco. */
@@ -393,6 +413,17 @@ Module.register("MMM-Energia", {
 		};
 	},
 
+	/* Classe di colore per la potenza assorbita. Le soglie
+	   arrivano dal config: cambiarle non richiede di toccare
+	   questo codice. */
+	livello: function (watt) {
+		const s = this.config.shelly;
+		if (watt < 0) return s.classeImmissione;
+
+		const trovata = (s.soglie || []).find((x) => watt <= x.fino);
+		return trovata ? trovata.classe : s.classeOltre;
+	},
+
 	/* ------------------------------------------------------
 	   DISEGNO
 	   Il pannello e' diviso in due colonne: a sinistra il costo
@@ -452,9 +483,17 @@ Module.register("MMM-Energia", {
 			: "—";
 		col.appendChild(titolo);
 
+		/* La riga sotto dice COSA sia quell'orario. Sta qui e non
+		   sopra il numero grande per non spendere altezza, e
+		   perche' cosi' la colonna assume la stessa forma di
+		   quella accanto: numero grande, riga che lo spiega,
+		   barra, scala, nota. E' quella simmetria a tenere
+		   allineate le due colonne senza regole di allineamento. */
 		const sotto = document.createElement("div");
 		sotto.className = "energy-best-avg";
-		sotto.textContent = migliore ? `${this.euro(migliore.media)} €/kWh` : "";
+		sotto.textContent = migliore
+			? `fascia migliore · ${this.euro(migliore.media)} €/kWh`
+			: "";
 		col.appendChild(sotto);
 
 		const barra = document.createElement("div");
@@ -506,7 +545,7 @@ Module.register("MMM-Energia", {
 		const lettura = this.potenza(consumo);
 
 		const numero = document.createElement("div");
-		numero.className = "energy-now";
+		numero.className = `energy-now ${this.livello(consumo)}`;
 		numero.textContent = lettura.numero;
 
 		const unita = document.createElement("span");
@@ -515,15 +554,29 @@ Module.register("MMM-Energia", {
 		numero.appendChild(unita);
 		col.appendChild(numero);
 
-		/* L'etichetta dice sempre COSA e' il numero. Lo stato del
-		   dispositivo e' un'altra cosa e va detto altrove: nella
-		   versione precedente "non in linea" prendeva il posto di
-		   "in rete adesso" e faceva sparire l'informazione piu'
-		   utile delle due. */
-		const etichetta = document.createElement("div");
-		etichetta.className = "energy-now-label";
-		etichetta.textContent = immissione ? "in rete adesso" : "consumo adesso";
-		col.appendChild(etichetta);
+		/* Sotto il numero grande va la PRODUZIONE, nello stesso
+		   posto in cui la colonna accanto scrive il prezzo della
+		   fascia migliore. Prima qui c'era un'etichetta che
+		   ripeteva a parole cio' che il segno gia' diceva
+		   ("in rete adesso" quando il numero era negativo): una
+		   riga spesa per non aggiungere nulla, mentre la
+		   produzione era relegata in fondo e le due colonne
+		   risultavano sfalsate.
+		   Il colore del numero dice ora quello che diceva
+		   l'etichetta, e lo dice prima che tu abbia letto la
+		   cifra. */
+		const sotto = document.createElement("div");
+		sotto.className = "energy-now-label";
+
+		if (this.potenze.produzione !== null) {
+			const p = this.potenza(this.potenze.produzione);
+			sotto.textContent = `Produzione ${p.numero} ${p.unita}`;
+		} else {
+			/* senza la seconda pinza la produzione non si sa, e
+			   allora torna utile dire cosa sia il numero grande */
+			sotto.textContent = immissione ? "in rete adesso" : "consumo adesso";
+		}
+		col.appendChild(sotto);
 
 		/* La barra rappresenta sempre un valore positivo: in
 		   immissione mostra quanto stai immettendo. */
@@ -532,8 +585,11 @@ Module.register("MMM-Energia", {
 
 		const misuratore = document.createElement("div");
 		misuratore.className = "energy-meter";
+		/* La barra prende lo stesso colore del numero: se la cifra
+		   diventasse rossa e la barra restasse verde, i due segni
+		   direbbero cose diverse sulla stessa grandezza. */
 		const riempimento = document.createElement("div");
-		riempimento.className = "energy-meter-fill" + (immissione ? " energy-meter-export" : "");
+		riempimento.className = `energy-meter-fill ${this.livello(consumo)}`;
 		riempimento.style.width = `${quota}%`;
 		misuratore.appendChild(riempimento);
 		col.appendChild(misuratore);
@@ -558,16 +614,10 @@ Module.register("MMM-Energia", {
 		   te ne accorgi guardandolo, senza dover dedurre nulla.
 		   Sta sulla stessa riga della produzione per non costare
 		   altezza. */
-		if (this.potenze.produzione !== null) {
-			const p = this.potenza(this.potenze.produzione);
-			col.appendChild(this.nota(`Produzione ${p.numero} ${p.unita}`));
-		}
-
 		/* ORARIO DELL'ULTIMA MISURA
-		   Su una riga propria e allineato a destra: non e' un dato
-		   dell'impianto ma un giudizio su quanto e' affidabile il
-		   numero qui sopra, quindi si stacca dal resto invece di
-		   accodarsi alla produzione.
+		   Ultima riga della colonna, alla stessa quota di
+		   "Media ... €/kWh" a sinistra: entrambe sono note a pie'
+		   di colonna, e stanno bene sulla stessa riga.
 		   Si mostra sempre, non solo quando il dato e' vecchio: un
 		   numero fermo da ore senza segnalazione e' lo scenario
 		   peggiore, e l'avviso dipende da un campo che il cloud
