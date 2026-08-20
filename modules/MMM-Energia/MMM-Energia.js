@@ -205,16 +205,21 @@ Module.register("MMM-Energia", {
 		   finale il browser la interpreterebbe come ora locale e
 		   d'estate il dato sembrerebbe vecchio di due ore. */
 		let minuti = null;
+		let istante = null;
 		if (typeof stato._updated === "string") {
 			const iso = stato._updated.trim().replace(" ", "T") + "Z";
-			const istante = Date.parse(iso);
-			if (!Number.isNaN(istante)) minuti = (Date.now() - istante) / 60000;
+			const t = Date.parse(iso);
+			if (!Number.isNaN(t)) {
+				istante = t;
+				minuti = (Date.now() - t) / 60000;
+			}
 		}
 
 		return {
 			consumo: canale(this.config.shelly.canaleConsumo, this.config.shelly.invertiConsumo),
 			produzione: canale(this.config.shelly.canaleProduzione, this.config.shelly.invertiProduzione),
 			minuti: minuti,
+			istante: istante,
 			vecchio: minuti !== null && minuti > this.config.shelly.minutiFreschezza
 		};
 	},
@@ -530,21 +535,39 @@ Module.register("MMM-Energia", {
 		scala.appendChild(max);
 		col.appendChild(scala);
 
+		/* ORARIO DELLA MISURA, SEMPRE VISIBILE
+		   Prima compariva solo quando il dato superava la soglia,
+		   ma quell'avviso dipende dal campo _updated: se il cloud
+		   non lo mandasse, o lo mandasse in un formato diverso,
+		   l'eta' risulterebbe sconosciuta e non si direbbe nulla.
+		   Un numero fermo da ore senza segnalazione e' lo scenario
+		   peggiore, quindi l'orario si mostra sempre: se e' fermo
+		   te ne accorgi guardandolo, senza dover dedurre nulla.
+		   Sta sulla stessa riga della produzione per non costare
+		   altezza. */
+		const pezzi = [];
+
 		if (this.potenze.produzione !== null) {
 			const p = this.potenza(this.potenze.produzione);
-			col.appendChild(this.nota(`Produzione ${p.numero} ${p.unita}`));
+			pezzi.push(`Produzione ${p.numero} ${p.unita}`);
 		}
 
-		/* Il dato vecchio non si nasconde e non si butta: si
-		   mostra dicendo di quando e'. Un numero fermo da ore
-		   spacciato per attuale sarebbe peggio di nessun numero. */
-		if (this.potenze.vecchio) {
-			const m = Math.round(this.potenze.minuti);
-			const quando = m < 120 ? `${m} min` : `${Math.round(m / 60)} ore`;
-			const riga = this.nota(`Misura di ${quando} fa`);
-			riga.classList.add("energy-note-vecchia");
-			col.appendChild(riga);
+		if (this.potenze.istante !== null) {
+			pezzi.push(new Date(this.potenze.istante).toLocaleTimeString("it-IT", {
+				hour: "2-digit",
+				minute: "2-digit"
+			}));
+		} else {
+			/* il cloud non ha detto quando ha letto: e' esso stesso
+			   un'informazione, e va scritta */
+			pezzi.push("orario ignoto");
 		}
+
+		const riga = this.nota(pezzi.join(" · "));
+		if (this.potenze.vecchio || this.potenze.istante === null) {
+			riga.classList.add("energy-note-vecchia");
+		}
+		col.appendChild(riga);
 
 		return col;
 	},
