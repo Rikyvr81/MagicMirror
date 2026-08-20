@@ -1395,15 +1395,27 @@ body,
   color: #ffffff !important;
 }
 
-/* Stessa intestazione di TO DO LIST, NOTE e SETTEMBRE 2026 */
-.energy-header {
+/* INTESTAZIONE DI COLONNA
+   Non c'e' piu' un titolo unico sopra le due misure: ognuna
+   porta il proprio, con la propria riga. Sono due grandezze
+   diverse - un piano della giornata e una lettura istantanea -
+   e un titolo solo le faceva sembrare due parti della stessa
+   cosa.
+
+   Stesso corpo di TO DO LIST, NOTE e SETTEMBRE 2026, ma con
+   spaziatura fra le lettere dimezzata: "COSTO ORARIO ENERGIA"
+   e' lungo e in mezza colonna ogni decimo di millimetro conta.
+   Se dovesse comunque andare a capo, scendi a 16px qui: e'
+   preferibile a un titolo su due righe. */
+.energy-col-header {
   font-family: var(--font-primary) !important;
   font-size: 18px !important;
   font-weight: 400 !important;
   line-height: 22px !important;
-  letter-spacing: 1px !important;
+  letter-spacing: .5px !important;
   text-transform: uppercase !important;
   text-align: center !important;
+  white-space: nowrap !important;
   color: rgba(255, 255, 255, .90) !important;
   border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
   padding: 0 0 8px 0 !important;
@@ -1563,9 +1575,19 @@ body,
   white-space: nowrap !important;
 }
 
-/* Riga dell'eta' della misura: compare solo quando il dato e'
-   piu' vecchio della soglia. Colore d'avviso perche' dice che
-   quel numero non e' piu' attuale. */
+/* Riga dell'orario dell'ultima misura: allineata a destra e
+   staccata dal resto, perche' non e' un dato dell'impianto ma
+   un giudizio su quanto e' affidabile il numero qui sopra.
+   Va a capo se serve: la dicitura per esteso non entra sempre
+   in mezza colonna, e troncarla la renderebbe inutile. */
+.energy-note-tempo {
+  text-align: right !important;
+  white-space: normal !important;
+  margin-top: 6px !important;
+}
+
+/* Misura piu' vecchia della soglia, oppure di eta' ignota:
+   colore d'avviso, perche' quel numero non e' piu' attuale. */
 .energy-note-vecchia {
   color: var(--energy-media) !important;
 }

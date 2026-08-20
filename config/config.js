@@ -707,7 +707,10 @@ let config = {
 				zona: "IT-North",     // zona di offerta del nord Italia (maiuscole comprese: il servizio le distingue)
 				giorno: 0,            // 0 = oggi, 1 = domani (solo dopo le 13)
 				finestra: 3,          // durata in ore della fascia migliore
-				titolo: "ENERGIA",
+				/* Un titolo per colonna, ciascuno con la propria
+				   riga: sono due grandezze diverse. */
+				titoloCosto: "COSTO ORARIO ENERGIA",
+				titoloConsumo: "CONSUMO ATTUALE",
 
 				/* ----------------------------------------------
 				   SHELLY EM
