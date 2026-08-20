@@ -1370,6 +1370,20 @@ body,
   --energy-media: #F0A32E;
   --energy-alta: #E45C6B;
 
+  /* LIVELLI DI CONSUMO
+     Il verde e' lo stesso della fascia oraria migliore, non un
+     verde qualsiasi: sotto zero stai immettendo, ed e' un buon
+     momento esattamente come lo sono le ore economiche.
+     Giallo e arancio sono distinti a sufficienza da leggersi
+     anche di sfuggita; il viola marca lo sconfinamento oltre il
+     fondo scala, dove la barra e' comunque piena e solo il
+     colore puo' dire che sei fuori misura. */
+  --energy-livello-verde: var(--energy-bassa);
+  --energy-livello-giallo: #F2D048;
+  --energy-livello-arancio: #F0A32E;
+  --energy-livello-rosso: #E45C6B;
+  --energy-livello-viola: #B57BE0;
+
   /* Stacco dalle NOTE. Volutamente piu' stretto di
      --section-gap (26px): qui lo spazio verticale e' contato.
      E' la prima leva da usare se il riquadro tornasse a
@@ -1473,9 +1487,19 @@ body,
   color: var(--energy-bassa) !important;
 }
 
+/* Il numero prende il colore dal proprio livello: la classe la
+   assegna il modulo secondo le soglie scritte nel config.
+   Il bianco resta solo come ripiego, se per qualche motivo la
+   classe non arrivasse. */
 .energy-now {
   color: #ffffff !important;
 }
+
+.energy-now.energy-livello-verde   { color: var(--energy-livello-verde) !important; }
+.energy-now.energy-livello-giallo  { color: var(--energy-livello-giallo) !important; }
+.energy-now.energy-livello-arancio { color: var(--energy-livello-arancio) !important; }
+.energy-now.energy-livello-rosso   { color: var(--energy-livello-rosso) !important; }
+.energy-now.energy-livello-viola   { color: var(--energy-livello-viola) !important; }
 
 /* L'unita' di misura non compete col numero */
 .energy-now-unit {
@@ -1485,10 +1509,15 @@ body,
 }
 
 /* Riga di chiarimento sotto ciascun numero grande */
+/* Riga che spiega il numero grande, in entrambe le colonne:
+   a sinistra "fascia migliore · 0,156 €/kWh", a destra
+   "Produzione 891 W". Un punto in meno rispetto ai 15px di
+   prima, perche' la dicitura a sinistra e' lunga e in mezza
+   colonna andrebbe a capo, sfasando le due colonne. */
 .energy-best-avg,
 .energy-now-label {
   font-family: var(--font-primary) !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
   color: rgba(255, 255, 255, .70) !important;
   margin: 2px 0 8px 0 !important;
   white-space: nowrap !important;
@@ -1549,12 +1578,14 @@ body,
   background: var(--energy-bassa) !important;
 }
 
-/* Immissione in rete: il fotovoltaico produce piu' di quanto la
-   casa consuma e il surplus esce. E' una condizione diversa, non
-   un consumo piccolo, quindi cambia colore. */
-.energy-meter-fill.energy-meter-export {
-  background: #4FB8FF !important;
-}
+/* La barra prende lo stesso colore del numero. Se la cifra
+   diventasse rossa e la barra restasse verde, i due segni
+   direbbero cose diverse sulla stessa grandezza. */
+.energy-meter-fill.energy-livello-verde   { background: var(--energy-livello-verde) !important; }
+.energy-meter-fill.energy-livello-giallo  { background: var(--energy-livello-giallo) !important; }
+.energy-meter-fill.energy-livello-arancio { background: var(--energy-livello-arancio) !important; }
+.energy-meter-fill.energy-livello-rosso   { background: var(--energy-livello-rosso) !important; }
+.energy-meter-fill.energy-livello-viola   { background: var(--energy-livello-viola) !important; }
 
 /* Scala sotto le due barre: ore a sinistra, watt a destra */
 .energy-ticks {
@@ -1575,15 +1606,15 @@ body,
   white-space: nowrap !important;
 }
 
-/* Riga dell'orario dell'ultima misura: allineata a destra e
-   staccata dal resto, perche' non e' un dato dell'impianto ma
-   un giudizio su quanto e' affidabile il numero qui sopra.
-   Va a capo se serve: la dicitura per esteso non entra sempre
-   in mezza colonna, e troncarla la renderebbe inutile. */
+/* Riga dell'orario dell'ultima misura: ultima della colonna,
+   alla stessa quota di "Media ... €/kWh" a sinistra. Era
+   allineata a destra e staccata: si notava come un corpo
+   estraneo, mentre e' semplicemente la nota a pie' di colonna,
+   gemella di quella accanto.
+   Va a capo se serve: la dicitura per esteso non entra sempre in
+   mezza colonna, e troncarla la renderebbe inutile. */
 .energy-note-tempo {
-  text-align: right !important;
   white-space: normal !important;
-  margin-top: 6px !important;
 }
 
 /* Misura piu' vecchia della soglia, oppure di eta' ignota:
