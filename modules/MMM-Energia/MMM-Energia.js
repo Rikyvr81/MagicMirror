@@ -59,7 +59,10 @@ Module.register("MMM-Energia", {
 		/* Dopo un errore si riprova prima, senza aspettare l'ora */
 		riprova: 5 * 60 * 1000,
 
-		titolo: "ENERGIA",
+		/* Un titolo per colonna: le due misure non sono due parti
+		   della stessa cosa e non condividono piu' un'unica riga. */
+		titoloCosto: "COSTO ORARIO ENERGIA",
+		titoloConsumo: "CONSUMO ATTUALE",
 
 		/* ------------------------------------------------------
 		   SHELLY
@@ -399,6 +402,14 @@ Module.register("MMM-Energia", {
 	   resta comunque a video.
 	   ------------------------------------------------------ */
 
+	/* intestazione della singola colonna, con la propria riga */
+	intestazione: function (testo) {
+		const e = document.createElement("div");
+		e.className = "energy-col-header";
+		e.textContent = testo;
+		return e;
+	},
+
 	/* riga piccola sotto ciascuna colonna */
 	nota: function (testo) {
 		const e = document.createElement("div");
@@ -418,6 +429,7 @@ Module.register("MMM-Energia", {
 	colonnaCosto: function () {
 		const col = document.createElement("div");
 		col.className = "energy-col energy-col-costo";
+		col.appendChild(this.intestazione(this.config.titoloCosto));
 
 		if (!this.prezzi) {
 			col.appendChild(this.avviso(
@@ -471,6 +483,7 @@ Module.register("MMM-Energia", {
 	colonnaConsumo: function () {
 		const col = document.createElement("div");
 		col.className = "energy-col energy-col-consumo";
+		col.appendChild(this.intestazione(this.config.titoloConsumo));
 
 		if (!this.potenze) {
 			col.appendChild(this.avviso(
@@ -545,29 +558,34 @@ Module.register("MMM-Energia", {
 		   te ne accorgi guardandolo, senza dover dedurre nulla.
 		   Sta sulla stessa riga della produzione per non costare
 		   altezza. */
-		const pezzi = [];
-
 		if (this.potenze.produzione !== null) {
 			const p = this.potenza(this.potenze.produzione);
-			pezzi.push(`Produzione ${p.numero} ${p.unita}`);
+			col.appendChild(this.nota(`Produzione ${p.numero} ${p.unita}`));
 		}
 
-		if (this.potenze.istante !== null) {
-			pezzi.push(new Date(this.potenze.istante).toLocaleTimeString("it-IT", {
-				hour: "2-digit",
-				minute: "2-digit"
-			}));
-		} else {
-			/* il cloud non ha detto quando ha letto: e' esso stesso
-			   un'informazione, e va scritta */
-			pezzi.push("orario ignoto");
-		}
+		/* ORARIO DELL'ULTIMA MISURA
+		   Su una riga propria e allineato a destra: non e' un dato
+		   dell'impianto ma un giudizio su quanto e' affidabile il
+		   numero qui sopra, quindi si stacca dal resto invece di
+		   accodarsi alla produzione.
+		   Si mostra sempre, non solo quando il dato e' vecchio: un
+		   numero fermo da ore senza segnalazione e' lo scenario
+		   peggiore, e l'avviso dipende da un campo che il cloud
+		   potrebbe non mandare. Cosi' se ne' l'orario ne' il numero
+		   si muovono, te ne accorgi guardando. */
+		const orario = document.createElement("div");
+		orario.className = "energy-note energy-note-tempo";
+		orario.textContent = this.potenze.istante !== null
+			? `ultimo aggiornamento alle ${new Date(this.potenze.istante).toLocaleTimeString("it-IT", {
+					hour: "2-digit",
+					minute: "2-digit"
+				})}`
+			: "orario dell'ultima misura non disponibile";
 
-		const riga = this.nota(pezzi.join(" · "));
 		if (this.potenze.vecchio || this.potenze.istante === null) {
-			riga.classList.add("energy-note-vecchia");
+			orario.classList.add("energy-note-vecchia");
 		}
-		col.appendChild(riga);
+		col.appendChild(orario);
 
 		return col;
 	},
@@ -576,11 +594,8 @@ Module.register("MMM-Energia", {
 		const radice = document.createElement("div");
 		radice.className = "energy-block";
 
-		const intestazione = document.createElement("div");
-		intestazione.className = "energy-header";
-		intestazione.textContent = this.config.titolo;
-		radice.appendChild(intestazione);
-
+		/* Nessuna intestazione unica: ogni colonna porta la
+		   propria, cosi' titolo e contenuto restano attaccati. */
 		const pannello = document.createElement("div");
 		pannello.className = "energy-panel";
 		pannello.appendChild(this.colonnaCosto());
