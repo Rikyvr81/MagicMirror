@@ -104,30 +104,42 @@ Module.register("MMM-Energia", {
 			   sembrerebbe attuale. */
 			minutiFreschezza: 5,
 
-			/* Fondo scala della barra, in watt: e' il valore a cui
-			   la barra risulta piena. 3000 corrisponde ai 3 kW
-			   dell'indicatore dell'app. */
-			fondoScala: 3000,
+			/* ESTREMI DELLA SCALA, in watt.
+			   Il minimo e' negativo perche' con il fotovoltaico il
+			   consumo scende sotto zero: la barra non si riempie
+			   piu' da sinistra, ma parte dallo zero e cresce verso
+			   destra se assorbi, verso sinistra se immetti.
+			   Lo zero non sta quindi piu' a inizio barra ma a un
+			   sesto della sua lunghezza, e viene marcato con un
+			   trattino bianco: senza quel riferimento non si
+			   capirebbe da che parte ci si trova. */
+			scalaMin: -1000,
+			scalaMax: 5000,
 
 			/* SOGLIE DI COLORE DEL CONSUMO
-			   Il numero grande cambia colore secondo quanto stai
-			   assorbendo, cosi' il livello si coglie prima ancora
-			   di leggere la cifra.
-			   Sotto zero e' verde: non stai consumando, stai
-			   immettendo, ed e' lo stesso verde della fascia oraria
-			   migliore perche' dice la stessa cosa - questo e' un
-			   buon momento.
+			   Il numero grande, l'unita' di misura e la barra
+			   cambiano colore secondo quanto stai assorbendo, cosi'
+			   il livello si coglie prima ancora di leggere la
+			   cifra.
+			   Sotto zero e' BLU e non verde: il verde e' gia' il
+			   colore della fascia oraria migriore nella colonna
+			   accanto, e due segni identici che significano cose
+			   diverse a seconda di dove guardi sono una trappola.
+			   Il blu e' inoltre il colore convenzionale
+			   dell'immissione in rete.
 			   Ogni valore di "fino" e' il limite SUPERIORE in watt,
 			   e l'elenco va letto dall'alto: si prende la prima
 			   soglia non superata. Per cambiare i livelli basta
-			   toccare questi numeri. */
+			   toccare questi numeri, ma ricordati di allineare le
+			   tappe del gradiente in custom.css: sono le stesse
+			   soglie, espresse in percentuale della scala. */
 			soglie: [
-				{ fino: 500, classe: "energy-livello-giallo" },
-				{ fino: 1000, classe: "energy-livello-arancio" },
-				{ fino: 3000, classe: "energy-livello-rosso" }
+				{ fino: 500, classe: "energy-livello-verde" },
+				{ fino: 1000, classe: "energy-livello-giallo" },
+				{ fino: 3000, classe: "energy-livello-arancio" }
 			],
-			classeImmissione: "energy-livello-verde",
-			classeOltre: "energy-livello-viola",
+			classeImmissione: "energy-livello-blu",
+			classeOltre: "energy-livello-rosso",
 
 			/* Il cloud Shelly aggiorna lo stato ogni mezzo minuto
 			   circa: chiedere piu' spesso non darebbe un dato piu'
@@ -594,10 +606,21 @@ Module.register("MMM-Energia", {
 		}
 		col.appendChild(sotto);
 
-		/* La barra rappresenta sempre un valore positivo: in
-		   immissione mostra quanto stai immettendo. */
-		const fondo = this.config.shelly.fondoScala || 3000;
-		const quota = Math.min(100, (Math.abs(consumo) / fondo) * 100);
+		/* POSIZIONI SULLA SCALA
+		   La barra copre l'intervallo da scalaMin a scalaMax, e
+		   ogni valore diventa una percentuale della sua lunghezza.
+		   Il pieno non parte dal bordo sinistro ma dallo zero, e
+		   si estende verso destra o verso sinistra a seconda del
+		   segno. */
+		const min = this.config.shelly.scalaMin;
+		const max = this.config.shelly.scalaMax;
+		const posizione = (w) =>
+			Math.max(0, Math.min(100, ((w - min) / (max - min)) * 100));
+
+		const posZero = posizione(0);
+		const posOra = posizione(consumo);
+		const inizio = Math.min(posZero, posOra);
+		const fine = Math.max(posZero, posOra);
 
 		const misuratore = document.createElement("div");
 		misuratore.className = "energy-meter";
@@ -613,22 +636,43 @@ Module.register("MMM-Energia", {
 		   In immissione la barra e' invece tutta verde: li' non
 		   siamo su quella scala, siamo dall'altra parte dello
 		   zero. */
-		misuratore.classList.add(immissione ? "energy-meter-export" : "energy-meter-scala");
+		misuratore.classList.add("energy-meter-scala");
 
-		const maschera = document.createElement("div");
-		maschera.className = "energy-meter-mask";
-		maschera.style.width = `${100 - quota}%`;
-		misuratore.appendChild(maschera);
+		/* Due maschere, una per lato: coprono la parte di scala
+		   non raggiunta e lasciano scoperto solo il tratto fra lo
+		   zero e il valore attuale. Sotto resta il gradiente, che
+		   e' dipinto sull'intera scala, quindi il colore che vedi
+		   e' quello del punto in cui ti trovi e trascolora invece
+		   di scattare da una soglia all'altra. */
+		const sinistra = document.createElement("div");
+		sinistra.className = "energy-meter-mask energy-meter-mask-left";
+		sinistra.style.width = `${inizio}%`;
+		misuratore.appendChild(sinistra);
+
+		const destra = document.createElement("div");
+		destra.className = "energy-meter-mask energy-meter-mask-right";
+		destra.style.width = `${100 - fine}%`;
+		misuratore.appendChild(destra);
+
+		/* Trattino dello zero, sopra tutto: e' il riferimento che
+		   rende leggibile il resto. */
+		const zero = document.createElement("div");
+		zero.className = "energy-meter-zero";
+		zero.style.left = `${posZero}%`;
+		misuratore.appendChild(zero);
+
 		col.appendChild(misuratore);
 
 		const scala = document.createElement("div");
 		scala.className = "energy-ticks";
-		const zero = document.createElement("span");
-		zero.textContent = "0";
-		const max = document.createElement("span");
-		max.textContent = `${this.potenza(fondo).numero} ${this.potenza(fondo).unita}`;
-		scala.appendChild(zero);
-		scala.appendChild(max);
+		const etichetta = (w) => {
+			const p = this.potenza(w);
+			const e = document.createElement("span");
+			e.textContent = `${p.numero} ${p.unita}`;
+			return e;
+		};
+		scala.appendChild(etichetta(min));
+		scala.appendChild(etichetta(max));
 		col.appendChild(scala);
 
 		/* ORARIO DELLA MISURA, SEMPRE VISIBILE
