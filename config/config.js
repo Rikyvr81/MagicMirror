@@ -746,11 +746,16 @@ let config = {
 					invertiConsumo: false,
 					invertiProduzione: true,
 
-					/* Valore a cui la barra risulta piena, in watt.
-					   Se lo cambi, ricalcola anche le percentuali
-					   del gradiente in custom.css: sono legate a
-					   questo numero. */
-					fondoScala: 5000
+					/* Estremi della scala della barra, in watt. Il
+					   minimo e' negativo perche' col fotovoltaico
+					   il consumo scende sotto zero: la barra parte
+					   dallo zero e cresce a destra se assorbi, a
+					   sinistra se immetti.
+					   Se cambi questi due numeri, ricalcola anche
+					   le tappe del gradiente in custom.css: sono
+					   percentuali di questa scala. */
+					scalaMin: -1000,
+					scalaMax: 5000
 				}
 			}
 		},

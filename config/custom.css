@@ -1371,13 +1371,16 @@ body,
   --energy-alta: #E45C6B;
 
   /* LIVELLI DI CONSUMO
-     Il verde e' lo stesso della fascia oraria migliore, non un
-     verde qualsiasi: sotto zero stai immettendo, ed e' un buon
-     momento esattamente come lo sono le ore economiche.
-     Giallo e arancio sono distinti a sufficienza da leggersi
-     anche di sfuggita; il viola marca lo sconfinamento oltre il
-     fondo scala, dove la barra e' comunque piena e solo il
-     colore puo' dire che sei fuori misura. */
+     Sotto zero il blu, colore convenzionale dell'immissione in
+     rete. Non il verde: quello e' gia' il colore della fascia
+     oraria migliore nella colonna accanto, e due segni identici
+     che significano cose diverse a seconda di dove guardi sono
+     una trappola.
+     Da zero in su la scala sale per gradi - verde, giallo,
+     arancio, rosso - e il rosso copre tutto cio' che supera i
+     3 kW, dove la barra e' ormai quasi piena e solo il colore
+     puo' dire quanto sei fuori misura. */
+  --energy-livello-blu: #4FB8FF;
   --energy-livello-verde: var(--energy-bassa);
   --energy-livello-giallo: #F2D048;
   --energy-livello-arancio: #F0A32E;
@@ -1518,6 +1521,7 @@ body,
   color: #ffffff !important;
 }
 
+.energy-now.energy-livello-blu     { color: var(--energy-livello-blu) !important; }
 .energy-now.energy-livello-verde   { color: var(--energy-livello-verde) !important; }
 .energy-now.energy-livello-giallo  { color: var(--energy-livello-giallo) !important; }
 .energy-now.energy-livello-arancio { color: var(--energy-livello-arancio) !important; }
@@ -1600,19 +1604,29 @@ body,
    BARRA DEL CONSUMO: UN GRADIENTE MASCHERATO
 
    Il fondo della barra porta l'INTERA scala dei colori, sfumata
-   da un capo all'altro. Sopra ci sta una maschera che copre la
-   parte non raggiunta: quel che resta scoperto e' quindi
-   colorato secondo il punto della scala in cui ti trovi, e le
+   da un capo all'altro. Sopra ci stanno due maschere grigie, una
+   per lato, che coprono la parte non raggiunta: quel che resta
+   scoperto e' il tratto fra lo zero e il valore attuale, gia'
+   colorato secondo il punto della scala in cui si trova. Le
    tinte trascolorano l'una nell'altra invece di scattare al
    superamento di una soglia.
 
-   Le percentuali corrispondono ai watt sul fondo scala di 5 kW:
-     500 W  = 10%   passaggio giallo -> arancio
-    1000 W  = 20%   passaggio arancio -> rosso
-    3000 W  = 60%   passaggio rosso -> viola
-   Se cambi fondoScala nel config, questi tre numeri vanno
-   ricalcolati, altrimenti i colori non corrispondono piu' alle
-   soglie annunciate.
+   LE TAPPE DEL GRADIENTE
+   La scala va da -1 kW a +5 kW, quindi sei kilowatt in tutto, e
+   ogni valore in watt diventa (w + 1000) / 6000.
+   I colori pieni cadono al CENTRO di ciascuna fascia, non ai
+   suoi estremi: cosi' il passaggio da una all'altra e' una
+   sfumatura e non uno scalino, e in mezzo a una fascia il colore
+   e' inequivocabile.
+     -500 W   =  8.3%   cuore del blu      (immissione)
+        0 W   = 16.7%   lo zero
+      250 W   = 20.8%   cuore del verde    (0 - 500)
+      750 W   = 29.2%   cuore del giallo   (500 - 1000)
+     2000 W   = 50.0%   cuore dell'arancio (1000 - 3000)
+     4000 W   = 83.3%   cuore del rosso    (oltre 3000)
+   Se cambi scalaMin, scalaMax o le soglie nel config, questi
+   numeri vanno ricalcolati o i colori smettono di corrispondere
+   ai valori annunciati.
    ---------------------------------------------------------- */
 
 .energy-meter {
@@ -1626,30 +1640,43 @@ body,
 .energy-meter.energy-meter-scala {
   background: linear-gradient(
     90deg,
-    var(--energy-livello-giallo) 0%,
-    var(--energy-livello-arancio) 10%,
-    var(--energy-livello-rosso) 20%,
-    var(--energy-livello-rosso) 40%,
-    var(--energy-livello-viola) 60%,
-    var(--energy-livello-viola) 100%
+    var(--energy-livello-blu) 0%,
+    var(--energy-livello-blu) 8.3%,
+    var(--energy-livello-verde) 20.8%,
+    var(--energy-livello-giallo) 29.2%,
+    var(--energy-livello-arancio) 50%,
+    var(--energy-livello-rosso) 83.3%,
+    var(--energy-livello-rosso) 100%
   ) !important;
 }
 
-/* Immissione in rete: non siamo su quella scala, siamo
-   dall'altra parte dello zero. Tutta verde, come la fascia
-   oraria migliore. */
-.energy-meter.energy-meter-export {
-  background: var(--energy-livello-verde) !important;
-}
-
-/* La maschera copre da destra la parte non raggiunta. Il suo
-   colore e' quello del fondo neutro della barra. */
+/* Le due maschere coprono la scala non raggiunta, ciascuna dal
+   proprio lato. Il loro colore e' il grigio di fondo della
+   barra: a consumo nullo restano attaccate e la barra si vede
+   tutta grigia. */
 .energy-meter-mask {
   position: absolute !important;
   top: 0 !important;
-  right: 0 !important;
   bottom: 0 !important;
   background: var(--energy-meter-bg) !important;
+}
+
+.energy-meter-mask-left { left: 0 !important; }
+.energy-meter-mask-right { right: 0 !important; }
+
+/* Trattino dello zero. Sta sopra le maschere, perche' senza un
+   riferimento visibile non si distinguerebbe un piccolo consumo
+   da una piccola immissione: sono due tratti corti a sinistra e
+   a destra dello stesso punto.
+   Il margine negativo lo centra sulla propria posizione invece
+   di appoggiarcelo a destra. */
+.energy-meter-zero {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 2px !important;
+  margin-left: -1px !important;
+  background: rgba(255, 255, 255, .85) !important;
 }
 
 /* Scala sotto le due barre: ore a sinistra, watt a destra */
