@@ -137,6 +137,22 @@ Module.register("MMM-Energia", {
 	},
 
 	start: function () {
+		/* FUSIONE DELLE IMPOSTAZIONI SHELLY
+		   MagicMirror fonde config e defaults in modo
+		   SUPERFICIALE: il blocco "shelly" scritto nel config.js
+		   sostituisce per intero quello dei predefiniti invece di
+		   integrarlo. Tutto cio' che non e' ripetuto nel config
+		   risulta quindi indefinito.
+		   Non e' un dettaglio teorico: e' costato un intervallo di
+		   aggiornamento indefinito, e quindi un setInterval che
+		   ripartiva senza sosta inondando il cloud di richieste.
+		   Qui i due livelli si fondono a mano, una volta sola. */
+		this.config.shelly = Object.assign(
+			{},
+			this.defaults.shelly,
+			this.config.shelly || {}
+		);
+
 		this.prezzi = null;        // 24 valori in euro/kWh, oppure null
 		this.errore = null;        // messaggio dell'ultimo tentativo fallito
 		this.potenze = null;       // { consumo, produzione } in watt
@@ -492,7 +508,7 @@ Module.register("MMM-Energia", {
 		const sotto = document.createElement("div");
 		sotto.className = "energy-best-avg";
 		sotto.textContent = migliore
-			? `fascia migliore · ${this.euro(migliore.media)} €/kWh`
+			? `fascia migliore: ${this.euro(migliore.media)} €/kWh di media`
 			: "";
 		col.appendChild(sotto);
 
@@ -585,13 +601,24 @@ Module.register("MMM-Energia", {
 
 		const misuratore = document.createElement("div");
 		misuratore.className = "energy-meter";
-		/* La barra prende lo stesso colore del numero: se la cifra
-		   diventasse rossa e la barra restasse verde, i due segni
-		   direbbero cose diverse sulla stessa grandezza. */
-		const riempimento = document.createElement("div");
-		riempimento.className = `energy-meter-fill ${this.livello(consumo)}`;
-		riempimento.style.width = `${quota}%`;
-		misuratore.appendChild(riempimento);
+		/* LA BARRA E' UN GRADIENTE MASCHERATO
+		   Il fondo porta l'intera scala dei colori, dal giallo al
+		   viola, sfumata. Sopra ci sta una maschera che copre la
+		   parte non raggiunta: quello che resta scoperto e' quindi
+		   colorato secondo il punto della scala in cui ti trovi,
+		   e le tinte trascolorano invece di scattare.
+		   Il riempimento a tinta unita non lo permetteva: il
+		   colore sarebbe cambiato di netto al superamento di ogni
+		   soglia.
+		   In immissione la barra e' invece tutta verde: li' non
+		   siamo su quella scala, siamo dall'altra parte dello
+		   zero. */
+		misuratore.classList.add(immissione ? "energy-meter-export" : "energy-meter-scala");
+
+		const maschera = document.createElement("div");
+		maschera.className = "energy-meter-mask";
+		maschera.style.width = `${100 - quota}%`;
+		misuratore.appendChild(maschera);
 		col.appendChild(misuratore);
 
 		const scala = document.createElement("div");
