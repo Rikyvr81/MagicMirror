@@ -1584,7 +1584,21 @@ body,
    La regola va quindi agganciata a .container. */
 .region.top.right > .container {
   display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
+  /* PERCHE' minmax(0, ...) E NON UN SEMPLICE fr
+     "1fr" non significa "meta' esatta": significa "una parte
+     dello spazio residuo, ma mai meno di quanto serve al
+     contenuto". Le note hanno righe lunghe, quindi la loro
+     colonna pretendeva piu' larghezza e strozzava quella
+     accanto, al punto da mandare a capo "TO DO LIST".
+     minmax(0, ...) autorizza la colonna a scendere sotto la
+     larghezza del proprio contenuto e a mandarlo a capo.
+
+     Le proporzioni non sono pari: alle NOTE serve piu' spazio
+     perche' sono il blocco piu' alto, e ogni pixel di larghezza
+     in piu' e' una riga in meno. Alla TO DO LIST basta che ci
+     stia la sua intestazione su una riga sola.
+     Su 440px di colonna fanno circa 188px e 236px. */
+  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) !important;
   width: 100% !important;
   /* stacco fra le due colonne */
   column-gap: 16px !important;
