@@ -142,8 +142,27 @@ if (typeof document !== "undefined") {
 	   quella scritta nel custom.css, ripescata dalla cache.
 	   Agiamo su documentElement, che esiste da subito: non serve
 	   aspettare che il resto della pagina sia pronto. */
-	cambiaSfondo();
-	setInterval(cambiaSfondo, SFONDO_INTERVALLO);
+
+	/* UNA VOLTA SOLA PER PAGINA
+	   Misurato in console: a ogni caricamento partivano QUATTRO
+	   chiamate, due delle quali a un millesimo di secondo di
+	   distanza - quindi in parallelo, non in sequenza dopo un
+	   fallimento. Ognuna scaricava e applicava la propria
+	   immagine, e si vedeva il carosello di sfondi prima che la
+	   cosa si assestasse.
+	   La causa e' che questo file viene valutato piu' volte nella
+	   stessa pagina. Non e' un difetto nostro, ma il codice qui
+	   dentro dava per scontato di girare una volta sola, ed e'
+	   quella l'assunzione da togliere: la bandierina su window
+	   sopravvive alle altre valutazioni, il ricaricamento la
+	   azzera.
+	   Come effetto secondario sparisce anche un timer duplicato
+	   ogni mezz'ora per ciascuna valutazione. */
+	if (!window.__sfondoAvviato) {
+		window.__sfondoAvviato = true;
+		cambiaSfondo();
+		setInterval(cambiaSfondo, SFONDO_INTERVALLO);
+	}
 }
 
 /* ==========================================================
