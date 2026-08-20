@@ -1796,6 +1796,14 @@ body,
    "ultimo aggiornamento alle ..." a destra. Stessa regola per
    entrambe, quindi stesso carattere e stessa quota. */
 .energy-note {
+  /* Riga a due voci nella colonna del costo - media a sinistra,
+     fonte a destra - e a una voce sola in quella del consumo,
+     dove il flex non cambia nulla. Stessa regola per entrambe,
+     quindi stesso carattere e stessa quota. */
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  gap: 8px !important;
   font-family: var(--font-primary) !important;
   font-size: 12px !important;
   font-weight: 400 !important;
@@ -2132,7 +2140,12 @@ body,
 
 .urgent-box {
   position: absolute !important;
-  top: 14px !important;
+  /* Allineato alla stessa quota del titolo del mese: la regione
+     parte da --cal-region-top e il calendario aggiunge
+     --cal-top-gap, quindi "Agosto 2026" comincia li'. Ora che i
+     due testi hanno lo stesso corpo devono anche poggiare sulla
+     stessa linea. */
+  top: var(--cal-top-gap) !important;
   left: calc(var(--urgent-fine-titolo) + var(--urgent-gap)) !important;
   right: calc(var(--urgent-larghezza-legenda) + var(--urgent-gap)) !important;
   width: auto !important;
@@ -2225,15 +2238,18 @@ body,
   display: none !important;
 }
 
-/* Il testo: stesso carattere di "Agosto 2026", rosso e in
-   grassetto. Il corpo e' molto piu' piccolo dei 48px del titolo
-   perche' deve stare in una fascia alta poco piu' di trenta
-   pixel senza spingere sul calendario. */
+/* Il testo: stesso carattere e STESSO CORPO di "Agosto 2026",
+   48px, in rosso e in grassetto. Il titolo del mese ha peso 400,
+   questo 700: a parita' di altezza il messaggio pesa di piu', ed
+   e' voluto.
+   La fascia e' in posizione assoluta, quindi crescere non spinge
+   sul calendario sotto; l'unico limite e' non superare l'altezza
+   che il titolo del mese occupa gia'. */
 .urgent-box .divTableCell.title {
   font-family: var(--font-primary) !important;
-  font-size: 30px !important;
+  font-size: 48px !important;
   font-weight: 700 !important;
-  line-height: 34px !important;
+  line-height: 52px !important;
   letter-spacing: normal !important;
   color: var(--urgent-color) !important;
   text-align: left !important;
