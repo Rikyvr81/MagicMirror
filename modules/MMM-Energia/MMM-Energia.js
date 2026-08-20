@@ -166,6 +166,7 @@ Module.register("MMM-Energia", {
 		);
 
 		this.prezzi = null;        // 24 valori in euro/kWh, oppure null
+		this.fonte = null;         // "PUN" oppure "zonale"
 		this.errore = null;        // messaggio dell'ultimo tentativo fallito
 		this.potenze = null;       // { consumo, produzione } in watt
 		this.erroreShelly = null;
@@ -218,6 +219,16 @@ Module.register("MMM-Energia", {
 				? `https://api.energy-charts.info/price?bzn=${encodeURIComponent(this.config.zona)}`
 				: null;
 
+		/* PRIMA IL PUN, POI IL PREZZO ZONALE
+		   Il PUN e' il prezzo nazionale su cui il fornitore
+		   fattura; il prezzo zonale del nord e' un'approssimazione
+		   che diverge fino all'8% nelle ore serali di punta.
+		   Si chiedono entrambi: se il portale del fornitore
+		   cambiasse o smettesse di rispondere, il riquadro
+		   ripiega sul valore zonale e lo dichiara, invece di
+		   restare vuoto. Una degradazione dichiarata e' meglio di
+		   un'assenza. */
+		this.sendSocketNotification("PUN_SCARICA", { giorno: this.giornoRichiesto });
 		this.sendSocketNotification("ENERGIA_SCARICA", { url: url, riserva: riserva });
 	},
 
@@ -293,9 +304,33 @@ Module.register("MMM-Energia", {
 			return;
 		}
 
+		if (avviso === "PUN_DATI") {
+			/* Il PUN arriva gia' ridotto a 24 valori orari dal
+			   node_helper: la numerazione delle ore del portale non
+			   dipende dal fuso, quindi non c'e' nulla da
+			   riallineare qui. */
+			this.prezzi = carico.ore;
+			this.fonte = "PUN";
+			this.errore = null;
+			this.updateDom();
+			return;
+		}
+
+		if (avviso === "PUN_ERRORE") {
+			/* Non si mostra nulla: sta arrivando anche il prezzo
+			   zonale, che fara' da riserva. Se fallisse pure
+			   quello, sara' lui a scrivere l'errore. */
+			return;
+		}
+
 		if (avviso === "ENERGIA_DATI") {
+			/* Se il PUN e' gia' arrivato ha la precedenza: il
+			   zonale serve solo come riserva. */
+			if (this.fonte === "PUN") return;
+
 			try {
 				this.prezzi = this.riduciAOre(carico);
+				this.fonte = "zonale";
 				this.errore = null;
 			} catch (e) {
 				this.errore = e.message;
@@ -542,7 +577,15 @@ Module.register("MMM-Energia", {
 		});
 		col.appendChild(scala);
 
-		col.appendChild(this.nota(`Media ${this.euro(media)} €/kWh`));
+		/* La media porta l'indicazione della fonte solo quando NON
+		   e' il PUN: nel caso normale sarebbe rumore, in quello
+		   degradato e' un'informazione che spiega perche' il numero
+		   non coincide con quello dell'app del fornitore. */
+		col.appendChild(this.nota(
+			this.fonte === "zonale"
+				? `Media ${this.euro(media)} €/kWh · zonale`
+				: `Media ${this.euro(media)} €/kWh`
+		));
 		return col;
 	},
 

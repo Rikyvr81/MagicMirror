@@ -39,6 +39,7 @@ const NodeHelper = require("node_helper");
    qualunque cosa. */
 const DOMINI_AMMESSI = [
 	"api.energy-charts.info",
+	"api.energyportal.sgrlucegas.com",
 	".shelly.cloud"
 ];
 
@@ -81,6 +82,49 @@ const VALIDITA_PREZZI = 10 * 60 * 1000;
 
 const dominioAmmesso = (host) =>
 	DOMINI_AMMESSI.some((d) => (d.startsWith(".") ? host.endsWith(d) : host === d));
+
+/* ==========================================================
+   PUN DAL PORTALE DEL FORNITORE
+
+   Il PUN e' il prezzo nazionale, quello su cui il fornitore
+   fattura davvero. api.energy-charts.info dava invece il prezzo
+   ZONALE del nord: coincidono nelle ore in cui la rete non e'
+   congestionata, divergono fino all'8% nelle ore di punta serali
+   quando le zone si separano.
+
+   PERCHE' NON DAL GME
+   L'archivio ufficiale risponde "Authorization has been denied"
+   anche dopo aver accettato le condizioni d'uso, e serve
+   comunque archivi compressi da scompattare.
+
+   COME FUNZIONA QUI
+   Due chiamate. La prima crea una sessione ANONIMA - ruolo
+   Guest, nessuna credenziale, il corpo contiene solo il codice
+   del fornitore e la lingua. La seconda chiede i prezzi orari
+   passando l'identificativo di sessione come intestazione.
+   Verificato dal browser in navigazione anonima: nessun dato
+   personale entra in gioco, e i valori corrispondono al portale
+   fino al sesto decimale.
+
+   LA SESSIONE SI RIUSA
+   Vale finche' il portale la accetta. Quando scade, la chiamata
+   fallisce e se ne crea una nuova al tentativo successivo: non
+   c'e' modo di sapere in anticipo quanto duri, quindi si impara
+   dall'errore invece di indovinare una durata.
+   ========================================================== */
+
+const PUN_BASE = "https://api.energyportal.sgrlucegas.com/services/rest/portalapi";
+
+/* Corpo della richiesta di sessione, copiato da quello che manda
+   il portale. Sono costanti dell'applicazione, non dati di un
+   utente. */
+const PUN_CORPO_SESSIONE = {
+	createNewSessionRequest: {
+		company: "SGA",
+		locale: "it",
+		clientSpec: { version: "1.2.8", type: "Browser" }
+	}
+};
 
 module.exports = NodeHelper.create({
 	start: function () {
@@ -143,6 +187,12 @@ module.exports = NodeHelper.create({
 		   attenderle: qualunque eccezione sfuggita ai loro try
 		   interni diventerebbe un rifiuto orfano, e quindi la
 		   morte del processo. Il catch qui e' l'ultima rete. */
+		if (avviso === "PUN_SCARICA") {
+			this.scaricaPun(carico).catch((e) =>
+				console.error("MMM-Energia: pun, errore non gestito -", e && e.message)
+			);
+		}
+
 		if (avviso === "ENERGIA_SCARICA") {
 			this.scaricaPrezzi(carico).catch((e) =>
 				console.error("MMM-Energia: prezzi, errore non gestito -", e && e.message)
@@ -225,6 +275,114 @@ module.exports = NodeHelper.create({
 	},
 
 	/* ------------------------------------------------------
+	   PUN
+	   ------------------------------------------------------ */
+
+	/* Sessione anonima. Si tiene da parte e si riusa; se scade,
+	   scaricaPun se ne accorge dall'errore e ne chiede una nuova. */
+	sessionePun: async function (forzaNuova) {
+		if (this.sessione && !forzaNuova) return this.sessione;
+
+		const risposta = await fetch(`${PUN_BASE}/Core/v1/sessions`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify(PUN_CORPO_SESSIONE)
+		});
+
+		const testo = await risposta.text();
+		if (!risposta.ok) {
+			throw new Error(`sessione: ${risposta.status} ${testo.trim().slice(0, LUNGHEZZA_ERRORE)}`);
+		}
+
+		const dati = JSON.parse(testo);
+		const id = dati?.createNewSessionResponse?.session?.id;
+		if (!id) throw new Error("sessione senza identificativo");
+
+		this.sessione = id;
+		console.log("MMM-Energia: nuova sessione PUN");
+		return id;
+	},
+
+	/* Una singola richiesta dei prezzi con la sessione indicata */
+	provaPun: async function (giorno, sessione) {
+		const url =
+			`${PUN_BASE}/Erp/v1/quotations?quotationType=PUN&detailLevel=Hour` +
+			`&startDate=${giorno}&endDate=${giorno}`;
+
+		const risposta = await fetch(url, {
+			headers: { sessionId: sessione, Accept: "application/json" }
+		});
+
+		const testo = await risposta.text();
+		if (!risposta.ok) {
+			throw new Error(`${risposta.status} ${testo.trim().slice(0, LUNGHEZZA_ERRORE)}`);
+		}
+
+		return JSON.parse(testo);
+	},
+
+	/* ORE IN VALORI
+	   Il portale numera le ore da 1 a 24, dove l'ora N copre
+	   l'intervallo che FINISCE alle N: "hour": 14 e' quindi la
+	   fascia 13:00-14:00. Verificato contro il portale, che per
+	   quel valore mostra "ora piu' conveniente 13:00 / 14:00".
+	   Sbagliare questa convenzione sposterebbe l'intera giornata
+	   di un'ora senza che nulla lo segnali.
+	   Nei giorni di cambio dell'ora legale le ore sono 23 o 25:
+	   si accetta quel che arriva invece di pretenderne 24. */
+	punInOre: function (dati) {
+		const dettagli =
+			dati?.findQuotationsResponse?.quotations?.quotation?.hourDetails?.det;
+		if (!Array.isArray(dettagli) || !dettagli.length) {
+			throw new Error("risposta senza dettagli orari");
+		}
+
+		const ore = new Array(24).fill(null);
+		dettagli.forEach((d) => {
+			const indice = Number(d.hour) - 1;
+			const valore = Number(d.val);
+			if (indice >= 0 && indice < 24 && Number.isFinite(valore)) {
+				/* da EUR/MWh a euro al kWh */
+				ore[indice] = valore / 1000;
+			}
+		});
+
+		if (ore.every((v) => v === null)) throw new Error("nessun valore utilizzabile");
+		return ore;
+	},
+
+	scaricaPun: async function (carico) {
+		const giorno = (carico && carico.giorno) || "";
+		if (!giorno) {
+			this.sendSocketNotification("PUN_ERRORE", { messaggio: "giorno mancante" });
+			return;
+		}
+
+		try {
+			const dati = await this.conMemoria(`pun:${giorno}`, VALIDITA_PREZZI, async () => {
+				let sessione = await this.sessionePun(false);
+
+				try {
+					return await this.provaPun(giorno, sessione);
+				} catch (primo) {
+					/* Una sessione scaduta si manifesta come rifiuto:
+					   se ne prende una nuova e si riprova UNA volta
+					   sola, per non entrare in un ciclo se il
+					   problema fosse un altro. */
+					console.log("MMM-Energia: sessione PUN rifiutata, ne creo un'altra");
+					sessione = await this.sessionePun(true);
+					return await this.provaPun(giorno, sessione);
+				}
+			});
+
+			this.sendSocketNotification("PUN_DATI", { ore: this.punInOre(dati) });
+		} catch (errore) {
+			console.error("MMM-Energia: pun -", errore.message);
+			this.sendSocketNotification("PUN_ERRORE", { messaggio: errore.message });
+		}
+	},
+
+	/* ------------------------------------------------------
 	   SHELLY
 	   Il modulo manda solo server e identificativo: la chiave la
 	   mette qui il server, leggendola dall'ambiente. In questo
@@ -254,25 +412,38 @@ module.exports = NodeHelper.create({
 
 		try {
 			const dati = await this.conMemoria(
-				"shelly", VALIDITA_SHELLY, () => this.provaIndirizzo(indirizzo)
-			);
+				"shelly", VALIDITA_SHELLY, async () => {
+					const risposta = await this.provaIndirizzo(indirizzo);
 
-			/* DIAGNOSTICA
-			   Stampa la forma della risposta, non il contenuto
-			   completo e mai l'indirizzo (che conterrebbe la
-			   chiave). Serve a capire dove il cloud metta lo stato
-			   di connessione, che nelle risposte reali non e'
-			   sempre dove la documentazione lascia intendere.
-			   Quando il modulo sara' assestato, questo blocco si
-			   puo' togliere. */
-			const d = dati && dati.data;
-			const s = d && d.device_status;
-			console.log(
-				"MMM-Energia: shelly ->",
-				"campi in data:", d ? Object.keys(d).join(",") : "nessuno",
-				"| online:", d ? JSON.stringify(d.online) : "assente",
-				"| _updated:", s ? JSON.stringify(s._updated) : "assente",
-				"| cloud:", s && s.cloud ? JSON.stringify(s.cloud) : "assente"
+					/* DIAGNOSTICA
+					   Sta QUI dentro, e non fuori dalla memoria,
+					   perche' qui si passa solo quando si va
+					   davvero sul cloud. Messa fuori veniva
+					   eseguita a ogni richiesta ricevuta, comprese
+					   quelle servite dalla memoria: con piu' pagine
+					   collegate riempiva i log di righe identiche
+					   piu' volte al secondo, facendo sembrare un
+					   diluvio di chiamate cio' che era solo un
+					   diluvio di stampe.
+
+					   Non stampa mai l'indirizzo, che conterrebbe
+					   la chiave, ne' il contenuto completo: solo lo
+					   stato di connessione e l'istante della
+					   misura, che sono le due cose da cui si capisce
+					   se il dispositivo sta ancora parlando.
+
+					   Quando il quadro sara' chiaro, si toglie. */
+					const d = risposta && risposta.data;
+					const s = d && d.device_status;
+					console.log(
+						"MMM-Energia: shelly ->",
+						"online:", d ? JSON.stringify(d.online) : "assente",
+						"| _updated:", s ? JSON.stringify(s._updated) : "assente",
+						"| cloud:", s && s.cloud ? JSON.stringify(s.cloud) : "assente"
+					);
+
+					return risposta;
+				}
 			);
 
 			this.sendSocketNotification("SHELLY_DATI", dati);
