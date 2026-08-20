@@ -1384,6 +1384,12 @@ body,
   --energy-livello-rosso: #E45C6B;
   --energy-livello-viola: #B57BE0;
 
+  /* Fondo della barra del consumo, cioe' la parte non raggiunta.
+     Un grigio neutro: prima era un bianco molto trasparente che
+     su fotografie chiare quasi spariva, e la barra sembrava
+     sospesa nel vuoto invece di correre dentro una scala. */
+  --energy-meter-bg: rgba(190, 190, 185, .32);
+
   /* Stacco dalle NOTE. Volutamente piu' stretto di
      --section-gap (26px): qui lo spazio verticale e' contato.
      E' la prima leva da usare se il riquadro tornasse a
@@ -1518,11 +1524,14 @@ body,
 .energy-now.energy-livello-rosso   { color: var(--energy-livello-rosso) !important; }
 .energy-now.energy-livello-viola   { color: var(--energy-livello-viola) !important; }
 
-/* L'unita' di misura non compete col numero */
+/* L'unita' di misura non compete col numero per dimensione, ma
+   ne prende il colore: "W" e "kW" fanno parte della stessa
+   lettura, e vederli di un colore diverso li faceva sembrare
+   un'etichetta staccata invece che la coda della cifra. */
 .energy-now-unit {
   font-size: 16px !important;
   font-weight: 400 !important;
-  color: rgba(255, 255, 255, .70) !important;
+  color: inherit !important;
 }
 
 /* Riga di chiarimento sotto ciascun numero grande */
@@ -1611,7 +1620,7 @@ body,
   height: var(--energy-bar-height) !important;
   border-radius: 3px !important;
   overflow: hidden !important;
-  background: rgba(255, 255, 255, .15) !important;
+  background: var(--energy-meter-bg) !important;
 }
 
 .energy-meter.energy-meter-scala {
@@ -1640,7 +1649,7 @@ body,
   top: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  background: rgba(255, 255, 255, .15) !important;
+  background: var(--energy-meter-bg) !important;
 }
 
 /* Scala sotto le due barre: ore a sinistra, watt a destra */
@@ -1670,6 +1679,12 @@ body,
   margin: 5px 0 0 0 !important;
   white-space: nowrap !important;
   text-shadow: none !important;
+  /* Corsivo e a destra in entrambe le colonne: sono chiose, non
+     dati. Il corsivo le distingue dalle misure senza bisogno di
+     rimpicciolirle ancora, e l'allineamento a destra le stacca
+     dalla colonna di numeri che comincia a sinistra. */
+  font-style: italic !important;
+  text-align: right !important;
 }
 
 /* Riga dell'orario dell'ultima misura: ultima della colonna,
