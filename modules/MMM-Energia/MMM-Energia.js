@@ -35,8 +35,13 @@
 
 Module.register("MMM-Energia", {
 	defaults: {
-		/* Zona di offerta. Villafranca di Verona sta nel nord. */
-		zona: "IT-NORTH",
+		/* Zona di offerta. Villafranca di Verona sta nel nord.
+		   ATTENZIONE alle maiuscole: il servizio distingue
+		   "IT-North" da "IT-NORTH" e rifiuta il secondo con un
+		   400. Le altre zone italiane si scrivono allo stesso
+		   modo: IT-Centre-North, IT-Centre-South, IT-South,
+		   IT-Sicily, IT-Sardinia, IT-Calabria. */
+		zona: "IT-North",
 
 		/* 0 = oggi, 1 = domani (disponibile solo dopo le 13:00) */
 		giorno: 0,
@@ -127,11 +132,12 @@ Module.register("MMM-Energia", {
 
 	/* ------------------------------------------------------
 	   DA RISPOSTA GREZZA A 24 MEDIE ORARIE
-	   Il servizio puo' rispondere a passo orario o di quindici
-	   minuti, a seconda della zona e del periodo. Invece di dare
-	   per scontato il passo, raggruppiamo per ora locale e
-	   facciamo la media: funziona in entrambi i casi e non si
-	   rompe se il mercato cambia granularita'.
+	   Verificato il 20 agosto 2026: la zona IT-North risponde a
+	   passo di QUINDICI MINUTI, cioe' 96 valori che coprono dalla
+	   mezzanotte alle 23:45 locali. Non diamo comunque per
+	   scontato il passo: raggruppiamo per ora locale e facciamo
+	   la media, cosi' il codice regge anche se il mercato torna
+	   al passo orario o scende a un passo piu' fitto.
 	   ------------------------------------------------------ */
 	riduciAOre: function (dati) {
 		/* il campo dei valori ha cambiato nome nel tempo: li
