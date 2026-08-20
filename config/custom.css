@@ -1536,59 +1536,98 @@ body,
    lunga delle due invece che quanto la somma: e' spazio
    recuperato in fondo alla colonna, dove serve.
 
-   Sono TRE moduli distinti, non due: la TO DO LIST a sinistra,
-   e a destra il titolo NOTE (.family-message-box) col proprio
-   contenuto (.family-notes), che restano impilati fra loro
-   grazie a clear: right.
+   PERCHE' NON CON I FLOAT
+   Primo tentativo fatto con float: left / float: right. Le
+   larghezze venivano applicate ma le sezioni restavano
+   incolonnate, segno che i float erano ignorati - succede
+   quando il contenitore e' gia' un contenitore flessibile, dove
+   float non ha effetto sui figli. Invece di scoprire com'era
+   impostata la regione, qui la si dichiara griglia: cosi' il
+   risultato non dipende piu' da quel dettaglio.
 
-   PERCHE' I SELETTORI SONO LUNGHI
-   .region.top.right .module impone larghezza 100% a tutti i
-   moduli della colonna, e vale tre classi. Un semplice
-   .todo-list ne vale una e perderebbe il confronto: qui ogni
-   regola si aggancia alla regione per pareggiare la
-   specificita', e vince perche' viene dopo nel foglio.
+   COME E' FATTA LA GRIGLIA
+   Due colonne uguali. I moduli a tutta larghezza (orologio,
+   previsioni, energia) occupano entrambe; TO DO LIST e NOTE si
+   dividono le righe centrali:
+
+     riga 1   [ ORA + DATA                          ]
+     riga 2   [ PREVISIONI                          ]
+     riga 3   [ TO DO LIST     | NOTE (titolo)      ]
+     riga 4   [   "            | NOTE (contenuto)   ]
+     riga 5   [ COSTO ENERGIA                       ]
+
+   La TO DO LIST occupa le righe 3 e 4 insieme: e' cio' che
+   allinea la sua intestazione a quella delle NOTE. Senza quello
+   scavalcamento il contenuto delle note scenderebbe sotto tutta
+   la lista invece di affiancarla.
+
+   ATTENZIONE PER IL FUTURO
+   I numeri di riga sono scritti a mano. Se aggiungi o togli un
+   modulo in top_right, o ne cambi l'ordine nel config.js, vanno
+   rinumerati: e' il prezzo di una disposizione esplicita.
+   Il meteo attuale non e' in elenco di proposito: e' in
+   posizione assoluta, quindi la griglia non lo vede.
 
    SE VUOI TORNARE INDIETRO
    Basta commentare l'intero blocco: le sezioni tornano una
    sotto l'altra senza toccare altro.
    ========================================================== */
 
-:root {
-  /* Larghezza di ciascuna delle due colonne. Il 4% che avanza e'
-     lo spazio fra loro: con 440px di colonna fanno circa 17px. */
-  --half-col: 48%;
+.region.top.right {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  /* stacco fra le due colonne */
+  column-gap: 16px !important;
+  row-gap: 0 !important;
+  /* le celle non si allungano a riempire la riga: ogni sezione
+     resta alta quanto il suo contenuto */
+  align-items: start !important;
 }
 
+/* Moduli a tutta larghezza */
+.region.top.right .main-clock {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+}
+
+.region.top.right .weather-forecast-box {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+}
+
+.region.top.right .energy-box {
+  grid-column: 1 / -1 !important;
+  grid-row: 5 !important;
+}
+
+/* Colonna di sinistra: la TO DO LIST scavalca le due righe
+   occupate dalle NOTE */
 .region.top.right .todo-list {
-  float: left !important;
-  width: var(--half-col) !important;
-  max-width: var(--half-col) !important;
+  grid-column: 1 !important;
+  grid-row: 3 / span 2 !important;
+  width: auto !important;
+  max-width: none !important;
 }
 
-.region.top.right .family-message-box,
-.region.top.right .family-notes {
-  float: right !important;
-  /* clear: right tiene il contenuto sotto il proprio titolo
-     invece di affiancarlo */
-  clear: right !important;
-  width: var(--half-col) !important;
-  max-width: var(--half-col) !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-
-/* I due titoli devono partire dalla stessa quota, altrimenti le
-   righe bianche sotto "TO DO LIST" e "NOTE" risultano sfalsate.
-   La TO DO LIST prende il suo stacco da --section-gap: qui si
-   allinea il titolo delle NOTE allo stesso valore. */
+/* Colonna di destra: titolo e contenuto delle NOTE, impilati */
 .region.top.right .family-message-box {
+  grid-column: 2 !important;
+  grid-row: 3 !important;
+  width: auto !important;
+  max-width: none !important;
+  /* stesso stacco della TO DO LIST: e' cio' che porta le due
+     intestazioni alla stessa quota */
   margin-top: var(--section-gap) !important;
+  /* titolo e contenuto sono due moduli ma una sezione sola */
+  margin-bottom: 0 !important;
 }
 
-/* Il modulo del titolo NOTE non deve staccarsi dal proprio
-   contenuto: sono due moduli ma una sezione sola. */
-.region.top.right .family-message-box {
-  margin-bottom: 0 !important;
+.region.top.right .family-notes {
+  grid-column: 2 !important;
+  grid-row: 4 !important;
+  width: auto !important;
+  max-width: none !important;
+  margin-top: 0 !important;
 }
 
 /* Nella mezza colonna il testo delle note va a capo molto piu'
@@ -1599,16 +1638,6 @@ body,
   font-size: 14px !important;
   line-height: 19px !important;
   margin-bottom: 8px !important;
-}
-
-/* Il riquadro dell'energia torna a tutta larghezza e deve
-   scendere SOTTO entrambe le colonne: senza clear si
-   infilerebbe nello spazio lasciato libero dalla piu' corta
-   delle due. */
-.region.top.right .energy-box {
-  clear: both !important;
-  width: 100% !important;
-  max-width: 100% !important;
 }
 
 /* ==========================================================
