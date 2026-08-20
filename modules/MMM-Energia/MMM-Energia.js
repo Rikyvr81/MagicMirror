@@ -1,4 +1,4 @@
-/* ===========================================================
+/* ==========================================================
    MMM-Energia
    Costo dell'energia nell'arco della giornata.
 
@@ -618,15 +618,28 @@ Module.register("MMM-Energia", {
 		});
 		col.appendChild(scala);
 
-		/* La media porta l'indicazione della fonte solo quando NON
-		   e' il PUN: nel caso normale sarebbe rumore, in quello
-		   degradato e' un'informazione che spiega perche' il numero
-		   non coincide con quello dell'app del fornitore. */
-		col.appendChild(this.nota(
-			this.fonte === "zonale"
-				? `Media ${this.euroPreciso(media)} €/kWh · zonale`
-				: `Media ${this.euroPreciso(media)} €/kWh`
-		));
+		/* NOTA A PIE' DI COLONNA: MEDIA E FONTE
+		   Due voci sulla stessa riga, la media a sinistra e la
+		   fonte a destra. Prima la fonte compariva solo nel caso
+		   degradato, appesa alla media come "· zonale": dichiararla
+		   sempre costa nulla e toglie l'ambiguita' del silenzio -
+		   se non vedi scritto niente, non sai se stai guardando il
+		   PUN o hai smesso di guardarlo.
+		     PUN = prezzo nazionale, quello su cui il fornitore
+		           fattura
+		     NRD = prezzo zonale del nord, la riserva */
+		const piede = document.createElement("div");
+		piede.className = "energy-note";
+
+		const testoMedia = document.createElement("span");
+		testoMedia.textContent = `Media ${this.euroPreciso(media)} €/kWh`;
+		piede.appendChild(testoMedia);
+
+		const testoFonte = document.createElement("span");
+		testoFonte.textContent = `Fonte: ${this.fonte === "zonale" ? "NRD" : "PUN"}`;
+		piede.appendChild(testoFonte);
+
+		col.appendChild(piede);
 		return col;
 	},
 
