@@ -79,6 +79,28 @@ Module.register("MMM-Energia", {
 			canaleConsumo: 0,
 			canaleProduzione: 1,
 
+			/* VERSO DELLE PINZE
+			   Una pinza amperometrica misura anche la direzione
+			   della corrente, e se e' montata con la freccia dal
+			   lato sbagliato la potenza risulta col segno
+			   invertito. Sul canale della rete il segno e'
+			   informazione vera (negativo = stai immettendo);
+			   sul canale del fotovoltaico no, perche' un impianto
+			   non consuma: se lo vedi negativo, la pinza e' girata
+			   e va corretta qui.
+			   Correggere il segno da software e' equivalente a
+			   rigirare la pinza, e non richiede di aprire il
+			   quadro. */
+			invertiConsumo: false,
+			invertiProduzione: true,
+
+			/* Oltre quanti minuti dall'ultima misura il dato va
+			   considerato vecchio. Il cloud continua a restituire
+			   l'ultimo valore noto anche a dispositivo scollegato,
+			   quindi senza questo controllo un numero fermo da ore
+			   sembrerebbe attuale. */
+			minutiFreschezza: 5,
+
 			/* Fondo scala della barra, in watt: e' il valore a cui
 			   la barra risulta piena. 3000 corrisponde ai 3 kW
 			   dell'indicatore dell'app. */
@@ -169,17 +191,31 @@ Module.register("MMM-Energia", {
 		const misure = stato && stato.emeters;
 		if (!Array.isArray(misure)) throw new Error("risposta senza emeters");
 
-		const canale = (n) => {
+		const canale = (n, inverti) => {
 			if (n === null || n === undefined) return null;
 			const m = misure[n];
 			if (!m || typeof m.power !== "number") return null;
-			return m.power;
+			return inverti ? -m.power : m.power;
 		};
 
+		/* ETA' DELLA MISURA
+		   device_status._updated e' l'istante dell'ultima lettura,
+		   scritto dal cloud in tempo universale e nella forma
+		   "AAAA-MM-GG hh:mm:ss". Non e' una data ISO: senza la "Z"
+		   finale il browser la interpreterebbe come ora locale e
+		   d'estate il dato sembrerebbe vecchio di due ore. */
+		let minuti = null;
+		if (typeof stato._updated === "string") {
+			const iso = stato._updated.trim().replace(" ", "T") + "Z";
+			const istante = Date.parse(iso);
+			if (!Number.isNaN(istante)) minuti = (Date.now() - istante) / 60000;
+		}
+
 		return {
-			consumo: canale(this.config.shelly.canaleConsumo),
-			produzione: canale(this.config.shelly.canaleProduzione),
-			online: !(dati && dati.data && dati.data.online === false)
+			consumo: canale(this.config.shelly.canaleConsumo, this.config.shelly.invertiConsumo),
+			produzione: canale(this.config.shelly.canaleProduzione, this.config.shelly.invertiProduzione),
+			minuti: minuti,
+			vecchio: minuti !== null && minuti > this.config.shelly.minutiFreschezza
 		};
 	},
 
@@ -461,11 +497,14 @@ Module.register("MMM-Energia", {
 		numero.appendChild(unita);
 		col.appendChild(numero);
 
+		/* L'etichetta dice sempre COSA e' il numero. Lo stato del
+		   dispositivo e' un'altra cosa e va detto altrove: nella
+		   versione precedente "non in linea" prendeva il posto di
+		   "in rete adesso" e faceva sparire l'informazione piu'
+		   utile delle due. */
 		const etichetta = document.createElement("div");
 		etichetta.className = "energy-now-label";
-		etichetta.textContent = this.potenze.online
-			? (immissione ? "in rete adesso" : "consumo adesso")
-			: "dispositivo non in linea";
+		etichetta.textContent = immissione ? "in rete adesso" : "consumo adesso";
 		col.appendChild(etichetta);
 
 		/* La barra rappresenta sempre un valore positivo: in
@@ -494,6 +533,17 @@ Module.register("MMM-Energia", {
 		if (this.potenze.produzione !== null) {
 			const p = this.potenza(this.potenze.produzione);
 			col.appendChild(this.nota(`Produzione ${p.numero} ${p.unita}`));
+		}
+
+		/* Il dato vecchio non si nasconde e non si butta: si
+		   mostra dicendo di quando e'. Un numero fermo da ore
+		   spacciato per attuale sarebbe peggio di nessun numero. */
+		if (this.potenze.vecchio) {
+			const m = Math.round(this.potenze.minuti);
+			const quando = m < 120 ? `${m} min` : `${Math.round(m / 60)} ore`;
+			const riga = this.nota(`Misura di ${quando} fa`);
+			riga.classList.add("energy-note-vecchia");
+			col.appendChild(riga);
 		}
 
 		return col;
