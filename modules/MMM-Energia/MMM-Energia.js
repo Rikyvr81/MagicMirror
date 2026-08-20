@@ -92,7 +92,16 @@ Module.register("MMM-Energia", {
 			`https://api.energy-charts.info/price?bzn=${encodeURIComponent(this.config.zona)}` +
 			`&start=${this.dataLocale(giorno)}&end=${this.dataLocale(giornoDopo)}`;
 
-		this.sendSocketNotification("ENERGIA_SCARICA", { url: url });
+		/* Indirizzo di riserva, senza date: il servizio lo
+		   interpreta come "oggi". Ha senso solo se e' oggi che
+		   stiamo chiedendo, altrimenti otterremmo la giornata
+		   sbagliata senza accorgercene. */
+		const riserva =
+			this.config.giorno === 0
+				? `https://api.energy-charts.info/price?bzn=${encodeURIComponent(this.config.zona)}`
+				: null;
+
+		this.sendSocketNotification("ENERGIA_SCARICA", { url: url, riserva: riserva });
 	},
 
 	socketNotificationReceived: function (avviso, carico) {
