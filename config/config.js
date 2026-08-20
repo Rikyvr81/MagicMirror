@@ -314,6 +314,7 @@ const OWM_KEY = "4bd3e85d4cb8457cd3d0bf6f0e6a68aa";
 /* Progetti Todoist */
 const PROGETTO_TODO = "6hHmrPHvXCJqHhHC";                  // "To Do List"
 const PROGETTO_NOTE = "6hHp8PVv3GGJv7ch";                  // progetto "Note"
+const PROGETTO_URGENTI = "6hJGCJ26cJMfFVw3";               // progetto "Mess urgenti"
 
 /* Ordine con cui gli eventi si dispongono dentro la cella del giorno:
    valore piu' basso = piu' in alto. Il modulo dispone gli eventi
@@ -624,6 +625,45 @@ let config = {
 			classes: "calendar-legend-box",
 			config: {
 				text: LEGENDA_HTML + STILE_MESE_SUCCESSIVO
+			}
+		},
+
+		/* ======================================================
+		   MESSAGGI URGENTI (fascia in alto, fra il titolo del mese
+		   e la legenda)
+		   Terza istanza di MMM-Todoist, su un progetto dedicato.
+		   Il riquadro e' in posizione assoluta dentro la regione in
+		   alto a sinistra, quindi non sposta ne' il titolo ne' il
+		   calendario: occupa una fascia che era vuota.
+		   I messaggi si incolonnano su una riga sola separati da una
+		   barra verticale e scorrono da destra a sinistra; la
+		   composizione e lo scorrimento sono fatti dal custom.css,
+		   qui si dice solo da dove prendere il testo.
+		   Con il progetto vuoto il modulo sparisce del tutto
+		   (hideWhenEmpty), e la fascia torna libera come prima.
+		   ====================================================== */
+		{
+			module: "MMM-Todoist",
+			position: "top_left",
+			classes: "urgent-box",
+			config: {
+				accessToken: TODOIST_TOKEN,
+				projects: [PROGETTO_URGENTI],
+
+				/* Un messaggio urgente deve comparire in fretta: cinque
+				   minuti invece dei dieci delle altre liste. */
+				maximumEntries: 10,
+				updateInterval: 5 * 60 * 1000,
+				fade: false,
+				showProject: false,
+				hideWhenEmpty: true,
+
+				/* Come per le NOTE: senza questo il modulo taglierebbe i
+				   titoli dopo una venticinquina di caratteri. Qui pero'
+				   NON si va a capo, perche' i messaggi devono restare su
+				   una riga sola per poter scorrere. */
+				maxTitleLength: 250,
+				wrapEvents: false
 			}
 		},
 

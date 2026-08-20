@@ -1,4 +1,4 @@
-/* ===========================================================
+/* ==========================================================
    FAMILY HUB - versione stabile del 19 agosto 2026
    Punto di ripristino: layout a schermo intero 1920x1080.
 
@@ -1412,6 +1412,27 @@ body,
      con il separatore esattamente a meta'. */
   --col-pad: 15px;
 
+  /* ALTEZZA UTILE DELLA COLONNA DESTRA
+     Serve a spingere la fascia dell'energia in fondo, appena
+     sopra il calendario di settembre. Senza un'altezza dichiarata
+     la colonna e' alta quanto il suo contenuto e l'energia resta
+     appiccicata alle NOTE, lasciando un vuoto sotto.
+     Il valore sottratto e' l'ingombro del calendario piccolo piu'
+     i margini: e' MISURATO, non calcolato, perche' quel
+     calendario e' alto quanto le sue settimane.
+     ATTENZIONE: nei mesi che occupano sei settimane invece di
+     cinque il calendario cresce di una riga, e questo numero va
+     alzato di conseguenza o le due cose si sovrappongono. E' la
+     prima cosa da guardare se un giorno l'energia finisce sotto
+     SETTEMBRE. */
+  --right-col-height: calc(100vh - 470px);
+
+  /* Stacco della TO DO LIST e delle NOTE dal meteo. Piu' stretto
+     di --section-gap: quei due blocchi devono stare il piu' in
+     alto possibile, e 26px lasciavano un vuoto evidente sotto le
+     previsioni. */
+  --right-blocks-top-gap: 14px;
+
   /* Stacco dalle NOTE. Volutamente piu' stretto di
      --section-gap (26px): qui lo spazio verticale e' contato.
      E' la prima leva da usare se il riquadro tornasse a
@@ -1906,6 +1927,17 @@ body,
   /* le celle non si allungano a riempire la riga: ogni sezione
      resta alta quanto il suo contenuto */
   align-items: start !important;
+
+  /* ALTEZZA DICHIARATA E RIGA ELASTICA
+     La quarta riga - il contenuto delle NOTE - e' l'unica a
+     prendersi lo spazio che avanza. Tutto cio' che sta sopra
+     resta quindi in alto, e la fascia dell'energia, che e'
+     l'ultima riga, scende in fondo.
+     Senza l'altezza dichiarata sopra, "1fr" non avrebbe nulla da
+     distribuire: una griglia alta quanto il suo contenuto non ha
+     spazio che avanza. */
+  height: var(--right-col-height) !important;
+  grid-template-rows: auto auto auto 1fr auto !important;
 }
 
 /* Moduli a tutta larghezza */
@@ -1922,6 +1954,10 @@ body,
 .region.top.right .energy-box {
   grid-column: 1 / -1 !important;
   grid-row: 5 !important;
+  /* la riga sopra e' elastica, quindi questa cade gia' in fondo;
+     align-self: end la tiene attaccata al bordo inferiore anche
+     se un domani quella riga dovesse crescere */
+  align-self: end !important;
 }
 
 /* Colonna di sinistra: la TO DO LIST scavalca le due righe
@@ -1934,6 +1970,7 @@ body,
   /* gemello del rientro che la colonna di destra ha dopo il
      separatore: e' cio' che rende uguali le due meta' */
   padding-right: var(--col-pad) !important;
+  margin-top: var(--right-blocks-top-gap) !important;
 }
 
 /* Colonna di destra: titolo e contenuto delle NOTE, impilati */
@@ -1944,7 +1981,7 @@ body,
   max-width: none !important;
   /* stesso stacco della TO DO LIST: e' cio' che porta le due
      intestazioni alla stessa quota */
-  margin-top: var(--section-gap) !important;
+  margin-top: var(--right-blocks-top-gap) !important;
   /* titolo e contenuto sono due moduli ma una sezione sola */
   margin-bottom: 0 !important;
 }
@@ -2022,6 +2059,140 @@ body,
   font-size: 14px !important;
   line-height: 19px !important;
   margin-bottom: 8px !important;
+}
+
+
+/* ==========================================================
+   MESSAGGI URGENTI (fascia in alto, fra "Agosto 2026" e la
+   legenda dei calendari)
+
+   Terza istanza di MMM-Todoist. Occupa una fascia che era
+   vuota: il titolo del mese sta a sinistra, la legenda in alto
+   a destra, e in mezzo c'era solo lo sfondo.
+
+   POSIZIONE ASSOLUTA COME LA LEGENDA
+   Il riferimento e' .region.top.left, che MagicMirror posiziona
+   in modo assoluto. Essendo fuori dal flusso, il riquadro non
+   occupa spazio verticale e non sposta di un pixel ne' il
+   titolo ne' il calendario sotto.
+   left e right delimitano la fascia libera: 300px lasciano
+   respiro dopo "Agosto 2026" (48px di corpo), 300px a destra
+   tengono libera la legenda, che e' larga circa 260px. Se un
+   giorno il mese avesse un nome piu' lungo o la legenda una
+   voce in piu', sono questi due numeri da ritoccare.
+
+   COME SI COMPONE UNA RIGA SOLA
+   MMM-Todoist genera una tabella, una riga per messaggio:
+     <div class="divTableRow">
+       <div class="divTableCell"> </div>            <- spunta
+       <div class="divTableCell spacerCell"> </div>
+       <div class="divTableCell title ...">testo</div>
+       <div class="divTableCell ... dueDate ..."></div>
+     </div>
+   Qui le celle inutili spariscono, righe e celle diventano
+   in linea, e un separatore viene aggiunto DOPO ogni titolo
+   tranne l'ultimo. Il risultato e' una riga unica del tipo
+   "primo | secondo | terzo", senza che il modulo sappia nulla
+   di tutto questo.
+   ========================================================== */
+
+:root {
+  /* Colore dei messaggi urgenti. Un rosso piu' acceso di quello
+     delle fasce di costo: li' segnala "caro", qui "guardami". */
+  --urgent-color: #FF3B30;
+
+  /* Durata di una passata completa dello scorrimento. Non e'
+     proporzionale alla lunghezza del testo - CSS non sa quanto
+     sia lungo - quindi con pochi messaggi lo scorrimento risulta
+     piu' lento e con molti piu' veloce. Se dovesse correre
+     troppo, alza questo numero. */
+  --urgent-speed: 22s;
+}
+
+.urgent-box {
+  position: absolute !important;
+  top: 14px !important;
+  left: 300px !important;
+  right: 300px !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* la fascia ritaglia il testo che scorre: fuori di qui non si
+     deve vedere nulla */
+  overflow: hidden !important;
+  z-index: 2 !important;
+}
+
+/* Il contenuto e' un unico blocco largo quanto il testo, che
+   scivola da destra a sinistra. Serve che sia inline-block:
+   un blocco normale sarebbe largo quanto la fascia e il testo
+   andrebbe a capo invece di scorrere. */
+.urgent-box .module-content {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  will-change: transform !important;
+  animation: urgentiScorri var(--urgent-speed) linear infinite !important;
+}
+
+/* Parte appena fuori dal bordo destro e finisce appena fuori da
+   quello sinistro, cosi' non compare ne' sparisce a meta' */
+@keyframes urgentiScorri {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-100%); }
+}
+
+/* Tabella e righe diventano una riga sola */
+.urgent-box .divTable,
+.urgent-box .divTableBody {
+  display: inline !important;
+  white-space: nowrap !important;
+}
+
+.urgent-box .divTableRow,
+.urgent-box .divTableCell {
+  display: inline !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  vertical-align: baseline !important;
+}
+
+/* Via la spunta, il distanziatore e la data: qui servono solo i
+   testi */
+.urgent-box .divTableRow .divTableCell:first-child,
+.urgent-box .divTableCell.spacerCell,
+.urgent-box .divTableCell.dueDate,
+.urgent-box input[type="checkbox"],
+.urgent-box .checkbox,
+.urgent-box header {
+  display: none !important;
+}
+
+/* Il testo: stesso carattere di "Agosto 2026", rosso e in
+   grassetto. Il corpo e' molto piu' piccolo dei 48px del titolo
+   perche' deve stare in una fascia alta poco piu' di trenta
+   pixel senza spingere sul calendario. */
+.urgent-box .divTableCell.title {
+  font-family: var(--font-primary) !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  line-height: 34px !important;
+  letter-spacing: normal !important;
+  color: var(--urgent-color) !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .95) !important;
+}
+
+/* Separatore fra un messaggio e il successivo. Sta DOPO il
+   titolo e non prima, e non compare sull'ultima riga: cosi' non
+   si vede una barra penzolante in coda alla fila. */
+.urgent-box .divTableRow:not(:last-child) .divTableCell.title::after {
+  content: "  |  " !important;
+  color: var(--urgent-color) !important;
+  opacity: .55 !important;
+  font-weight: 400 !important;
 }
 
 /* ==========================================================
