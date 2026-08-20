@@ -1393,6 +1393,14 @@ body,
      sospesa nel vuoto invece di correre dentro una scala. */
   --energy-meter-bg: rgba(190, 190, 185, .32);
 
+  /* Distacco fra le due colonne. Vale sia per TO DO LIST / NOTE
+     sia per COSTO / CONSUMO: insieme a proporzioni identiche, e'
+     cio' che fa cadere i due separatori verticali sulla stessa
+     ascissa. Con griglie diverse i due tratti coinciderebbero
+     solo per caso, e nessuna correzione locale potrebbe
+     rimediare. */
+  --col-gap: 16px;
+
   /* Stacco dalle NOTE. Volutamente piu' stretto di
      --section-gap (26px): qui lo spazio verticale e' contato.
      E' la prima leva da usare se il riquadro tornasse a
@@ -1456,7 +1464,8 @@ body,
 .energy-panel {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-  column-gap: 16px !important;
+  /* stesso distacco della griglia TO DO / NOTE piu' in alto */
+  column-gap: var(--col-gap) !important;
   align-items: start !important;
 }
 
@@ -1541,13 +1550,16 @@ body,
 /* Riga di chiarimento sotto ciascun numero grande */
 /* Riga che spiega il numero grande, in entrambe le colonne:
    a sinistra "fascia migliore · 0,156 €/kWh", a destra
-   "Produzione 891 W". Un punto in meno rispetto ai 15px di
-   prima, perche' la dicitura a sinistra e' lunga e in mezza
-   colonna andrebbe a capo, sfasando le due colonne. */
+   "Produzione 891 W". Due punti in meno rispetto ai 15px
+   iniziali: "fascia migliore: 0,156 €/kWh di media" e' lunga
+   trentasei caratteri e a 14px arrivava a sfiorare il
+   separatore verticale. Non potendo andare a capo - l'altezza e'
+   fissa, per tenere allineate le colonne - l'unica leva e' il
+   corpo. */
 .energy-best-avg,
 .energy-now-label {
   font-family: var(--font-primary) !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: 400 !important;
   line-height: 18px !important;
   height: 18px !important;
@@ -1812,15 +1824,16 @@ body,
      minmax(0, ...) autorizza la colonna a scendere sotto la
      larghezza del proprio contenuto e a mandarlo a capo.
 
-     Le proporzioni non sono pari: alle NOTE serve piu' spazio
-     perche' sono il blocco piu' alto, e ogni pixel di larghezza
-     in piu' e' una riga in meno. Alla TO DO LIST basta che ci
-     stia la sua intestazione su una riga sola.
-     Su 440px di colonna fanno circa 188px e 236px. */
-  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) !important;
+     Le proporzioni erano 4 a 5, a favore delle NOTE, che sono
+     il blocco piu' alto e guadagnano una riga per ogni pixel di
+     larghezza. Ora sono pari, e devono restarlo: la fascia
+     energia piu' in basso usa la stessa divisione, ed e' cio'
+     che allinea i due separatori verticali. Si perde qualche
+     riga nelle note, si guadagna la simmetria. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
   width: 100% !important;
-  /* stacco fra le due colonne */
-  column-gap: 16px !important;
+  /* stesso distacco della fascia energia */
+  column-gap: var(--col-gap) !important;
   /* niente spazio automatico fra le righe: le distanze le
      danno i margini dei singoli moduli, gia' tarati */
   row-gap: 0 !important;
@@ -1914,6 +1927,22 @@ body,
   line-height: 22px !important;
   padding: 0 0 8px 0 !important;
   margin: 0 0 12px 0 !important;
+}
+
+/* ----------------------------------------------------------
+   SEPARATORE VERTICALE FRA TO DO LIST E NOTE
+   Lo stesso segno che divide costo e consumo piu' in basso, e
+   alla stessa ascissa: le due griglie hanno ormai proporzioni e
+   distacco identici, quindi i due tratti cadono sulla stessa
+   verticale senza che nessuno li allinei a mano.
+   Il bordo va su ENTRAMBI i moduli della colonna, titolo e
+   contenuto: sono due moduli distinti, e su uno solo la linea si
+   fermerebbe a meta' sezione.
+   ---------------------------------------------------------- */
+.region.top.right .family-message-box,
+.region.top.right .family-notes {
+  border-left: 1px solid rgba(255, 255, 255, .20) !important;
+  padding-left: 14px !important;
 }
 
 /* Nella mezza colonna il testo delle note va a capo molto piu'
