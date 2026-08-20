@@ -704,7 +704,7 @@ let config = {
 			position: "top_right",
 			classes: "energy-box",
 			config: {
-				zona: "IT-NORTH",     // zona di offerta del nord Italia
+				zona: "IT-North",     // zona di offerta del nord Italia (maiuscole comprese: il servizio le distingue)
 				giorno: 0,            // 0 = oggi, 1 = domani (solo dopo le 13)
 				finestra: 3,          // durata in ore della fascia migliore
 				titolo: "COSTO ENERGIA OGGI"
