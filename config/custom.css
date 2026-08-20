@@ -88,8 +88,12 @@
   --clock-time-top: 16px;
   --clock-time-left: 34px;
 
-  /* Stacco delle previsioni dal blocco ora + meteo attuale */
-  --forecast-top-gap: 16px;
+  /* Stacco delle previsioni dal blocco ora + meteo attuale.
+     Era 16px, quando le previsioni avevano una propria
+     intestazione che le staccava da cio' che sta sopra. Ora che
+     l'intestazione e' nascosta, l'elenco dei giorni si legge
+     come continuazione dell'orologio, e serve un valore basso. */
+  --forecast-top-gap: 4px;
 
   /* Sollevamento dell'intera regione in alto a sinistra: titolo, legenda
      e calendario si muovono insieme, guadagnando spazio prima del meteo.
@@ -713,7 +717,10 @@ body,
    ---------------------------------------------------------- */
 
 .main-clock {
-  margin-bottom: 18px !important;
+  /* Era 18px. Ridotto per recuperare spazio verticale in fondo
+     alla colonna, dove il riquadro dell'energia rischiava di
+     finire sotto il calendario di settembre. */
+  margin-bottom: 10px !important;
   text-align: left !important;
 }
 
@@ -1312,10 +1319,25 @@ body,
   letter-spacing: 1px;
 }
 
-/* Intestazione centrata sopra la propria riga bianca */
+/* INTESTAZIONE DELLE PREVISIONI NASCOSTA
+   "PREVISIONI VILLAFRANCA DI VERONA" costava una riga di testo,
+   una riga bianca e i relativi margini: circa 39px, che servono
+   in fondo alla colonna. Tolta l'intestazione, l'elenco dei
+   giorni sale e si legge come continuazione dell'orologio e del
+   meteo attuale, che stanno subito sopra.
+   La localita' non compare piu' da nessuna parte: e' un dato
+   fisso (casa), quindi non serve ripeterlo sullo schermo.
+   Per riaverla basta commentare questo blocco e togliere il
+   commento a quello sotto. */
+.weather-forecast-box header {
+  display: none !important;
+}
+
+/*
 .weather-forecast-box header {
   text-align: center !important;
 }
+*/
 
 /* ==========================================================
    COSTO ENERGIA (colonna destra, tra NOTE e SETTEMBRE)
@@ -1347,8 +1369,10 @@ body,
   --energy-alta: #E45C6B;
 
   /* Stacco dalle NOTE. Volutamente piu' stretto di
-     --section-gap (26px): qui lo spazio verticale e' contato. */
-  --energy-gap: 18px;
+     --section-gap (26px): qui lo spazio verticale e' contato.
+     E' la prima leva da usare se il riquadro tornasse a
+     sovrapporsi al calendario di settembre. */
+  --energy-gap: 12px;
 
   /* Altezza della striscia delle 24 ore */
   --energy-bar-height: 14px;
