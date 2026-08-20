@@ -1656,6 +1656,47 @@ body,
   margin-top: 0 !important;
 }
 
+/* ----------------------------------------------------------
+   GLI ELEMENTI INTERNI DELLE NOTE
+   Nel blocco "COLONNA DESTRA - ALLINEAMENTO GLOBALE", piu' in
+   alto, c'e' una rete di sicurezza che impone la larghezza
+   piena della colonna (440px) a .family-message e
+   .family-message-title. Serviva quando le NOTE occupavano
+   tutta la colonna; ora che ne occupano meta' quella regola
+   fa sbordare il titolo e la sua riga bianca oltre il bordo
+   dello schermo, e fa apparire la scritta "NOTE" spostata a
+   destra perche' e' centrata dentro un riquadro largo il doppio
+   della colonna che la contiene.
+   Qui i due elementi tornano a seguire la larghezza del proprio
+   contenitore.
+   ---------------------------------------------------------- */
+.region.top.right .family-message,
+.region.top.right .family-message-title {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* ----------------------------------------------------------
+   LE DUE INTESTAZIONI ALLA STESSA QUOTA
+   "TO DO LIST" e "NOTE" arrivano da due moduli diversi, con
+   spaziature interne diverse: la prima e' l'intestazione nativa
+   di un modulo, la seconda un div dentro un helloworld. Qui si
+   impongono le stesse misure a entrambe, cosi' le due righe
+   bianche cadono sulla stessa riga e i due contenuti partono
+   insieme.
+   Il margine inferiore era --notes-title-gap (4px), scelto
+   quando titolo e contenuto erano due moduli impilati e le
+   spaziature si sommavano. Nella griglia quella somma non c'e'
+   piu', quindi si allinea al valore della TO DO LIST.
+   ---------------------------------------------------------- */
+.region.top.right .todo-list header,
+.region.top.right .family-message-title {
+  font-size: 18px !important;
+  line-height: 22px !important;
+  padding: 0 0 8px 0 !important;
+  margin: 0 0 12px 0 !important;
+}
+
 /* Nella mezza colonna il testo delle note va a capo molto piu'
    spesso. Un punto di corpo in meno e un'interlinea piu' stretta
    recuperano una riga o due senza intaccare la leggibilita'.
