@@ -1631,15 +1631,23 @@ body,
    ---------------------------------------------------------- */
 
 /* ----------------------------------------------------------
-   BARRA DEL CONSUMO: UN GRADIENTE MASCHERATO
+   BARRA DEL CONSUMO: UN GRADIENTE RITAGLIATO
 
-   Il fondo della barra porta l'INTERA scala dei colori, sfumata
-   da un capo all'altro. Sopra ci stanno due maschere grigie, una
-   per lato, che coprono la parte non raggiunta: quel che resta
-   scoperto e' il tratto fra lo zero e il valore attuale, gia'
-   colorato secondo il punto della scala in cui si trova. Le
-   tinte trascolorano l'una nell'altra invece di scattare al
-   superamento di una soglia.
+   Il fondo della barra e' grigio. Sopra ci sta una finestra
+   larga quanto il tratto fra lo zero e il valore attuale, e
+   dentro quella finestra il gradiente dell'INTERA scala,
+   riposizionato in modo che il pezzo visibile sia esattamente
+   quello che compete a quel valore. Le tinte trascolorano l'una
+   nell'altra invece di scattare al superamento di una soglia.
+
+   PERCHE' NON CON DELLE MASCHERE
+   Il primo tentativo dipingeva il gradiente su tutta la barra e
+   ci sovrapponeva due rettangoli grigi sui tratti non raggiunti.
+   Non funzionava: quel grigio e' semitrasparente, per lasciar
+   vedere la fotografia sotto, e quindi lasciava trasparire anche
+   il gradiente. La barra risultava sempre tutta colorata,
+   qualunque fosse il consumo, e sembrava che l'indicatore non si
+   muovesse.
 
    LE TAPPE DEL GRADIENTE
    La scala va da -1 kW a +5 kW, quindi sei kilowatt in tutto, e
@@ -1667,7 +1675,23 @@ body,
   background: var(--energy-meter-bg) !important;
 }
 
-.energy-meter.energy-meter-scala {
+/* La finestra ritaglia il tratto raggiunto. min-width perche' a
+   consumi bassissimi - 29 W su una scala di sei kilowatt sono
+   mezzo punto percentuale - il tratto sarebbe largo meno di un
+   pixel e non si vedrebbe: meglio un segno minimo sempre
+   leggibile che un valore matematicamente esatto e invisibile. */
+.energy-meter-window {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  min-width: 4px !important;
+  overflow: hidden !important;
+}
+
+.energy-meter-scala {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
   background: linear-gradient(
     90deg,
     var(--energy-livello-blu) 0%,
@@ -1679,20 +1703,6 @@ body,
     var(--energy-livello-rosso) 100%
   ) !important;
 }
-
-/* Le due maschere coprono la scala non raggiunta, ciascuna dal
-   proprio lato. Il loro colore e' il grigio di fondo della
-   barra: a consumo nullo restano attaccate e la barra si vede
-   tutta grigia. */
-.energy-meter-mask {
-  position: absolute !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  background: var(--energy-meter-bg) !important;
-}
-
-.energy-meter-mask-left { left: 0 !important; }
-.energy-meter-mask-right { right: 0 !important; }
 
 /* Trattino dello zero. Sta sopra le maschere, perche' senza un
    riferimento visibile non si distinguerebbe un piccolo consumo
