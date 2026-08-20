@@ -1522,13 +1522,46 @@ body,
    Il riferimento e' la colonna del costo.
    ---------------------------------------------------------- */
 
+/* La riga che contiene il numero grande. Altezza fissa e
+   identica nelle due colonne: e' il primo dei blocchi che
+   devono cadere alla stessa quota a destra e a sinistra. */
+.energy-best-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 28px !important;
+}
+
+/* ETICHETTA "FASCIA CONSIGLIATA"
+   Sta di fianco all'orario, su due righe corte, cosi' occupa
+   l'altezza che il numero ha gia' invece di aggiungerne.
+   Verde come l'orario: le due cose vanno lette insieme.
+   La larghezza e' fissa perche' il testo deve andare a capo in
+   un punto prevedibile; se la cambi, ricorda che quel che
+   togli o aggiungi qui lo togli o aggiungi all'orario, che non
+   puo' andare a capo. */
+.energy-best-tag {
+  flex: 0 0 46px !important;
+  font-family: var(--font-primary) !important;
+  font-size: 11px !important;
+  line-height: 12px !important;
+  color: var(--energy-bassa) !important;
+  opacity: .75 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .95) !important;
+}
+
+/* I due numeri grandi. Erano 26px: scesi a 24 quando a sinistra
+   e' comparsa l'etichetta, che ruba larghezza all'orario.
+   Scendono ENTRAMBI anche se solo la colonna di sinistra ne
+   aveva bisogno: pari dimensione significa pari importanza, ed
+   e' la ragione per cui erano stati messi uguali. */
 .energy-best-hours,
 .energy-now {
   font-family: var(--font-primary) !important;
-  font-size: 26px !important;
+  font-size: 24px !important;
   font-weight: 500 !important;
   line-height: 28px !important;
-  height: 28px !important;
+  white-space: nowrap !important;
   margin: 0 !important;
   text-shadow: 0 1px 4px rgba(0, 0, 0, .95) !important;
 }
@@ -1568,16 +1601,21 @@ body,
 /* Riga di chiarimento sotto ciascun numero grande */
 /* Riga che spiega il numero grande, in entrambe le colonne:
    a sinistra "fascia migliore · 0,156 €/kWh", a destra
-   "Produzione 891 W". Due punti in meno rispetto ai 15px
-   iniziali: "fascia migliore: 0,156 €/kWh di media" e' lunga
-   trentasei caratteri e a 14px arrivava a sfiorare il
-   separatore verticale. Non potendo andare a capo - l'altezza e'
-   fissa, per tenere allineate le colonne - l'unica leva e' il
-   corpo. */
+   "Produzione 891 W". Un punto in meno rispetto ai 15px
+   iniziali.
+   Era sceso a 13px quando la riga di sinistra diceva "fascia
+   migliore: 0,156 €/kWh di media", trentasei caratteri che a
+   14px sfioravano il separatore verticale. Ora dice "costo
+   attuale: 0,160053 €/kWh", ventinove caratteri, e a 14px
+   misura circa 175px sui 205 disponibili: si puo' tornare al
+   corpo pieno.
+   Attenzione se ci rimetti un testo piu' lungo: la riga NON puo'
+   andare a capo, perche' l'altezza e' fissa per tenere allineate
+   le due colonne. */
 .energy-best-avg,
 .energy-now-label {
   font-family: var(--font-primary) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   font-weight: 400 !important;
   line-height: 18px !important;
   height: 18px !important;
