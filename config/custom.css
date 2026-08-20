@@ -1573,11 +1573,23 @@ body,
    sotto l'altra senza toccare altro.
    ========================================================== */
 
-.region.top.right {
+/* IL CONTENITORE, NON LA REGIONE
+   MagicMirror non mette i moduli direttamente dentro la
+   regione: c'e' un div .container che li racchiude. Dichiarare
+   griglia la regione disponeva quindi un elemento solo - il
+   contenitore - e non cambiava nulla a video. E' anche il
+   motivo per cui i float non funzionavano: agivano su elementi
+   figli di .container, che evidentemente e' gia' un contenitore
+   flessibile e li ignora.
+   La regola va quindi agganciata a .container. */
+.region.top.right > .container {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
+  width: 100% !important;
   /* stacco fra le due colonne */
   column-gap: 16px !important;
+  /* niente spazio automatico fra le righe: le distanze le
+     danno i margini dei singoli moduli, gia' tarati */
   row-gap: 0 !important;
   /* le celle non si allungano a riempire la riga: ogni sezione
      resta alta quanto il suo contenuto */
