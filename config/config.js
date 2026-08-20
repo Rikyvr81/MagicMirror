@@ -746,8 +746,11 @@ let config = {
 					invertiConsumo: false,
 					invertiProduzione: true,
 
-					/* Valore a cui la barra risulta piena, in watt */
-					fondoScala: 3000
+					/* Valore a cui la barra risulta piena, in watt.
+					   Se lo cambi, ricalcola anche le percentuali
+					   del gradiente in custom.css: sono legate a
+					   questo numero. */
+					fondoScala: 5000
 				}
 			}
 		},
