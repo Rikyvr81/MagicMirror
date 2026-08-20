@@ -1318,6 +1318,192 @@ body,
 }
 
 /* ==========================================================
+   COSTO ENERGIA (colonna destra, tra NOTE e SETTEMBRE)
+
+   Sta PRIMA del blocco "CALENDARI COMPLETAMENTE TRASPARENTI":
+   quello deve restare l'ultimo del foglio, perche' la sua
+   precedenza dipende dalla posizione.
+
+   Il riquadro riprende il linguaggio delle altre sezioni della
+   colonna: intestazione in maiuscolo con riga bianca da 1px,
+   fondo trasparente, testo con ombra perche' poggia sulla foto.
+   L'unico elemento nuovo e' la striscia delle 24 ore.
+
+   INGOMBRO: circa 115px piu' lo stacco. Nello spazio libero tra
+   NOTE e SETTEMBRE (~138px) ci sta, ma e' uno spazio che si
+   consuma: se la TO DO LIST arriva a otto voci o le NOTE si
+   allungano, il riquadro scende e va a finire sotto il
+   calendario di settembre, che e' ancorato al fondo e non si
+   sposta. Se succede, le leve sono maximumEntries dei due
+   Todoist nel config.js oppure --energy-gap qui sotto.
+   ========================================================== */
+
+:root {
+  /* Le tre fasce. Verde e rosso sono piu' desaturati di quelli
+     dell'app del fornitore: a schermo intero su una foto, i
+     colori pieni vibrano e stancano. */
+  --energy-bassa: #2FBF8F;
+  --energy-media: #F0A32E;
+  --energy-alta: #E45C6B;
+
+  /* Stacco dalle NOTE. Volutamente piu' stretto di
+     --section-gap (26px): qui lo spazio verticale e' contato. */
+  --energy-gap: 18px;
+
+  /* Altezza della striscia delle 24 ore */
+  --energy-bar-height: 14px;
+}
+
+.energy-box {
+  margin-top: var(--energy-gap) !important;
+  margin-bottom: 0 !important;
+}
+
+.energy-block {
+  text-align: left !important;
+  color: #ffffff !important;
+}
+
+/* Stessa intestazione di TO DO LIST, NOTE e SETTEMBRE 2026 */
+.energy-header {
+  font-family: var(--font-primary) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  text-align: center !important;
+  color: rgba(255, 255, 255, .90) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 10px !important;
+  text-shadow: none !important;
+}
+
+/* ----------------------------------------------------------
+   RIGA DELLA FASCIA MIGLIORE
+   E' l'informazione che serve davvero, quindi e' l'unica cosa
+   grande del riquadro: le ore a sinistra, il prezzo medio di
+   quella finestra a destra, piu' piccolo e spento.
+   ---------------------------------------------------------- */
+
+.energy-best {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  margin-bottom: 10px !important;
+}
+
+.energy-best-hours {
+  font-family: var(--font-primary) !important;
+  font-size: 26px !important;
+  font-weight: 500 !important;
+  line-height: 28px !important;
+  color: var(--energy-bassa) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .95) !important;
+}
+
+.energy-best-avg {
+  font-family: var(--font-primary) !important;
+  font-size: 15px !important;
+  color: rgba(255, 255, 255, .70) !important;
+  white-space: nowrap !important;
+}
+
+/* ----------------------------------------------------------
+   STRISCIA DELLE 24 ORE
+   Ventiquattro segmenti di uguale larghezza, uno per ora,
+   colorati secondo la fascia. Sostituisce la ciambella
+   dell'app: dice la stessa cosa in un quinto dello spazio, e su
+   una barra dritta l'occhio confronta la posizione delle ore
+   meglio che su un anello.
+   ---------------------------------------------------------- */
+
+.energy-bar {
+  display: flex !important;
+  gap: 2px !important;
+  height: var(--energy-bar-height) !important;
+  margin-bottom: 5px !important;
+}
+
+.energy-seg {
+  flex: 1 1 0 !important;
+  border-radius: 2px !important;
+  /* fondo per le ore senza dato: si vede che manca qualcosa
+     invece di lasciare un buco nella striscia */
+  background: rgba(255, 255, 255, .15) !important;
+}
+
+.energy-seg.energy-bassa { background: var(--energy-bassa) !important; }
+.energy-seg.energy-media { background: var(--energy-media) !important; }
+.energy-seg.energy-alta  { background: var(--energy-alta)  !important; }
+
+/* Ora corrente: cornice bianca interna. Usiamo box-shadow inset
+   e non un bordo, per la stessa ragione degli eventi a bordo nel
+   calendario: un border aggiungerebbe 2px e sfalserebbe la
+   larghezza di quel solo segmento rispetto agli altri 23. */
+.energy-seg.energy-adesso {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .95) !important;
+}
+
+/* Scala oraria. I riferimenti intermedi sono indicativi: le
+   etichette si distribuiscono nello spazio, non sono agganciate
+   al singolo segmento. A distanza di lettura serve a orientarsi,
+   non a misurare. */
+.energy-ticks {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-family: var(--font-primary) !important;
+  font-size: 11px !important;
+  color: rgba(255, 255, 255, .55) !important;
+  margin-bottom: 6px !important;
+}
+
+/* ----------------------------------------------------------
+   PIEDE: media della giornata e legenda dei colori
+   Sulla stessa riga per non spendere una riga in piu'.
+   ---------------------------------------------------------- */
+
+.energy-foot {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-family: var(--font-primary) !important;
+  font-size: 12px !important;
+  color: rgba(255, 255, 255, .60) !important;
+}
+
+.energy-legend {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  white-space: nowrap !important;
+}
+
+.energy-legend i {
+  display: inline-block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 2px !important;
+  margin-left: 6px !important;
+}
+
+.energy-legend i:first-child {
+  margin-left: 0 !important;
+}
+
+.energy-legend .energy-bassa     { background: var(--energy-bassa) !important; }
+.energy-legend .energy-media-dot { background: var(--energy-media) !important; }
+.energy-legend .energy-alta      { background: var(--energy-alta)  !important; }
+
+/* Stato di attesa e di errore */
+.energy-avviso {
+  font-family: var(--font-primary) !important;
+  font-size: 15px !important;
+  color: rgba(255, 255, 255, .55) !important;
+  padding: 6px 0 !important;
+}
+
+/* ==========================================================
    CALENDARI COMPLETAMENTE TRASPARENTI  (blocco di prova)
    Sta in fondo al file di proposito: essendo l'ultimo, vince
    sulle regole precedenti. Per tornare indietro basta
