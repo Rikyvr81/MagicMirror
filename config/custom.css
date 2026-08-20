@@ -1340,30 +1340,32 @@ body,
 */
 
 /* ==========================================================
-   COSTO ENERGIA (colonna destra, tra NOTE e SETTEMBRE)
+   ENERGIA (colonna destra, tra NOTE e SETTEMBRE)
+
+   Due colonne: a sinistra il costo nell'arco della giornata, a
+   destra il consumo istantaneo letto dallo Shelly. Le due parti
+   arrivano da sorgenti diverse e si aggiornano con ritmi
+   diversi - i prezzi una volta all'ora, la potenza ogni mezzo
+   minuto - quindi ognuna si disegna per conto suo: se una non
+   risponde, l'altra resta a video.
 
    Sta PRIMA del blocco "CALENDARI COMPLETAMENTE TRASPARENTI":
    quello deve restare l'ultimo del foglio, perche' la sua
    precedenza dipende dalla posizione.
 
-   Il riquadro riprende il linguaggio delle altre sezioni della
-   colonna: intestazione in maiuscolo con riga bianca da 1px,
-   fondo trasparente, testo con ombra perche' poggia sulla foto.
-   L'unico elemento nuovo e' la striscia delle 24 ore.
-
-   INGOMBRO: circa 115px piu' lo stacco. Nello spazio libero tra
-   NOTE e SETTEMBRE (~138px) ci sta, ma e' uno spazio che si
-   consuma: se la TO DO LIST arriva a otto voci o le NOTE si
-   allungano, il riquadro scende e va a finire sotto il
-   calendario di settembre, che e' ancorato al fondo e non si
-   sposta. Se succede, le leve sono maximumEntries dei due
-   Todoist nel config.js oppure --energy-gap qui sotto.
+   INGOMBRO: circa 132px piu' lo stacco. Sono 17px in piu' della
+   versione a una colonna, e il motivo e' che orario e prezzo
+   non stanno affiancati in mezza colonna e si impilano. In
+   compenso e' sparita la legenda dei tre colori, che dopo
+   qualche giorno di uso non serve piu'.
+   Se lo spazio tornasse a mancare, le leve sono --energy-gap
+   qui sotto e maxEventLines del calendario di settembre.
    ========================================================== */
 
 :root {
-  /* Le tre fasce. Verde e rosso sono piu' desaturati di quelli
-     dell'app del fornitore: a schermo intero su una foto, i
-     colori pieni vibrano e stancano. */
+  /* Le tre fasce di costo. Verde e rosso sono piu' desaturati di
+     quelli dell'app del fornitore: a schermo intero su una foto,
+     i colori pieni vibrano e stancano. */
   --energy-bassa: #2FBF8F;
   --energy-media: #F0A32E;
   --energy-alta: #E45C6B;
@@ -1374,7 +1376,12 @@ body,
      sovrapporsi al calendario di settembre. */
   --energy-gap: 12px;
 
-  /* Altezza della striscia delle 24 ore */
+  /* Altezza della striscia delle 24 ore e della barra del
+     consumo: uguali di proposito, cosi' le due colonne hanno lo
+     stesso ritmo verticale.
+     Se sul monitor non distinguessi il quadratino dell'ora in
+     corso, questo e' il numero da alzare: a 18px il segnalino
+     diventa nettamente piu' visibile e costa 4px in tutto. */
   --energy-bar-height: 14px;
 }
 
@@ -1393,60 +1400,101 @@ body,
   font-family: var(--font-primary) !important;
   font-size: 18px !important;
   font-weight: 400 !important;
+  line-height: 22px !important;
   letter-spacing: 1px !important;
   text-transform: uppercase !important;
   text-align: center !important;
   color: rgba(255, 255, 255, .90) !important;
   border-bottom: 1px solid rgba(255, 255, 255, .35) !important;
-  padding-bottom: 8px !important;
-  margin-bottom: 10px !important;
+  padding: 0 0 8px 0 !important;
+  margin: 0 0 10px 0 !important;
   text-shadow: none !important;
 }
 
 /* ----------------------------------------------------------
-   RIGA DELLA FASCIA MIGLIORE
-   E' l'informazione che serve davvero, quindi e' l'unica cosa
-   grande del riquadro: le ore a sinistra, il prezzo medio di
-   quella finestra a destra, piu' piccolo e spento.
+   LE DUE COLONNE
+   minmax(0, 1fr) e non 1fr: senza il minimo a zero la colonna
+   si allarga fino a contenere il testo piu' lungo e strozza
+   l'altra. E' lo stesso inciampo gia' incontrato con TO DO LIST
+   e NOTE.
    ---------------------------------------------------------- */
-
-.energy-best {
-  display: flex !important;
-  align-items: baseline !important;
-  justify-content: space-between !important;
-  margin-bottom: 10px !important;
+.energy-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  column-gap: 16px !important;
+  align-items: start !important;
 }
 
-.energy-best-hours {
+/* Senza Shelly configurato il modulo aggiunge questa classe e
+   il costo si riprende tutta la larghezza. */
+.energy-panel.energy-panel-singola {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+/* Una linea sottile separa le due misure: sono due grandezze
+   diverse, non due parti dello stesso numero. */
+.energy-col-consumo {
+  border-left: 1px solid rgba(255, 255, 255, .20) !important;
+  padding-left: 14px !important;
+}
+
+/* ----------------------------------------------------------
+   NUMERI GRANDI
+   Fascia migliore a sinistra e potenza a destra hanno lo stesso
+   corpo: sono i due dati che devono leggersi da lontano, e a
+   pari dimensione l'occhio li tratta come pari importanza.
+   ---------------------------------------------------------- */
+
+.energy-best-hours,
+.energy-now {
   font-family: var(--font-primary) !important;
   font-size: 26px !important;
   font-weight: 500 !important;
   line-height: 28px !important;
-  color: var(--energy-bassa) !important;
   text-shadow: 0 1px 4px rgba(0, 0, 0, .95) !important;
 }
 
-.energy-best-avg {
+/* Il verde e' lo stesso della fascia bassa: l'orario proposto e
+   i segmenti verdi della striscia parlano cosi' la stessa
+   lingua. */
+.energy-best-hours {
+  color: var(--energy-bassa) !important;
+}
+
+.energy-now {
+  color: #ffffff !important;
+}
+
+/* L'unita' di misura non compete col numero */
+.energy-now-unit {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, .70) !important;
+}
+
+/* Riga di chiarimento sotto ciascun numero grande */
+.energy-best-avg,
+.energy-now-label {
   font-family: var(--font-primary) !important;
   font-size: 15px !important;
   color: rgba(255, 255, 255, .70) !important;
+  margin: 2px 0 8px 0 !important;
   white-space: nowrap !important;
 }
 
 /* ----------------------------------------------------------
    STRISCIA DELLE 24 ORE
    Ventiquattro segmenti di uguale larghezza, uno per ora,
-   colorati secondo la fascia. Sostituisce la ciambella
-   dell'app: dice la stessa cosa in un quinto dello spazio, e su
-   una barra dritta l'occhio confronta la posizione delle ore
-   meglio che su un anello.
+   colorati secondo la fascia. In mezza colonna ciascuno misura
+   circa 7px: come banda di colore resta leggibile, ed e' il
+   motivo per cui la striscia batte una ciambella dello stesso
+   ingombro, dove l'ora andrebbe ricavata da un angolo.
    ---------------------------------------------------------- */
 
 .energy-bar {
   display: flex !important;
   gap: 2px !important;
   height: var(--energy-bar-height) !important;
-  margin-bottom: 5px !important;
 }
 
 .energy-seg {
@@ -1469,64 +1517,63 @@ body,
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .95) !important;
 }
 
-/* Scala oraria. I riferimenti intermedi sono indicativi: le
-   etichette si distribuiscono nello spazio, non sono agganciate
-   al singolo segmento. A distanza di lettura serve a orientarsi,
-   non a misurare. */
+/* ----------------------------------------------------------
+   BARRA DEL CONSUMO
+   Stessa altezza e stesso raggio della striscia accanto: le due
+   colonne devono sembrare due letture della stessa cosa, non
+   due componenti presi da progetti diversi.
+   ---------------------------------------------------------- */
+
+.energy-meter {
+  height: var(--energy-bar-height) !important;
+  border-radius: 3px !important;
+  background: rgba(255, 255, 255, .15) !important;
+  overflow: hidden !important;
+}
+
+.energy-meter-fill {
+  height: 100% !important;
+  border-radius: 3px !important;
+  background: var(--energy-bassa) !important;
+}
+
+/* Immissione in rete: il fotovoltaico produce piu' di quanto la
+   casa consuma e il surplus esce. E' una condizione diversa, non
+   un consumo piccolo, quindi cambia colore. */
+.energy-meter-fill.energy-meter-export {
+  background: #4FB8FF !important;
+}
+
+/* Scala sotto le due barre: ore a sinistra, watt a destra */
 .energy-ticks {
   display: flex !important;
   justify-content: space-between !important;
   font-family: var(--font-primary) !important;
   font-size: 11px !important;
   color: rgba(255, 255, 255, .55) !important;
-  margin-bottom: 6px !important;
+  margin-top: 4px !important;
 }
 
-/* ----------------------------------------------------------
-   PIEDE: media della giornata e legenda dei colori
-   Sulla stessa riga per non spendere una riga in piu'.
-   ---------------------------------------------------------- */
-
-.energy-foot {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
+/* Riga di riepilogo in fondo a ciascuna colonna */
+.energy-note {
   font-family: var(--font-primary) !important;
   font-size: 12px !important;
   color: rgba(255, 255, 255, .60) !important;
-}
-
-.energy-legend {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
+  margin-top: 5px !important;
   white-space: nowrap !important;
 }
 
-.energy-legend i {
-  display: inline-block !important;
-  width: 8px !important;
-  height: 8px !important;
-  border-radius: 2px !important;
-  margin-left: 6px !important;
-}
-
-.energy-legend i:first-child {
-  margin-left: 0 !important;
-}
-
-.energy-legend .energy-bassa     { background: var(--energy-bassa) !important; }
-.energy-legend .energy-media-dot { background: var(--energy-media) !important; }
-.energy-legend .energy-alta      { background: var(--energy-alta)  !important; }
-
-/* Stato di attesa e di errore */
+/* Stato di attesa e di errore. Il testo va a capo: i messaggi
+   del cloud Shelly possono essere lunghi, e vederli per intero
+   e' l'unico modo per capire cosa non va senza aprire i log. */
 .energy-avviso {
   font-family: var(--font-primary) !important;
-  font-size: 15px !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
   color: rgba(255, 255, 255, .55) !important;
-  padding: 6px 0 !important;
+  padding: 4px 0 !important;
+  white-space: normal !important;
 }
-
 
 /* ==========================================================
    TO DO LIST E NOTE AFFIANCATE

@@ -707,7 +707,34 @@ let config = {
 				zona: "IT-North",     // zona di offerta del nord Italia (maiuscole comprese: il servizio le distingue)
 				giorno: 0,            // 0 = oggi, 1 = domani (solo dopo le 13)
 				finestra: 3,          // durata in ore della fascia migliore
-				titolo: "COSTO ENERGIA OGGI"
+				titolo: "ENERGIA",
+
+				/* ----------------------------------------------
+				   SHELLY EM
+				   La chiave di autorizzazione NON si scrive qui:
+				   va su Render, in Environment, con nome
+				   SHELLY_AUTH_KEY. Il node_helper la legge da li'
+				   e la aggiunge alla richiesta, quindi non arriva
+				   mai al browser e non finisce su GitHub.
+				   Ricorda che quella chiave permette anche di
+				   COMANDARE i dispositivi, non solo di leggerli.
+				   ---------------------------------------------- */
+				shelly: {
+					server: "https://shelly-41-eu.shelly.cloud",
+					id: "bcff4dfcd5fa",
+
+					/* Le due pinze dello Shelly EM. Se il numero
+					   grande non corrispondesse a quello che vedi
+					   nell'app, i due canali sono invertiti: basta
+					   scambiare 0 e 1 qui sotto.
+					   Se una pinza non e' collegata, metti null e
+					   la riga corrispondente sparisce. */
+					canaleConsumo: 0,
+					canaleProduzione: 1,
+
+					/* Valore a cui la barra risulta piena, in watt */
+					fondoScala: 3000
+				}
 			}
 		},
 
