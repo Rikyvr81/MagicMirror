@@ -59,12 +59,51 @@ Module.register("MMM-Energia", {
 		/* Dopo un errore si riprova prima, senza aspettare l'ora */
 		riprova: 5 * 60 * 1000,
 
-		titolo: "COSTO ENERGIA OGGI"
+		titolo: "ENERGIA",
+
+		/* ------------------------------------------------------
+		   SHELLY
+		   La chiave NON si scrive qui: sta su Render, in
+		   Environment, come SHELLY_AUTH_KEY. Il node_helper la
+		   legge da li' e la aggiunge alla richiesta, cosi' non
+		   arriva mai al browser ne' finisce su GitHub.
+		   Se manca, la colonna di destra lo dice esplicitamente.
+		   ------------------------------------------------------ */
+		shelly: {
+			server: "",              // https://shelly-NN-eu.shelly.cloud
+			id: "",                  // identificativo del dispositivo
+
+			/* Lo Shelly EM ha due pinze. Qui si dichiara a cosa
+			   sono collegate. Se ne usi una sola, metti null
+			   sull'altra e la riga corrispondente sparisce. */
+			canaleConsumo: 0,
+			canaleProduzione: 1,
+
+			/* Fondo scala della barra, in watt: e' il valore a cui
+			   la barra risulta piena. 3000 corrisponde ai 3 kW
+			   dell'indicatore dell'app. */
+			fondoScala: 3000,
+
+			/* Il cloud Shelly aggiorna lo stato ogni mezzo minuto
+			   circa: chiedere piu' spesso non darebbe un dato piu'
+			   fresco. */
+			aggiornamento: 30 * 1000
+		}
 	},
 
 	start: function () {
-		this.prezzi = null;      // 24 valori in euro/kWh, oppure null
-		this.errore = null;      // messaggio dell'ultimo tentativo fallito
+		this.prezzi = null;        // 24 valori in euro/kWh, oppure null
+		this.errore = null;        // messaggio dell'ultimo tentativo fallito
+		this.potenze = null;       // { consumo, produzione } in watt
+		this.erroreShelly = null;
+
+		/* Lo Shelly ha un ritmo tutto suo, molto piu' rapido di
+		   quello dei prezzi: due cicli indipendenti invece di uno
+		   solo al passo del piu' lento. */
+		if (this.config.shelly && this.config.shelly.server) {
+			this.chiediShelly();
+			setInterval(() => this.chiediShelly(), this.config.shelly.aggiornamento);
+		}
 
 		this.chiediPrezzi();
 		setInterval(() => this.chiediPrezzi(), this.config.aggiornamento);
@@ -109,7 +148,59 @@ Module.register("MMM-Energia", {
 		this.sendSocketNotification("ENERGIA_SCARICA", { url: url, riserva: riserva });
 	},
 
+	/* Al node_helper servono solo server e identificativo: la
+	   chiave la aggiunge lui, leggendola dall'ambiente. */
+	chiediShelly: function () {
+		this.sendSocketNotification("SHELLY_SCARICA", {
+			server: this.config.shelly.server,
+			id: this.config.shelly.id
+		});
+	},
+
+	/* Struttura della risposta di uno Shelly EM (prima
+	   generazione), verificata sulla documentazione del cloud:
+	     data.device_status.emeters[n].power   potenza in watt
+	   Il canale collegato alla rete puo' essere NEGATIVO quando
+	   l'impianto produce piu' di quanto la casa consuma e il
+	   surplus va in rete. Il segno si conserva: e' informazione,
+	   non un errore da nascondere. */
+	leggiPotenze: function (dati) {
+		const stato = dati && dati.data && dati.data.device_status;
+		const misure = stato && stato.emeters;
+		if (!Array.isArray(misure)) throw new Error("risposta senza emeters");
+
+		const canale = (n) => {
+			if (n === null || n === undefined) return null;
+			const m = misure[n];
+			if (!m || typeof m.power !== "number") return null;
+			return m.power;
+		};
+
+		return {
+			consumo: canale(this.config.shelly.canaleConsumo),
+			produzione: canale(this.config.shelly.canaleProduzione),
+			online: !(dati && dati.data && dati.data.online === false)
+		};
+	},
+
 	socketNotificationReceived: function (avviso, carico) {
+		if (avviso === "SHELLY_DATI") {
+			try {
+				this.potenze = this.leggiPotenze(carico);
+				this.erroreShelly = null;
+			} catch (e) {
+				this.erroreShelly = e.message;
+			}
+			this.updateDom();
+			return;
+		}
+
+		if (avviso === "SHELLY_ERRORE") {
+			this.erroreShelly = carico.messaggio;
+			this.updateDom();
+			return;
+		}
+
 		if (avviso === "ENERGIA_DATI") {
 			try {
 				this.prezzi = this.riduciAOre(carico);
@@ -238,8 +329,176 @@ Module.register("MMM-Energia", {
 	},
 
 	/* ------------------------------------------------------
-	   DISEGNO
+	   AIUTI DI FORMATO PER LA POTENZA
 	   ------------------------------------------------------ */
+
+	/* Sotto il chilowatt si scrivono i watt interi: "780 W" e'
+	   piu' leggibile di "0,78 kW", e a quel livello i decimali
+	   non aggiungono nulla. Sopra, due decimali come nell'app. */
+	potenza: function (watt) {
+		const segno = watt < 0 ? "-" : "";
+		const v = Math.abs(watt);
+
+		if (v < 1000) return { numero: segno + Math.round(v), unita: "W" };
+		return {
+			numero: segno + (v / 1000).toLocaleString("it-IT", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			}),
+			unita: "kW"
+		};
+	},
+
+	/* ------------------------------------------------------
+	   DISEGNO
+	   Il pannello e' diviso in due colonne: a sinistra il costo
+	   nell'arco della giornata, a destra il consumo istantaneo.
+	   Le due parti hanno sorgenti e ritmi diversi, quindi ognuna
+	   si disegna per conto suo: se una non risponde, l'altra
+	   resta comunque a video.
+	   ------------------------------------------------------ */
+
+	/* riga piccola sotto ciascuna colonna */
+	nota: function (testo) {
+		const e = document.createElement("div");
+		e.className = "energy-note";
+		e.textContent = testo;
+		return e;
+	},
+
+	avviso: function (testo) {
+		const e = document.createElement("div");
+		e.className = "energy-avviso";
+		e.textContent = testo;
+		return e;
+	},
+
+	/* ---- colonna di sinistra: costo ---- */
+	colonnaCosto: function () {
+		const col = document.createElement("div");
+		col.className = "energy-col energy-col-costo";
+
+		if (!this.prezzi) {
+			col.appendChild(this.avviso(
+				this.errore ? `Prezzi non disponibili: ${this.errore}` : "Caricamento in corso"
+			));
+			return col;
+		}
+
+		const ore = this.prezzi;
+		const fasce = this.calcolaFasce(ore);
+		const migliore = this.miglioreFinestra(ore);
+		const validi = ore.filter((v) => v !== null);
+		const media = validi.reduce((a, b) => a + b, 0) / validi.length;
+		const adesso = this.config.giorno === 0 ? new Date().getHours() : -1;
+
+		const titolo = document.createElement("div");
+		titolo.className = "energy-best-hours";
+		titolo.textContent = migliore
+			? `${this.oraDue(migliore.ora)} – ${this.oraDue(migliore.ora + this.config.finestra)}`
+			: "—";
+		col.appendChild(titolo);
+
+		const sotto = document.createElement("div");
+		sotto.className = "energy-best-avg";
+		sotto.textContent = migliore ? `${this.euro(migliore.media)} €/kWh` : "";
+		col.appendChild(sotto);
+
+		const barra = document.createElement("div");
+		barra.className = "energy-bar";
+		fasce.forEach((f, h) => {
+			const seg = document.createElement("span");
+			seg.className = "energy-seg" + (f ? ` energy-${f}` : "") + (h === adesso ? " energy-adesso" : "");
+			barra.appendChild(seg);
+		});
+		col.appendChild(barra);
+
+		const scala = document.createElement("div");
+		scala.className = "energy-ticks";
+		["00", "06", "12", "18", "24"].forEach((t) => {
+			const e = document.createElement("span");
+			e.textContent = t;
+			scala.appendChild(e);
+		});
+		col.appendChild(scala);
+
+		col.appendChild(this.nota(`Media ${this.euro(media)} €/kWh`));
+		return col;
+	},
+
+	/* ---- colonna di destra: consumo ---- */
+	colonnaConsumo: function () {
+		const col = document.createElement("div");
+		col.className = "energy-col energy-col-consumo";
+
+		if (!this.potenze) {
+			col.appendChild(this.avviso(
+				this.erroreShelly ? `Shelly: ${this.erroreShelly}` : "Lettura in corso"
+			));
+			return col;
+		}
+
+		const consumo = this.potenze.consumo;
+
+		if (consumo === null) {
+			col.appendChild(this.avviso("Canale non disponibile"));
+			return col;
+		}
+
+		/* Con impianto fotovoltaico il canale della rete va sotto
+		   zero quando si immette: in quel caso il numero grande
+		   perde di senso come "consumo" e cambia etichetta. */
+		const immissione = consumo < 0;
+		const lettura = this.potenza(consumo);
+
+		const numero = document.createElement("div");
+		numero.className = "energy-now";
+		numero.textContent = lettura.numero;
+
+		const unita = document.createElement("span");
+		unita.className = "energy-now-unit";
+		unita.textContent = ` ${lettura.unita}`;
+		numero.appendChild(unita);
+		col.appendChild(numero);
+
+		const etichetta = document.createElement("div");
+		etichetta.className = "energy-now-label";
+		etichetta.textContent = this.potenze.online
+			? (immissione ? "in rete adesso" : "consumo adesso")
+			: "dispositivo non in linea";
+		col.appendChild(etichetta);
+
+		/* La barra rappresenta sempre un valore positivo: in
+		   immissione mostra quanto stai immettendo. */
+		const fondo = this.config.shelly.fondoScala || 3000;
+		const quota = Math.min(100, (Math.abs(consumo) / fondo) * 100);
+
+		const misuratore = document.createElement("div");
+		misuratore.className = "energy-meter";
+		const riempimento = document.createElement("div");
+		riempimento.className = "energy-meter-fill" + (immissione ? " energy-meter-export" : "");
+		riempimento.style.width = `${quota}%`;
+		misuratore.appendChild(riempimento);
+		col.appendChild(misuratore);
+
+		const scala = document.createElement("div");
+		scala.className = "energy-ticks";
+		const zero = document.createElement("span");
+		zero.textContent = "0";
+		const max = document.createElement("span");
+		max.textContent = `${this.potenza(fondo).numero} ${this.potenza(fondo).unita}`;
+		scala.appendChild(zero);
+		scala.appendChild(max);
+		col.appendChild(scala);
+
+		if (this.potenze.produzione !== null) {
+			const p = this.potenza(this.potenze.produzione);
+			col.appendChild(this.nota(`Produzione ${p.numero} ${p.unita}`));
+		}
+
+		return col;
+	},
+
 	getDom: function () {
 		const radice = document.createElement("div");
 		radice.className = "energy-block";
@@ -251,86 +510,18 @@ Module.register("MMM-Energia", {
 
 		const pannello = document.createElement("div");
 		pannello.className = "energy-panel";
+		pannello.appendChild(this.colonnaCosto());
+
+		/* la colonna del consumo compare solo se lo Shelly e'
+		   configurato: senza server il riquadro resta a una
+		   colonna sola, come prima */
+		if (this.config.shelly && this.config.shelly.server) {
+			pannello.appendChild(this.colonnaConsumo());
+		} else {
+			pannello.classList.add("energy-panel-singola");
+		}
+
 		radice.appendChild(pannello);
-
-		if (!this.prezzi) {
-			const avviso = document.createElement("div");
-			avviso.className = "energy-avviso";
-			avviso.textContent = this.errore
-				? `Prezzi non disponibili: ${this.errore}`
-				: "Caricamento in corso";
-			pannello.appendChild(avviso);
-			return radice;
-		}
-
-		const ore = this.prezzi;
-		const fasce = this.calcolaFasce(ore);
-		const migliore = this.miglioreFinestra(ore);
-		const validi = ore.filter((v) => v !== null);
-		const media = validi.reduce((a, b) => a + b, 0) / validi.length;
-		const adesso = this.config.giorno === 0 ? new Date().getHours() : -1;
-
-		/* riga della fascia migliore */
-		const rigaMigliore = document.createElement("div");
-		rigaMigliore.className = "energy-best";
-
-		const ore1 = document.createElement("span");
-		ore1.className = "energy-best-hours";
-		ore1.textContent = migliore
-			? `${this.oraDue(migliore.ora)} – ${this.oraDue(migliore.ora + this.config.finestra)}`
-			: "—";
-		rigaMigliore.appendChild(ore1);
-
-		if (migliore) {
-			const prezzo = document.createElement("span");
-			prezzo.className = "energy-best-avg";
-			prezzo.textContent = `${this.euro(migliore.media)} €/kWh`;
-			rigaMigliore.appendChild(prezzo);
-		}
-		pannello.appendChild(rigaMigliore);
-
-		/* striscia delle 24 ore */
-		const barra = document.createElement("div");
-		barra.className = "energy-bar";
-		fasce.forEach((f, h) => {
-			const segmento = document.createElement("span");
-			segmento.className = "energy-seg" + (f ? ` energy-${f}` : "") + (h === adesso ? " energy-adesso" : "");
-			barra.appendChild(segmento);
-		});
-		pannello.appendChild(barra);
-
-		/* scala oraria */
-		const scala = document.createElement("div");
-		scala.className = "energy-ticks";
-		["00", "06", "12", "18", "24"].forEach((t) => {
-			const e = document.createElement("span");
-			e.textContent = t;
-			scala.appendChild(e);
-		});
-		pannello.appendChild(scala);
-
-		/* piede: media della giornata e legenda */
-		const piede = document.createElement("div");
-		piede.className = "energy-foot";
-
-		const testoMedia = document.createElement("span");
-		testoMedia.className = "energy-media-testo";
-		testoMedia.textContent = `Media ${this.euro(media)} €/kWh`;
-		piede.appendChild(testoMedia);
-
-		const legenda = document.createElement("span");
-		legenda.className = "energy-legend";
-		[["energy-bassa", "bassa"], ["energy-media-dot", "media"], ["energy-alta", "alta"]].forEach(
-			([classe, etichetta]) => {
-				const punto = document.createElement("i");
-				punto.className = classe;
-				legenda.appendChild(punto);
-				legenda.appendChild(document.createTextNode(etichetta));
-			}
-		);
-		piede.appendChild(legenda);
-		pannello.appendChild(piede);
-
 		return radice;
 	}
 });
