@@ -2107,13 +2107,34 @@ body,
      piu' lento e con molti piu' veloce. Se dovesse correre
      troppo, alza questo numero. */
   --urgent-speed: 22s;
+
+  /* DUE CENTIMETRI, IN PIXEL
+     Sul monitor da 27" a 1920x1080 ci sono circa 32 pixel per
+     centimetro (1920 diviso i 59,8 cm di larghezza utile), quindi
+     2 cm fanno 64px. Se un giorno cambi schermo, e' l'unico
+     numero da ricalcolare. */
+  --urgent-gap: 64px;
+
+  /* Dove finisce "Agosto 2026" e quanto e' larga la legenda.
+     Sono misure prese dallo schermo, non calcolate: il titolo e'
+     a 48px e la legenda si stringe sul suo contenuto, quindi
+     nessuna delle due e' deducibile dal foglio di stile.
+     Un mese dal nome piu' lungo (settembre, novembre, dicembre)
+     sposta la prima; una voce in piu' nella legenda la seconda. */
+  --urgent-fine-titolo: 280px;
+  --urgent-larghezza-legenda: 270px;
+
+  /* Quanto e' lunga la sfumatura ai due bordi della fascia. Il
+     testo non compare e non sparisce di netto: svanisce entrando
+     da destra e uscendo a sinistra. */
+  --urgent-fade: 70px;
 }
 
 .urgent-box {
   position: absolute !important;
   top: 14px !important;
-  left: 300px !important;
-  right: 300px !important;
+  left: calc(var(--urgent-fine-titolo) + var(--urgent-gap)) !important;
+  right: calc(var(--urgent-larghezza-legenda) + var(--urgent-gap)) !important;
   width: auto !important;
   max-width: none !important;
   margin: 0 !important;
@@ -2122,23 +2143,58 @@ body,
      deve vedere nulla */
   overflow: hidden !important;
   z-index: 2 !important;
+
+  /* SFUMATURA AI BORDI
+     La maschera rende la fascia opaca al centro e trasparente
+     agli estremi: il testo svanisce entrando da destra e uscendo
+     a sinistra invece di apparire e sparire di netto contro un
+     bordo invisibile.
+     Il prefisso -webkit- serve al browser della TV, che e' basato
+     su Chromium e non riconosce ancora la forma senza prefisso. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 var(--urgent-fade),
+    #000 calc(100% - var(--urgent-fade)),
+    transparent 100%
+  ) !important;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 var(--urgent-fade),
+    #000 calc(100% - var(--urgent-fade)),
+    transparent 100%
+  ) !important;
 }
 
 /* Il contenuto e' un unico blocco largo quanto il testo, che
    scivola da destra a sinistra. Serve che sia inline-block:
    un blocco normale sarebbe largo quanto la fascia e il testo
-   andrebbe a capo invece di scorrere. */
+   andrebbe a capo invece di scorrere.
+
+   PERCHE' padding-left: 100%
+   Qui c'era un difetto. Lo scorrimento partiva da
+   translateX(100%), ma quel 100% e' la larghezza del TESTO, non
+   della fascia: con un messaggio corto il testo partiva appena a
+   destra di se' stesso, cioe' gia' dentro la fascia e vicino al
+   bordo sinistro, e usciva subito. Sembrava che il riquadro
+   fosse molto piu' stretto di quanto sia.
+   Il padding in percentuale invece si calcola sulla LARGHEZZA
+   DELLA FASCIA: aggiungendone una intera davanti al testo, il
+   blocco diventa lungo "fascia + testo" e uno spostamento del
+   100% della propria larghezza lo porta esattamente da fuori
+   destra a fuori sinistra, qualunque sia la lunghezza del
+   messaggio. */
 .urgent-box .module-content {
   display: inline-block !important;
   white-space: nowrap !important;
+  padding-left: 100% !important;
   will-change: transform !important;
   animation: urgentiScorri var(--urgent-speed) linear infinite !important;
 }
 
-/* Parte appena fuori dal bordo destro e finisce appena fuori da
-   quello sinistro, cosi' non compare ne' sparisce a meta' */
 @keyframes urgentiScorri {
-  from { transform: translateX(100%); }
+  from { transform: translateX(0); }
   to   { transform: translateX(-100%); }
 }
 
