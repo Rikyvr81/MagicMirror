@@ -22,6 +22,21 @@
 const NodeHelper = require("node_helper");
 
 const UNSPLASH = "https://api.unsplash.com";
+const DRIVE = "https://www.googleapis.com/drive/v3/files";
+
+/* Indirizzo diretto della rete di distribuzione di Google.
+   Verificato in navigazione anonima: l'indirizzo "thumbnail" di
+   drive.google.com reindirizza qui, quindi si punta direttamente
+   alla destinazione. Non richiede la chiave - che quindi non
+   finisce nella pagina servita alla TV - e converte da sola i
+   formati che il browser non sa leggere, HEIC compreso. */
+const DRIVE_IMMAGINE = "https://lh3.googleusercontent.com/d/";
+
+/* L'elenco dei file cambia solo quando aggiungi o togli foto:
+   riscaricarlo a ogni cambio di sfondo sarebbe inutile. Sei ore
+   sono un compromesso fra il non accorgersi delle novita' e il
+   tempestare Google di richieste. */
+const VALIDITA_ELENCO = 6 * 60 * 60 * 1000;
 
 /* Larghezza a cui chiedere l'immagine. Unsplash serve indirizzi
    ridimensionabili al volo, e non ha senso scaricare un file da
@@ -36,6 +51,73 @@ const LUNGHEZZA_ERRORE = 180;
 module.exports = NodeHelper.create({
 	start: function () {
 		console.log("MMM-Sfondo: helper avviato");
+		/* elenco dei file del Drive, tenuto da parte */
+		this.elenco = null;
+		this.elencoQuando = 0;
+	},
+
+	/* ------------------------------------------------------
+	   GOOGLE DRIVE
+
+	   Legge una cartella condivisa "con chiunque abbia il link".
+	   Serve solo una chiave API, non un accesso al tuo account:
+	   e' la ragione per cui la cartella deve essere pubblica, e
+	   il motivo per cui li' dentro vanno solo foto che non ti
+	   dispiacerebbe far vedere a uno sconosciuto.
+	   La chiave sta su Render come GDRIVE_API_KEY. Serve solo per
+	   ELENCARE i file: le immagini si scaricano da un indirizzo
+	   che non la richiede, quindi la chiave non arriva mai al
+	   browser.
+	   ------------------------------------------------------ */
+	elencoDrive: async function (cartella) {
+		if (this.elenco && Date.now() - this.elencoQuando < VALIDITA_ELENCO) {
+			return this.elenco;
+		}
+
+		const chiave = process.env.GDRIVE_API_KEY;
+		if (!chiave) throw new Error("GDRIVE_API_KEY non impostata su Render");
+		if (!cartella) throw new Error("cartella Drive non indicata nel config");
+
+		const url =
+			`${DRIVE}?q=${encodeURIComponent(`'${cartella}' in parents and trashed = false`)}` +
+			`&fields=${encodeURIComponent("files(id,name,mimeType)")}` +
+			`&pageSize=1000&key=${encodeURIComponent(chiave)}`;
+
+		const risposta = await fetch(url, { headers: { Accept: "application/json" } });
+		const testo = await risposta.text();
+
+		if (!risposta.ok) {
+			throw new Error(`drive: ${risposta.status} ${testo.trim().slice(0, LUNGHEZZA_ERRORE)}`);
+		}
+
+		const dati = JSON.parse(testo);
+
+		/* Si tengono solo le immagini: nella cartella potrebbe
+		   finirci di tutto, e una cartella o un PDF messi come
+		   sfondo darebbero uno schermo nero senza spiegazioni. */
+		const foto = (dati.files || []).filter(
+			(f) => typeof f.mimeType === "string" && f.mimeType.startsWith("image/")
+		);
+
+		if (!foto.length) throw new Error("nessuna immagine nella cartella");
+
+		this.elenco = foto;
+		this.elencoQuando = Date.now();
+		console.log(`MMM-Sfondo: elenco Drive aggiornato, ${foto.length} immagini`);
+
+		return foto;
+	},
+
+	daDrive: async function (carico) {
+		const foto = await this.elencoDrive(carico && carico.cartella);
+		const scelta = foto[Math.floor(Math.random() * foto.length)];
+
+		return {
+			immagine: `${DRIVE_IMMAGINE}${scelta.id}=w${LARGHEZZA}`,
+			autore: "",
+			profilo: "",
+			fonte: "drive"
+		};
 	},
 
 	socketNotificationReceived: function (avviso, carico) {
@@ -46,15 +128,52 @@ module.exports = NodeHelper.create({
 		);
 	},
 
-	scegli: async function (carico) {
-		const chiave = process.env.UNSPLASH_ACCESS_KEY;
+	/* ------------------------------------------------------
+	   SMISTAMENTO FRA LE DUE SORGENTI
 
-		if (!chiave) {
-			const avviso = "UNSPLASH_ACCESS_KEY non impostata su Render";
-			console.error("MMM-Sfondo:", avviso);
-			this.sendSocketNotification("SFONDO_ERRORE", { messaggio: avviso });
-			return;
+	   modo 1 = solo Drive
+	   modo 2 = entrambe, sorteggiate a ogni cambio
+	   modo 3 = solo Unsplash
+
+	   Nel modo 2 non c'e' una principale e una di riserva: si
+	   tira a sorte ogni volta. E' una scelta migliore di quella
+	   che avevo proposto io, perche' tiene vive entrambe le
+	   strade - se il Drive smettesse di rispondere te ne
+	   accorgeresti subito, vedendo solo fotografie di Unsplash,
+	   invece di scoprirlo mesi dopo.
+	   Quando una delle due fallisce si prova comunque l'altra
+	   prima di arrendersi: uno sfondo c'e' sempre.
+	   ------------------------------------------------------ */
+	scegli: async function (carico) {
+		const modo = (carico && carico.modo) || 2;
+
+		let ordine;
+		if (modo === 1) ordine = ["drive"];
+		else if (modo === 3) ordine = ["unsplash"];
+		else ordine = Math.random() < 0.5 ? ["drive", "unsplash"] : ["unsplash", "drive"];
+
+		const problemi = [];
+
+		for (const fonte of ordine) {
+			try {
+				const foto = fonte === "drive"
+					? await this.daDrive(carico)
+					: await this.daUnsplash(carico);
+
+				this.sendSocketNotification("SFONDO_FOTO", foto);
+				return;
+			} catch (errore) {
+				console.error(`MMM-Sfondo: ${fonte} -`, errore.message);
+				problemi.push(`${fonte}: ${errore.message}`);
+			}
 		}
+
+		this.sendSocketNotification("SFONDO_ERRORE", { messaggio: problemi.join(" / ") });
+	},
+
+	daUnsplash: async function (carico) {
+		const chiave = process.env.UNSPLASH_ACCESS_KEY;
+		if (!chiave) throw new Error("UNSPLASH_ACCESS_KEY non impostata su Render");
 
 		/* Una parola di ricerca a caso fra quelle configurate: cosi'
 		   i generi si alternano invece di esaurire prima uno e poi
@@ -66,7 +185,7 @@ module.exports = NodeHelper.create({
 			`${UNSPLASH}/photos/random?query=${encodeURIComponent(ricerca)}` +
 			`&orientation=landscape&content_filter=high`;
 
-		try {
+		{
 			const risposta = await fetch(url, {
 				headers: {
 					Authorization: `Client-ID ${chiave}`,
@@ -100,16 +219,14 @@ module.exports = NodeHelper.create({
 					.catch(() => {});
 			}
 
-			console.log(`MMM-Sfondo: nuova foto (${ricerca}) di ${foto?.user?.name || "ignoto"}`);
+			console.log(`MMM-Sfondo: nuova foto Unsplash (${ricerca}) di ${foto?.user?.name || "ignoto"}`);
 
-			this.sendSocketNotification("SFONDO_FOTO", {
+			return {
 				immagine: immagine,
 				autore: foto?.user?.name || "",
-				profilo: foto?.user?.links?.html || ""
-			});
-		} catch (errore) {
-			console.error("MMM-Sfondo:", errore.message);
-			this.sendSocketNotification("SFONDO_ERRORE", { messaggio: errore.message });
+				profilo: foto?.user?.links?.html || "",
+				fonte: "unsplash"
+			};
 		}
 	}
 });

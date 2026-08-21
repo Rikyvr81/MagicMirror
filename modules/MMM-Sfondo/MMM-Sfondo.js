@@ -28,6 +28,23 @@
 
 Module.register("MMM-Sfondo", {
 	defaults: {
+		/* DA DOVE ARRIVANO LE FOTOGRAFIE
+		     1 = solo Google Drive, le tue
+		     2 = entrambe, sorteggiate a ogni cambio
+		     3 = solo Unsplash
+		   Nel modo 2 non c'e' una principale e una di riserva: si
+		   tira a sorte ogni volta, cosi' entrambe restano in uso.
+		   Se una fallisce si prova comunque l'altra, quindi uno
+		   sfondo c'e' sempre. */
+		modo: 2,
+
+		/* Codice della cartella condivisa su Drive: la parte del
+		   link dopo /folders/. La cartella deve essere impostata
+		   su "chiunque abbia il link", altrimenti il server non
+		   puo' leggerla - e per questo li' dentro vanno solo foto
+		   che non ti dispiacerebbe far vedere a uno sconosciuto. */
+		cartellaDrive: "",
+
 		/* Parole di ricerca, IN INGLESE.
 		   Le fotografie su Unsplash sono etichettate quasi tutte in
 		   inglese: cercando "paesaggi" si trova solo quel poco che
@@ -61,7 +78,11 @@ Module.register("MMM-Sfondo", {
 	},
 
 	chiediFoto: function () {
-		this.sendSocketNotification("SFONDO_CHIEDI", { ricerche: this.config.ricerche });
+		this.sendSocketNotification("SFONDO_CHIEDI", {
+			modo: this.config.modo,
+			ricerche: this.config.ricerche,
+			cartella: this.config.cartellaDrive
+		});
 	},
 
 	socketNotificationReceived: function (avviso, carico) {
@@ -87,6 +108,9 @@ Module.register("MMM-Sfondo", {
 
 		pre.onload = () => {
 			document.documentElement.style.backgroundImage = `url("${dati.immagine}")`;
+			/* Il credito riguarda solo Unsplash: le tue foto non
+			   hanno un autore da accreditare, e la riga sparisce da
+			   sola quando la fotografia viene dal Drive. */
 			this.autore = dati.autore || null;
 			this.profilo = dati.profilo || null;
 			this.updateDom();
