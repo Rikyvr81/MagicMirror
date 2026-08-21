@@ -541,6 +541,21 @@ let config = {
 			position: "fullscreen_below",
 			classes: "sfondo-box",
 			config: {
+				/* 1 = solo Drive, 2 = entrambe a sorte, 3 = solo
+				   Unsplash. Con 2 le due sorgenti restano entrambe
+				   in uso: se una si rompe te ne accorgi subito
+				   perche' vedi solo le foto dell'altra. */
+				modo: 1,
+
+				/* Cartella condivisa su Drive - la parte del link
+				   dopo /folders/. Deve restare su "chiunque abbia
+				   il link": e' cio' che permette al server di
+				   leggerla senza le tue credenziali Google, ed e'
+				   anche il motivo per cui li' dentro vanno solo
+				   foto che possono essere viste da chiunque abbia
+				   quell'indirizzo. */
+				cartellaDrive: "1zUxlcg38exPFeYHCNDR8uPNXOuENQaou",
+
 				/* IN INGLESE: le foto su Unsplash sono etichettate
 				   quasi tutte cosi', e cercando in italiano la
 				   scelta si riduce a pochissime immagini. */
