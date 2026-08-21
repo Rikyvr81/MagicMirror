@@ -2407,6 +2407,46 @@ body,
 }
 
 /* ==========================================================
+   CREDITO AL FOTOGRAFO
+
+   Le condizioni d'uso dell'API di Unsplash chiedono di
+   accreditare l'autore della fotografia. La licenza delle
+   immagini non lo impone - sono libere anche per uso commerciale
+   - ma i termini del servizio si, ed e' il prezzo della chiave
+   gratuita.
+
+   Sta in basso a destra, piccolo e molto spento: deve essere
+   leggibile da vicino se qualcuno lo cerca, e invisibile da due
+   metri di distanza, dove si guarda tutto il resto.
+   Per toglierlo non serve agire qui: c'e' "credito: false" nel
+   config.js, che e' il posto giusto perche' e' una scelta, non
+   uno stile.
+   ========================================================== */
+
+.sfondo-box {
+  position: fixed !important;
+  right: 10px !important;
+  bottom: 6px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+}
+
+.sfondo-credito {
+  font-family: var(--font-primary) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+  color: rgba(255, 255, 255, .35) !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .9) !important;
+}
+
+/* ==========================================================
    CALENDARI COMPLETAMENTE TRASPARENTI  (blocco di prova)
    Sta in fondo al file di proposito: essendo l'ultimo, vince
    sulle regole precedenti. Per tornare indietro basta
