@@ -2447,6 +2447,72 @@ body,
 }
 
 /* ==========================================================
+   BUDGET DI FAMIGLIA - blocco in alto a destra
+
+   Due righe accanto alla data: budget del mese e residuo, con
+   una linea verticale che le separa da "venerdi', 21 agosto".
+
+   POSIZIONE ASSOLUTA, E NON PER VEZZO
+   La colonna destra e' una griglia con le righe assegnate a
+   mano: un modulo in piu' nel flusso verrebbe collocato in una
+   riga propria e scomporrebbe tutto l'impianto. In posizione
+   assoluta invece esce dalla griglia e si appoggia dove
+   serve, senza spostare nulla - lo stesso principio del meteo
+   attuale e della fascia dei messaggi urgenti.
+
+   L'ANGOLO E' STRETTO
+   Sopra c'e' la data, che a 28px occupa circa 280px dei 440
+   della colonna; sotto, a 38px dall'alto, comincia il riquadro
+   del meteo attuale. Le due righe del budget stanno in quello
+   spazio: 11px di corpo, interlinea 15, in tutto 30px. Se un
+   giorno crescessero, andrebbero a sovrapporsi al meteo.
+   ========================================================== */
+
+.budget-box {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 0 0 12px !important;
+
+  /* la linea che separa il budget dalla data */
+  border-left: 1px solid rgba(255, 255, 255, .30) !important;
+
+  z-index: 3 !important;
+}
+
+.budget-riga {
+  font-family: var(--font-primary) !important;
+  font-size: 11px !important;
+  line-height: 15px !important;
+  letter-spacing: .3px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  text-align: left !important;
+}
+
+/* L'etichetta resta neutra: il colore va solo sul numero,
+   altrimenti a colpo d'occhio sembra tutto un allarme. */
+.budget-etichetta {
+  color: rgba(255, 255, 255, .60) !important;
+}
+
+.budget-valore {
+  color: rgba(255, 255, 255, .95) !important;
+  font-weight: 500 !important;
+}
+
+/* Residuo sotto zero: rosso e grassetto. E' lo stesso rosso
+   delle ore care nella fascia dell'energia - significa la stessa
+   cosa, stai spendendo male. */
+.budget-valore.budget-rosso {
+  color: var(--energy-livello-rosso) !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================
    CALENDARI COMPLETAMENTE TRASPARENTI  (blocco di prova)
    Sta in fondo al file di proposito: essendo l'ultimo, vince
    sulle regole precedenti. Per tornare indietro basta

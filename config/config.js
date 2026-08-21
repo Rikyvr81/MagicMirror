@@ -528,6 +528,28 @@ let config = {
 		},
 
 		/* ======================================================
+		   BUDGET DI FAMIGLIA
+		   Legge un foglio Google con due schede: Budget, dove
+		   scrivi mese, importo e se mostrarlo, e Spese, riempita
+		   dal modulo Google che compili dal telefono.
+		   La dashboard legge soltanto, non scrive mai nulla.
+		   Il foglio deve essere condiviso "con chiunque abbia il
+		   link": e' cio' che permette al server di leggerlo senza
+		   le tue credenziali Google.
+		   ====================================================== */
+		{
+			module: "MMM-Budget",
+			position: "top_right",
+			classes: "budget-box",
+			config: {
+				foglio: "1kfK8e_PM6lXGU0RxoN_8sMt7fzAilmZr-Ydh6upWi1Q",
+				schedaBudget: "Budget",
+				schedaSpese: "Spese",
+				intervallo: 10 * 60 * 1000
+			}
+		},
+
+		/* ======================================================
 		   SFONDO A ROTAZIONE
 		   Non disegna nulla sullo schermo se non il credito
 		   all'autore in basso a destra: il suo lavoro e' scrivere
