@@ -1537,7 +1537,22 @@ body,
 
 .energy-gauge {
   position: absolute !important;
-  top: 0 !important;
+
+  /* SOTTO L'INTESTAZIONE, NON SOPRA
+     Il riferimento e' l'angolo della colonna, che comprende anche
+     "CONSUMO ATTUALE": ancorato a top: 0 lo strumento finiva
+     addosso alla scritta. Qui si scende dell'altezza esatta
+     dell'intestazione, ricostruita dai suoi pezzi invece che con
+     un numero tondo, cosi' se un domani cambia il corpo del
+     titolo basta aggiornare il primo addendo:
+       22px  interlinea del titolo
+        8px  spazio sotto il testo
+        1px  riga bianca
+       10px  stacco dal contenuto
+     Sotto restano i 46px delle due righe - numero grande ed
+     etichetta - e lo strumento ne occupa 44: ci sta con due
+     pixel di margine. */
+  top: calc(22px + 8px + 1px + 10px) !important;
   right: 0 !important;
   width: 76px !important;
   height: auto !important;
