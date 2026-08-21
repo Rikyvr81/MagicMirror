@@ -2468,12 +2468,21 @@ body,
    giorno crescessero, andrebbero a sovrapporsi al meteo.
    ========================================================== */
 
-.budget-box {
+/* Il selettore e' lungo per necessita', non per gusto:
+   .region.top.right .module impone larghezza piena a tutti i
+   moduli della colonna e vale tre classi. Un semplice
+   .budget-box ne vale una e perdeva il confronto, quindi il
+   riquadro restava largo 440px e, pur ancorato a destra,
+   partiva da sinistra sovrapponendosi alla data.
+   width: max-content lo fa stringere sul proprio contenuto:
+   e' cio' che permette a right: 0 di significare qualcosa. */
+.region.top.right .budget-box {
   position: absolute !important;
   top: 0 !important;
   right: 0 !important;
-  width: auto !important;
-  max-width: none !important;
+  left: auto !important;
+  width: max-content !important;
+  max-width: 200px !important;
   margin: 0 !important;
   padding: 0 0 0 12px !important;
 
