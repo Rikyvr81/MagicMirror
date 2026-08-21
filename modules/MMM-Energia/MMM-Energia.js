@@ -1,4 +1,4 @@
-/* ===========================================================
+/* ==========================================================
    MMM-Energia
    Costo dell'energia nell'arco della giornata.
 
@@ -141,6 +141,27 @@ Module.register("MMM-Energia", {
 			classeImmissione: "energy-livello-blu",
 			classeOltre: "energy-livello-rosso",
 
+			/* SOGLIE DEL TACHIMETRO, in watt.
+			   Non giudicano quanto consumi, ma se lo stai facendo
+			   nel momento giusto: la stessa potenza e' accettabile
+			   in un'ora economica e sbagliata in un'ora cara,
+			   quindi le soglie si stringono al salire del prezzo.
+			   Le chiavi corrispondono alle tre fasce di costo
+			   della colonna accanto: bassa, media, alta.
+			   Ogni fascia ha tre numeri: dove finisce il verde, dove
+			   finisce il giallo e dove finisce la corsa. L'ultimo
+			   serve perche' il settore rosso abbia un'estensione
+			   propria: senza, superata la soglia gialla la lancetta
+			   salterebbe subito a fine corsa e il rosso non direbbe
+			   piu' nulla su QUANTO sei oltre.
+			   Anche il fondo si stringe al salire del prezzo: 5 kW
+			   in un'ora economica, 3 kW in una cara. */
+			tachimetro: {
+				bassa: { verde: 1000, giallo: 3000, fondo: 5000 },
+				media: { verde: 800, giallo: 2000, fondo: 4000 },
+				alta: { verde: 500, giallo: 1500, fondo: 3000 }
+			},
+
 			/* Il cloud Shelly aggiorna lo stato ogni mezzo minuto
 			   circa: chiedere piu' spesso non darebbe un dato piu'
 			   fresco. */
@@ -163,6 +184,15 @@ Module.register("MMM-Energia", {
 			{},
 			this.defaults.shelly,
 			this.config.shelly || {}
+		);
+
+		/* Stessa cautela un livello piu' sotto: se un domani
+		   scrivessi "tachimetro" nel config.js con una sola fascia,
+		   la fusione superficiale cancellerebbe le altre due. */
+		this.config.shelly.tachimetro = Object.assign(
+			{},
+			this.defaults.shelly.tachimetro,
+			this.config.shelly.tachimetro || {}
 		);
 
 		this.prezzi = null;        // 24 valori in euro/kWh, oppure null
@@ -501,6 +531,132 @@ Module.register("MMM-Energia", {
 	},
 
 	/* ------------------------------------------------------
+	   TACHIMETRO
+
+	   Non dice quanta corrente stai usando - quello e' gia'
+	   scritto accanto in cifre - ma se la stai usando nel momento
+	   giusto. La stessa potenza e' verde in un'ora economica e
+	   rossa in un'ora cara: e' un giudizio sul TEMPISMO, non sul
+	   consumo.
+
+	   PERCHE' LA SCALA NON E' LINEARE
+	   I tre settori sono uguali, sessanta gradi ciascuno, e la
+	   lancetta si colloca DENTRO il settore che le compete. Con
+	   una scala lineare in watt le soglie cadrebbero in punti
+	   diversi a seconda dell'ora e il colore puntato non
+	   coinciderebbe piu' con i settori disegnati. Cosi' invece il
+	   colore sotto la punta e' sempre quello giusto, ed e' l'unica
+	   cosa che questo strumento deve comunicare.
+	   ------------------------------------------------------ */
+
+	/* Fascia di costo dell'ora in corso: "bassa", "media", "alta".
+	   Restituisce null se i prezzi non sono ancora arrivati - in
+	   quel caso non c'e' nulla da giudicare e il tachimetro non si
+	   disegna. */
+	fasciaOraCorrente: function () {
+		if (!this.prezzi || this.config.giorno !== 0) return null;
+
+		const fasce = this.calcolaFasce(this.prezzi);
+		return fasce[new Date().getHours()] || null;
+	},
+
+	/* Dalla potenza alla posizione sull'arco, fra 0 (tutto a
+	   sinistra) e 1 (tutto a destra). */
+	posizioneLancetta: function (watt, soglie) {
+		/* In immissione si sta producendo piu' di quanto si
+		   consuma: e' il caso migliore possibile, lancetta a
+		   fondo scala sinistro. */
+		if (watt <= 0) return 0;
+
+		const terzo = 1 / 3;
+
+		if (watt <= soglie.verde) {
+			return (watt / soglie.verde) * terzo;
+		}
+
+		if (watt <= soglie.giallo) {
+			const dentro = (watt - soglie.verde) / (soglie.giallo - soglie.verde);
+			return terzo + dentro * terzo;
+		}
+
+		/* Settore rosso: dalla soglia gialla al fondo scala della
+		   fascia. Oltre il fondo la lancetta resta appoggiata a
+		   destra.
+		   Il controllo su fondo <= giallo non serve con i valori
+		   attuali, ma evita una divisione per zero se un domani
+		   qualcuno mettesse un fondo scala piu' basso della soglia
+		   gialla. */
+		if (soglie.fondo <= soglie.giallo) return 1;
+
+		const dentro = Math.min(1, (watt - soglie.giallo) / (soglie.fondo - soglie.giallo));
+		return 2 * terzo + dentro * terzo;
+	},
+
+	/* Punto sull'arco. L'angolo si misura da sinistra (180 gradi)
+	   verso destra (0), e in SVG la y cresce verso il basso: da
+	   qui il segno meno sul seno. */
+	puntoArco: function (gradi, raggio) {
+		const r = (gradi * Math.PI) / 180;
+		return {
+			x: 50 + raggio * Math.cos(r),
+			y: 50 - raggio * Math.sin(r)
+		};
+	},
+
+	settoreArco: function (daGradi, aGradi, raggio) {
+		const a = this.puntoArco(daGradi, raggio);
+		const b = this.puntoArco(aGradi, raggio);
+		return `M ${a.x} ${a.y} A ${raggio} ${raggio} 0 0 1 ${b.x} ${b.y}`;
+	},
+
+	tachimetro: function (watt, fascia) {
+		const NS = "http://www.w3.org/2000/svg";
+		const soglie = this.config.shelly.tachimetro[fascia];
+		if (!soglie) return null;
+
+		const svg = document.createElementNS(NS, "svg");
+		svg.setAttribute("viewBox", "0 0 100 58");
+		svg.setAttribute("class", "energy-gauge");
+
+		/* Tre settori uguali: verde a sinistra, giallo al centro,
+		   rosso a destra. */
+		const settori = [
+			[180, 121, "energy-livello-verde"],
+			[119, 61, "energy-livello-giallo"],
+			[59, 0, "energy-livello-rosso"]
+		];
+
+		settori.forEach(([da, a, classe]) => {
+			const p = document.createElementNS(NS, "path");
+			p.setAttribute("d", this.settoreArco(da, a, 40));
+			p.setAttribute("class", `energy-gauge-arc ${classe}`);
+			svg.appendChild(p);
+		});
+
+		/* La lancetta. Il perno sta al centro del semicerchio e la
+		   punta sull'arco interno, cosi' non copre i colori. */
+		const t = this.posizioneLancetta(watt, soglie);
+		const punta = this.puntoArco(180 - t * 180, 30);
+
+		const ago = document.createElementNS(NS, "line");
+		ago.setAttribute("x1", 50);
+		ago.setAttribute("y1", 50);
+		ago.setAttribute("x2", punta.x.toFixed(2));
+		ago.setAttribute("y2", punta.y.toFixed(2));
+		ago.setAttribute("class", "energy-gauge-needle");
+		svg.appendChild(ago);
+
+		const perno = document.createElementNS(NS, "circle");
+		perno.setAttribute("cx", 50);
+		perno.setAttribute("cy", 50);
+		perno.setAttribute("r", 5);
+		perno.setAttribute("class", "energy-gauge-pin");
+		svg.appendChild(perno);
+
+		return svg;
+	},
+
+	/* ------------------------------------------------------
 	   DISEGNO
 	   Il pannello e' diviso in due colonne: a sinistra il costo
 	   nell'arco della giornata, a destra il consumo istantaneo.
@@ -673,6 +829,19 @@ Module.register("MMM-Energia", {
 		   altezza fissa che contiene il numero grande - cosi' le
 		   due restano allineate anche ora che a sinistra c'e'
 		   un'etichetta in piu'. */
+		/* Il tachimetro sta in posizione assoluta nell'angolo in
+		   alto a destra della colonna, quindi non entra nel flusso
+		   e non tocca le altezze fisse che tengono allineate le due
+		   colonne. Compare solo se sappiamo in che fascia oraria
+		   siamo: senza prezzi non c'e' alcun tempismo da giudicare,
+		   e una lancetta che indica a caso e' peggio di nessuna
+		   lancetta. */
+		const fascia = this.fasciaOraCorrente();
+		if (fascia) {
+			const strumento = this.tachimetro(consumo, fascia);
+			if (strumento) col.appendChild(strumento);
+		}
+
 		const riga = document.createElement("div");
 		riga.className = "energy-best-row";
 
