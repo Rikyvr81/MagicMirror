@@ -216,44 +216,56 @@ html {
 }
 
 /* ==========================================================
-   TAGLIO DEI DUE CENTIMETRI IN BASSO
+   ZOOM DELLO SFONDO, CENTRATO
 
    Molte foto portano scritte, filigrane o didascalie lungo il
    bordo inferiore. Non potendo ritagliare il file - arriva da
-   fuori - si allarga la superficie dipinta OLTRE il bordo dello
-   schermo: gli ultimi centimetri cadono fuori e non si vedono,
-   e il resto si ingrandisce di conseguenza.
+   fuori - si allarga la superficie dipinta OLTRE i bordi dello
+   schermo: quel che esce non si vede, e il resto si ingrandisce
+   di conseguenza.
 
    PERCHE' UNO PSEUDO-ELEMENTO
    Su <html> non si puo' fare: il suo sfondo viene disteso sulla
    tela del browser e non ha un'area propria da poter sforare.
    Uno pseudo-elemento in posizione fissa invece ce l'ha, e puo'
-   avere il bordo inferiore piu' in basso dello schermo.
+   sporgere sopra e sotto lo schermo.
 
-   L'ancoraggio in alto e' essenziale: con "center" il taglio si
-   dividerebbe fra sopra e sotto e riapparirebbe meta' scritta.
+   SU TUTTI E QUATTRO I LATI
+   Un ingrandimento vero si espande in ogni direzione: la
+   superficie sporge della stessa quantita' sopra, sotto, a
+   destra e a sinistra, e la foto resta centrata. Una prima
+   versione sporgeva solo in basso e teneva la foto incollata al
+   bordo superiore: toglieva le scritte, ma spostava il soggetto
+   fuori asse verso il cielo, e una foto composta bene il
+   soggetto ce l'ha al centro.
+
+   UN'AVVERTENZA SUL BORDO ORIZZONTALE
+   Quanto si perda davvero ai lati non dipende solo da questo
+   numero: "cover" ritaglia comunque l'asse in eccesso per far
+   combaciare le proporzioni della foto con quelle dello schermo,
+   e una foto piu' panoramica di 16:9 perde ai lati anche senza
+   alcun ingrandimento. Il valore qui sotto e' quindi il taglio
+   AGGIUNTIVO rispetto a quel che sarebbe successo comunque.
    ========================================================== */
 
 :root {
-  /* Quanto si taglia in basso. Due centimetri sul monitor da 27"
-     a 1920x1080, dove ci sono circa 32 pixel per centimetro. */
-  --sfondo-taglio-basso: 64px;
+  /* Quanto si taglia per lato. Due centimetri sul monitor da 27"
+     a 1920x1080, dove ci sono circa 32 pixel per centimetro.
+     In verticale sono 128px su 1080, quindi circa il 12% di
+     ingrandimento; in orizzontale 128px su 1920, circa il 7%. */
+  --sfondo-zoom: 64px;
 }
 
 html::before {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  /* il bordo inferiore scende SOTTO lo schermo: e' li' che
-     finisce la parte tagliata */
-  bottom: calc(-1 * var(--sfondo-taglio-basso));
+  /* sporge in egual misura sui quattro lati */
+  inset: calc(-1 * var(--sfondo-zoom));
 
   /* eredita l'indirizzo scritto in linea su <html> dal config */
   background-image: inherit;
   background-size: cover;
-  background-position: center top;
+  background-position: center center;
   background-repeat: no-repeat;
 
   pointer-events: none;
