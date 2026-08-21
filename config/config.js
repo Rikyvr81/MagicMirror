@@ -545,7 +545,7 @@ let config = {
 				   Unsplash. Con 2 le due sorgenti restano entrambe
 				   in uso: se una si rompe te ne accorgi subito
 				   perche' vedi solo le foto dell'altra. */
-				modo: 1,
+				modo: 2,
 
 				/* Cartella condivisa su Drive - la parte del link
 				   dopo /folders/. Deve restare su "chiunque abbia
