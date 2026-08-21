@@ -2522,6 +2522,86 @@ body,
 }
 
 /* ==========================================================
+   BUDGET NELLE CELLE DEL CALENDARIO
+
+   In alto a sinistra di ogni cella, piu' piccolo del numero del
+   giorno: "Budget disponibile: 589€".
+
+   IL TESTO NON ESISTE COME ELEMENTO
+   Le celle le costruisce il calendario e le rifa' da capo a ogni
+   aggiornamento: qualunque cosa ci si infilasse dentro
+   sparirebbe al primo arrivo di eventi. Qui invece il testo e'
+   contenuto GENERATO, e il modulo MMM-Budget emette una regola
+   per ciascuna giornata agganciata a data-date. Una regola non
+   e' un oggetto nel documento e continua a valere anche per le
+   celle appena ricostruite.
+   Questo blocco definisce solo la forma; il testo e il colore
+   arrivano dal modulo.
+
+   DUE PSEUDO-ELEMENTI, NON UNO
+   ::before porta l'etichetta, sempre neutra, ::after il numero,
+   che si colora. Con un contenuto solo l'intera riga sarebbe
+   verde o rossa, e a colpo d'occhio sembrerebbe un allarme anche
+   quando e' una buona notizia.
+
+   ATTENZIONE
+   Se un domani MMM-CalendarExt3 usasse ::before o ::after sulle
+   celle per qualcosa di suo, qui si creerebbe un conflitto: e'
+   il primo posto dove guardare se dopo un aggiornamento del
+   modulo comparissero segni strani nelle caselle.
+   ========================================================== */
+
+:root {
+  /* Larghezza riservata all'etichetta. E' tarata su "Budget
+     disponibile: " a 10px: se cambi quel testo nel config, o il
+     corpo qui sotto, ritocca anche questo numero o l'importo ci
+     finisce sopra. */
+  --budget-etichetta-larghezza: 96px;
+
+  /* Verde e rosso del budget: gli stessi della fascia energia,
+     perche' significano la stessa cosa - stai andando bene,
+     oppure stai spendendo male. */
+  --budget-verde: var(--energy-livello-verde);
+  --budget-rosso: var(--energy-livello-rosso);
+}
+
+/* Le celle diventano il riferimento per il posizionamento del
+   testo: senza questo, il contenuto generato si ancorerebbe alla
+   pagina intera e finirebbe in un angolo dello schermo. */
+.CX3_basicCalendar .cell {
+  position: relative !important;
+}
+
+.CX3_basicCalendar .cell::before,
+.CX3_basicCalendar .cell::after {
+  position: absolute !important;
+  top: 3px !important;
+  font-family: var(--font-primary) !important;
+  font-size: 10px !important;
+  line-height: 12px !important;
+  letter-spacing: .2px !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .9) !important;
+  z-index: 1 !important;
+}
+
+/* Etichetta: neutra e spenta, e' solo la didascalia del numero */
+.CX3_basicCalendar .cell::before {
+  left: 6px !important;
+  color: rgba(255, 255, 255, .50) !important;
+  font-weight: 400 !important;
+}
+
+/* Numero: parte dove finisce l'etichetta. Il colore e il grassetto
+   li decide il modulo, giorno per giorno. */
+.CX3_basicCalendar .cell::after {
+  left: var(--budget-etichetta-larghezza) !important;
+  color: rgba(255, 255, 255, .90) !important;
+  font-weight: 400 !important;
+}
+
+/* ==========================================================
    CALENDARI COMPLETAMENTE TRASPARENTI  (blocco di prova)
    Sta in fondo al file di proposito: essendo l'ultimo, vince
    sulle regole precedenti. Per tornare indietro basta
