@@ -1507,6 +1507,69 @@ body,
   grid-template-columns: minmax(0, 1fr) !important;
 }
 
+/* ----------------------------------------------------------
+   TACHIMETRO DEL TEMPISMO
+
+   Non dice quanta corrente stai usando - quello e' scritto in
+   cifre a fianco - ma se la stai usando nel momento giusto. Le
+   soglie si stringono al salire del prezzo dell'ora, quindi la
+   stessa potenza punta al verde a mezzogiorno e al rosso alle
+   venti.
+
+   POSIZIONE ASSOLUTA
+   Sta nell'angolo in alto a destra della colonna, sopra lo
+   spazio che restava vuoto accanto al numero grande. Essendo
+   fuori dal flusso non tocca le altezze fisse che tengono
+   allineate le due colonne: e' la stessa ragione per cui la
+   fascia dei messaggi urgenti non sposta il calendario.
+
+   ATTENZIONE ALLO SPAZIO A SINISTRA
+   Lo strumento occupa 76px dei 190 utili della colonna, quindi
+   alla riga "Produzione ..." ne restano 114. Con la produzione
+   in kilowatt - "Produzione 1,84 kW" - si arriva a sfiorarli. Se
+   un giorno le due cose si toccassero, la leva e' la larghezza
+   qui sotto.
+   ---------------------------------------------------------- */
+
+.energy-col-consumo {
+  position: relative !important;
+}
+
+.energy-gauge {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 76px !important;
+  height: auto !important;
+}
+
+/* I tre settori. Fondo trasparente e nessun riempimento: si
+   disegnano solo gli archi, cosi' la fotografia sotto continua a
+   vedersi come nel resto della dashboard. */
+.energy-gauge-arc {
+  fill: none !important;
+  stroke-width: 12 !important;
+  stroke-linecap: butt !important;
+}
+
+.energy-gauge-arc.energy-livello-verde  { stroke: var(--energy-livello-verde) !important; }
+.energy-gauge-arc.energy-livello-giallo { stroke: var(--energy-livello-giallo) !important; }
+.energy-gauge-arc.energy-livello-rosso  { stroke: var(--energy-livello-rosso) !important; }
+
+/* La lancetta e' bianca perche' deve leggersi sopra tutti e tre
+   i colori: qualunque tinta avrebbe finito per confondersi con
+   uno dei settori. L'ombra la stacca dagli archi. */
+.energy-gauge-needle {
+  stroke: #ffffff !important;
+  stroke-width: 3.5 !important;
+  stroke-linecap: round !important;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, .9)) !important;
+}
+
+.energy-gauge-pin {
+  fill: #ffffff !important;
+}
+
 /* Una linea sottile separa le due misure: sono due grandezze
    diverse, non due parti dello stesso numero.
    I rientri sono simmetrici - uno per lato - cosi' le due meta'
