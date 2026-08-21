@@ -28,6 +28,13 @@ Module.register("MMM-Budget", {
 		schedaBudget: "Budget",
 		schedaSpese: "Spese",
 
+		/* Testo che precede l'importo dentro ogni cella. E' una
+		   costante: la larghezza riservata all'etichetta nel
+		   custom.css - --budget-etichetta-larghezza - e' tarata su
+		   questa lunghezza, quindi se la allunghi ritocca anche
+		   quella o il numero ci finisce sopra. */
+		etichettaCella: "Budget disponibile: ",
+
 		/* Il foglio cambia poco e il flag "visibile" non serve
 		   che reagisca in un attimo: dieci minuti bastano. */
 		intervallo: 10 * 60 * 1000,
@@ -195,6 +202,107 @@ Module.register("MMM-Budget", {
 	},
 
 	/* ------------------------------------------------------
+	   IL BUDGET GIORNO PER GIORNO
+
+	   Tre situazioni diverse, una per ciascuna parte del mese:
+
+	   GIORNI PASSATI - niente. Sono chiusi, e mostrarne il saldo
+	   sarebbe rumore: non ci puoi piu' fare nulla.
+
+	   OGGI - la quota moltiplicata per i giorni trascorsi meno
+	   tutto lo speso. E' qui che si vede il riporto: se nei giorni
+	   scorsi hai risparmiato, oggi lo ritrovi accumulato.
+
+	   GIORNI FUTURI - la quota secca. NON il progressivo: su venti
+	   giorni davanti diventerebbe un numero enorme e privo di
+	   significato, mentre la domanda a cui serve rispondere e'
+	   "quanto posso spendere quel giorno".
+
+	   LO SFONDAMENTO SI PROPAGA
+	   Se oggi hai speso piu' di quanto avevi, il disponibile non
+	   diventa negativo: si ferma a zero e il rosso passa al giorno
+	   dopo, riducendone la quota. Se non basta neanche quella, si
+	   propaga ancora. E' il comportamento di un budget vero: il
+	   debito non sparisce, si sposta.
+	   ------------------------------------------------------ */
+	perGiorno: function (c) {
+		const giorni = new Map();
+		const oggi = new Date();
+		const anno = oggi.getFullYear();
+		const indiceMese = oggi.getMonth();
+
+		/* Quanto manca a coprire le spese gia' fatte. Se il
+		   disponibile di oggi e' negativo, quel negativo e' il
+		   debito da spalmare sui giorni successivi. */
+		let debito = Math.max(0, -c.disponibileOggi);
+
+		for (let g = c.giorno; g <= c.giorniMese; g++) {
+			let valore;
+
+			if (g === c.giorno) {
+				valore = Math.max(0, c.disponibileOggi);
+			} else {
+				valore = c.quota - debito;
+				if (valore < 0) {
+					debito = -valore;
+					valore = 0;
+				} else {
+					debito = 0;
+				}
+			}
+
+			/* La chiave e' l'istante di mezzanotte locale, lo stesso
+			   che il calendario scrive in data-date su ogni cella.
+			   Verificato: fra una cella e la successiva passano 24
+			   ore esatte e il valore corrisponde alla mezzanotte del
+			   giorno, non a un orario universale. */
+			giorni.set(new Date(anno, indiceMese, g).getTime(), valore);
+		}
+
+		return giorni;
+	},
+
+	/* Regole di stile, una coppia per giorno.
+
+	   PERCHE' NON INSERISCO ELEMENTI NELLE CELLE
+	   Le celle le costruisce il calendario, e le RIFA' da capo a
+	   ogni aggiornamento: qualunque cosa ci infilassi dentro
+	   sparirebbe al primo arrivo di eventi. Una regola di stile
+	   invece non e' un oggetto nel documento, e continua a valere
+	   anche per le celle ricostruite un attimo fa.
+
+	   PERCHE' DUE PSEUDO-ELEMENTI E NON UNO
+	   Perche' il colore deve stare solo sul numero. Con un solo
+	   contenuto generato, "Budget disponibile: 630€" sarebbe tutto
+	   verde o tutto rosso, e a colpo d'occhio sembrerebbe un
+	   allarme anche quando e' una buona notizia. Cosi' invece
+	   ::before porta l'etichetta, sempre neutra, e ::after il
+	   valore, che si colora. */
+	regole: function (c) {
+		const giorni = this.perGiorno(c);
+		const righe = [];
+
+		giorni.forEach((valore, istante) => {
+			/* Il confronto si fa sui valori arrotondati, gli stessi
+			   che finiscono a video: altrimenti un giorno da
+			   29,0001 contro una quota di 29,03 risulterebbe "sotto
+			   la media" pur mostrando lo stesso numero del vicino. */
+			const mostrato = Math.round(valore);
+			const riferimento = Math.round(c.quota);
+
+			let stile = "";
+			if (mostrato > riferimento) stile = "color:var(--budget-verde);font-weight:700;";
+			else if (mostrato < riferimento || mostrato === 0) stile = "color:var(--budget-rosso);font-weight:700;";
+
+			const sel = `.CX3_basicCalendar .cell[data-date="${istante}"]`;
+			righe.push(`${sel}::before{content:"${this.config.etichettaCella}";}`);
+			righe.push(`${sel}::after{content:"${this.euro(valore)}";${stile}}`);
+		});
+
+		return righe.join("\n");
+	},
+
+	/* ------------------------------------------------------
 	   DISEGNO
 	   ------------------------------------------------------ */
 	euro: function (v) {
@@ -234,6 +342,15 @@ Module.register("MMM-Budget", {
 		radice.appendChild(
 			this.riga("BUDGET RESIDUO: ", this.euro(c.residuoMese), c.residuoMese < 0)
 		);
+
+		/* Le regole per le celle viaggiano dentro il DOM di questo
+		   modulo: un foglio di stile vale per tutto il documento
+		   anche se sta annidato qui dentro, e cosi' viene rifatto
+		   da solo a ogni ridisegno senza doverlo inseguire a mano
+		   nell'intestazione della pagina. */
+		const stile = document.createElement("style");
+		stile.textContent = this.regole(c);
+		radice.appendChild(stile);
 
 		return radice;
 	}
