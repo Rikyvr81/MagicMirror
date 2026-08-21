@@ -203,12 +203,61 @@ html {
      questo stesso elemento appena viene caricato.
      Qui NON c'e' piu' un indirizzo fisso: era sempre lo stesso, quindi il
      browser lo ripescava dalla cache e a ogni ricaricamento si rivedeva
-     la medesima foto. */
-  background-size: cover;
-  background-position: center center;
+     la medesima foto.
+
+     L'immagine pero' NON viene dipinta qui: background-size a zero la
+     rende invisibile su questo elemento, e a mostrarla ci pensa lo
+     pseudo-elemento qui sotto, che puo' estendersi oltre il bordo dello
+     schermo. Il valore in linea scritto dal config resta comunque su
+     <html>, ed e' da li' che lo pseudo-elemento lo eredita. */
+  background-size: 0 0;
   background-repeat: no-repeat;
-  background-attachment: fixed;
   background-color: #000000;
+}
+
+/* ==========================================================
+   TAGLIO DEI DUE CENTIMETRI IN BASSO
+
+   Molte foto portano scritte, filigrane o didascalie lungo il
+   bordo inferiore. Non potendo ritagliare il file - arriva da
+   fuori - si allarga la superficie dipinta OLTRE il bordo dello
+   schermo: gli ultimi centimetri cadono fuori e non si vedono,
+   e il resto si ingrandisce di conseguenza.
+
+   PERCHE' UNO PSEUDO-ELEMENTO
+   Su <html> non si puo' fare: il suo sfondo viene disteso sulla
+   tela del browser e non ha un'area propria da poter sforare.
+   Uno pseudo-elemento in posizione fissa invece ce l'ha, e puo'
+   avere il bordo inferiore piu' in basso dello schermo.
+
+   L'ancoraggio in alto e' essenziale: con "center" il taglio si
+   dividerebbe fra sopra e sotto e riapparirebbe meta' scritta.
+   ========================================================== */
+
+:root {
+  /* Quanto si taglia in basso. Due centimetri sul monitor da 27"
+     a 1920x1080, dove ci sono circa 32 pixel per centimetro. */
+  --sfondo-taglio-basso: 64px;
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* il bordo inferiore scende SOTTO lo schermo: e' li' che
+     finisce la parte tagliata */
+  bottom: calc(-1 * var(--sfondo-taglio-basso));
+
+  /* eredita l'indirizzo scritto in linea su <html> dal config */
+  background-image: inherit;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+
+  pointer-events: none;
+  z-index: -1;
 }
 
 body {
