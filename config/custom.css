@@ -2558,11 +2558,21 @@ body,
    ========================================================== */
 
 :root {
-  /* Larghezza riservata all'etichetta. E' tarata su "Budget
-     disponibile: " a 10px: se cambi quel testo nel config, o il
-     corpo qui sotto, ritocca anche questo numero o l'importo ci
-     finisce sopra. */
-  --budget-etichetta-larghezza: 96px;
+  /* Larghezza dello spazio riservato all'etichetta, dal bordo
+     sinistro della cella. L'etichetta ci sta dentro allineata a
+     DESTRA, quindi il suo bordo finale cade sempre esattamente
+     qui e l'importo comincia subito dopo: il distacco fra i due
+     non dipende da quanto misura il testo.
+     Nella prima versione l'importo era ancorato a una posizione
+     fissa mentre l'etichetta partiva da sinistra, e fra le due
+     restava un buco pari alla differenza.
+     Se allunghi il testo nel config oltre questa larghezza,
+     l'etichetta sconfina a sinistra invece di spingere il numero:
+     alza questo valore. */
+  --budget-etichetta-larghezza: 86px;
+
+  /* Spazio fra etichetta e importo */
+  --budget-etichetta-stacco: 3px;
 
   /* Verde e rosso del budget: gli stessi della fascia energia,
      perche' significano la stessa cosa - stai andando bene,
@@ -2592,17 +2602,22 @@ body,
   z-index: 1 !important;
 }
 
-/* Etichetta: neutra e spenta, e' solo la didascalia del numero */
+/* Etichetta: neutra e spenta, e' solo la didascalia del numero.
+   Occupa una larghezza dichiarata e ci si allinea a destra: e'
+   cio' che tiene il testo attaccato all'importo. */
 .CX3_basicCalendar .cell::before {
-  left: 6px !important;
+  left: 0 !important;
+  width: var(--budget-etichetta-larghezza) !important;
+  text-align: right !important;
   color: rgba(255, 255, 255, .50) !important;
   font-weight: 400 !important;
 }
 
-/* Numero: parte dove finisce l'etichetta. Il colore e il grassetto
-   li decide il modulo, giorno per giorno. */
+/* Numero: comincia dove finisce lo spazio dell'etichetta, piu' un
+   respiro. Il colore e il grassetto li decide il modulo, giorno
+   per giorno. */
 .CX3_basicCalendar .cell::after {
-  left: var(--budget-etichetta-larghezza) !important;
+  left: calc(var(--budget-etichetta-larghezza) + var(--budget-etichetta-stacco)) !important;
   color: rgba(255, 255, 255, .90) !important;
   font-weight: 400 !important;
 }
