@@ -31,7 +31,14 @@ Module.register("MMM-Rifiuti", {
 		   documento a scheda unica. */
 		scheda: "",
 
-		testo: "oggi metti fuori: ",
+		/* FRASE MOSTRATA NELLA CELLA
+		   Le parentesi graffe sono il posto dove finisce il tipo di
+		   raccolta. Erano un prefisso e basta, ma cosi' il nome puo'
+		   stare anche in mezzo alla frase invece che solo in coda.
+		   Se allunghi il testo tieni d'occhio la larghezza: la cella
+		   e' larga circa 198px e oltre una certa lunghezza la frase
+		   viene troncata con dei puntini. */
+		testo: "RIFIUTI - Conferire {} in serata",
 
 		/* VALORI CHE NON SONO UNA RACCOLTA
 		   Nel calendario compare "NO SERVIZIO" per i giorni in cui
@@ -162,7 +169,15 @@ Module.register("MMM-Rifiuti", {
 
 		const oggi = new Date();
 		const istante = new Date(oggi.getFullYear(), oggi.getMonth(), oggi.getDate()).getTime();
-		const testo = this.protetto(this.config.testo + raccolta);
+		/* Se nella frase mancassero le graffe, il nome della
+		   raccolta si perderebbe del tutto: in quel caso lo si
+		   accoda, che e' meglio di una riga senza informazione. */
+		const modello = this.config.testo || "{}";
+		const frase = modello.includes("{}")
+			? modello.replace("{}", raccolta)
+			: `${modello} ${raccolta}`;
+
+		const testo = this.protetto(frase);
 
 		this.scriviRegole(
 			`.CX3_basicCalendar .cell[data-date="${istante}"] .cellHeader::after{content:"${testo}";}`
