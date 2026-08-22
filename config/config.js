@@ -566,7 +566,9 @@ let config = {
 			classes: "rifiuti-box",
 			config: {
 				foglio: "1z6CPJlM8nJ4mM52VBiRi_Qj37lwyfGg86Ir6v7r6i0w",
-				testo: "oggi metti fuori: "
+				/* Le graffe sono il posto dove va il tipo di
+				   raccolta: "RIFIUTI - Conferire UMIDO in serata" */
+				testo: "RIFIUTI - Conferire {} in serata"
 			}
 		},
 

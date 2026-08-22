@@ -2656,19 +2656,34 @@ body,
   bottom: 4px !important;
 
   font-family: var(--font-primary) !important;
-  font-size: 12px !important;
+  /* 11px e non 12: "RIFIUTI - Conferire PLASTICA E LATTINE in
+     serata" e' lunga e la cella misura circa 198px. Un punto in
+     meno evita che le raccolte dal nome lungo finiscano troncate
+     con i puntini. */
+  font-size: 11px !important;
   font-weight: 600 !important;
-  line-height: 14px !important;
+  line-height: 13px !important;
   letter-spacing: .2px !important;
+
+  /* allineata a sinistra: senza, eredita l'allineamento della
+     cella e la frase balla a seconda della lunghezza */
+  text-align: left !important;
 
   color: var(--budget-verde) !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, .95) !important;
 
-  /* Se il nome della raccolta fosse lungo, meglio troncarlo che
-     mandarlo a capo sopra un evento. */
-  white-space: nowrap !important;
+  /* LA FRASE VA A CAPO, NON SI TRONCA
+     "RIFIUTI - Conferire PLASTICA E LATTINE in serata" misura
+     circa 230px contro i 186 utili della cella, e capita
+     cinquantadue volte l'anno: troncata con i puntini perderebbe
+     proprio la parte che conta.
+     Essendo appoggiata al fondo, la seconda riga cresce verso
+     l'alto. Il prezzo e' che in una giornata piena di eventi puo'
+     avvicinarsi all'ultimo: in quel caso si alza "bottom" qui
+     sopra, oppure si accorcia la frase nel config - "RIFIUTI -
+     {} in serata" sta su una riga sola in quasi tutti i casi. */
+  white-space: normal !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
 
   pointer-events: none !important;
   z-index: 1 !important;
