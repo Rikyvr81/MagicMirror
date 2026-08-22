@@ -2513,11 +2513,17 @@ body,
   font-weight: 500 !important;
 }
 
-/* Residuo sotto zero: rosso e grassetto. E' lo stesso rosso
-   delle ore care nella fascia dell'energia - significa la stessa
-   cosa, stai spendendo male. */
+/* Il residuo dice come stai andando, quindi si colora: verde
+   finche' ne hai, rosso quando sei sotto zero. Sono gli stessi
+   verde e rosso della fascia energia e delle celle, perche'
+   significano la stessa cosa in tutta la dashboard. */
+.budget-valore.budget-verde {
+  color: var(--budget-verde) !important;
+  font-weight: 700 !important;
+}
+
 .budget-valore.budget-rosso {
-  color: var(--energy-livello-rosso) !important;
+  color: var(--budget-rosso) !important;
   font-weight: 700 !important;
 }
 
