@@ -290,9 +290,18 @@ Module.register("MMM-Budget", {
 			const mostrato = Math.round(valore);
 			const riferimento = Math.round(c.quota);
 
+			/* IL !important NON E' UN VEZZO
+			   La regola di base nel custom.css fissa colore e peso
+			   del carattere con !important, per non farseli portare
+			   via da altre regole del calendario. Senza altrettanto
+			   qui, il verde veniva calcolato e poi scavalcato dal
+			   bianco: il numero compariva sempre neutro. */
 			let stile = "";
-			if (mostrato > riferimento) stile = "color:var(--budget-verde);font-weight:700;";
-			else if (mostrato < riferimento || mostrato === 0) stile = "color:var(--budget-rosso);font-weight:700;";
+			if (mostrato > riferimento) {
+				stile = "color:var(--budget-verde)!important;font-weight:700!important;";
+			} else if (mostrato < riferimento || mostrato === 0) {
+				stile = "color:var(--budget-rosso)!important;font-weight:700!important;";
+			}
 
 			const sel = `.CX3_basicCalendar .cell[data-date="${istante}"]`;
 			righe.push(`${sel}::before{content:"${this.config.etichettaCella}";}`);
@@ -309,7 +318,8 @@ Module.register("MMM-Budget", {
 		return `${Math.round(v).toLocaleString("it-IT")}€`;
 	},
 
-	riga: function (etichetta, valore, rosso) {
+	/* colore: "verde", "rosso" oppure niente */
+	riga: function (etichetta, valore, colore) {
 		const r = document.createElement("div");
 		r.className = "budget-riga";
 
@@ -321,7 +331,7 @@ Module.register("MMM-Budget", {
 		/* Il colore va SOLO sul numero: l'etichetta resta neutra,
 		   altrimenti a colpo d'occhio sembra tutto un allarme. */
 		const v = document.createElement("span");
-		v.className = "budget-valore" + (rosso ? " budget-rosso" : "");
+		v.className = "budget-valore" + (colore ? ` budget-${colore}` : "");
 		v.textContent = valore;
 		r.appendChild(v);
 
@@ -369,10 +379,16 @@ Module.register("MMM-Budget", {
 
 		this.scriviRegole(this.regole(c));
 
-		radice.appendChild(this.riga("BUDGET DEL MESE: ", this.euro(c.budget), false));
-		radice.appendChild(
-			this.riga("BUDGET RESIDUO: ", this.euro(c.residuoMese), c.residuoMese < 0)
-		);
+		/* Il budget del mese e' un dato di partenza, non un
+		   giudizio: resta neutro. Il residuo invece dice come stai
+		   andando, e si colora - verde finche' ne hai, rosso quando
+		   sei sotto. */
+		radice.appendChild(this.riga("BUDGET DEL MESE: ", this.euro(c.budget), null));
+		radice.appendChild(this.riga(
+			"BUDGET RESIDUO: ",
+			this.euro(c.residuoMese),
+			c.residuoMese < 0 ? "rosso" : "verde"
+		));
 
 		return radice;
 	}
