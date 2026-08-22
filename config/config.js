@@ -550,6 +550,27 @@ let config = {
 		},
 
 		/* ======================================================
+		   RACCOLTA DIFFERENZIATA
+		   Scrive in fondo alla cella di oggi cosa si mette fuori
+		   stasera, cioe' la raccolta di DOMANI: il calendario del
+		   Comune indica il giorno del ritiro, il bidone si espone
+		   la sera prima.
+		   Il foglio deve essere condiviso "con chiunque abbia il
+		   link" e copre un anno solare: quando esce il calendario
+		   nuovo, aggiungi le righe in coda alla stessa scheda e
+		   non serve toccare nulla qui.
+		   ====================================================== */
+		{
+			module: "MMM-Rifiuti",
+			position: "top_left",
+			classes: "rifiuti-box",
+			config: {
+				foglio: "1z6CPJlM8nJ4mM52VBiRi_Qj37lwyfGg86Ir6v7r6i0w",
+				testo: "oggi metti fuori: "
+			}
+		},
+
+		/* ======================================================
 		   SFONDO A ROTAZIONE
 		   Non disegna nulla sullo schermo se non il credito
 		   all'autore in basso a destra: il suo lavoro e' scrivere

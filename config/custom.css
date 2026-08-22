@@ -2623,6 +2623,58 @@ body,
 }
 
 /* ==========================================================
+   RACCOLTA DIFFERENZIATA - "oggi metti fuori: CARTA"
+
+   Sta in fondo alla cella di OGGI. Il calendario del Comune
+   indica il giorno del ritiro, ma il bidone si mette fuori la
+   sera prima: il modulo fa lo scarto e scrive qui cosa si
+   raccoglie domani.
+
+   PERCHE' SULL'INTESTAZIONE DELLA CELLA E NON SULLA CELLA
+   Perche' ::before e ::after della cella sono gia' occupati dal
+   budget, e ogni elemento ne ha solo due. Si usa quindi quello
+   dell'intestazione, che pero' viene ancorato al fondo del
+   RIQUADRO: il riferimento del posizionamento e' la cella, che
+   ha position: relative, non l'intestazione, che non ce l'ha.
+   E' un dettaglio che sembra un caso e invece regge tutto.
+
+   ATTENZIONE
+   Se un domani servisse una terza scritta nelle celle, gli
+   pseudo-elementi sono finiti: bisognerebbe cambiare strada e
+   inserire elementi veri, sorvegliando le ricostruzioni del
+   calendario.
+   ========================================================== */
+
+.CX3_basicCalendar .cell .cellHeader::after {
+  position: absolute !important;
+  left: 6px !important;
+  right: 6px !important;
+
+  /* Appoggiata al fondo del riquadro. Se un giorno con quattro
+     eventi la scritta finisse sotto l'ultimo, questo e' il
+     numero da alzare. */
+  bottom: 4px !important;
+
+  font-family: var(--font-primary) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 14px !important;
+  letter-spacing: .2px !important;
+
+  color: var(--budget-verde) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .95) !important;
+
+  /* Se il nome della raccolta fosse lungo, meglio troncarlo che
+     mandarlo a capo sopra un evento. */
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* ==========================================================
    CALENDARI COMPLETAMENTE TRASPARENTI  (blocco di prova)
    Sta in fondo al file di proposito: essendo l'ultimo, vince
    sulle regole precedenti. Per tornare indietro basta
