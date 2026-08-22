@@ -328,6 +328,29 @@ Module.register("MMM-Budget", {
 		return r;
 	},
 
+	/* Le regole per le celle vanno nell'INTESTAZIONE della pagina,
+	   non dentro il modulo.
+	   Primo tentativo: un <style> annidato nel DOM del modulo.
+	   Non ha funzionato - MagicMirror ripulisce il contenuto dei
+	   moduli da quel tipo di elemento, e il foglio spariva senza
+	   lasciare traccia. Qui invece si scrive una volta sola in
+	   testa al documento e si aggiorna a ogni ridisegno, sempre
+	   sullo stesso elemento riconosciuto dal suo identificativo:
+	   non se ne accumulano copie.
+	   E' anche la tecnica che il config.js usa gia' per lo stile
+	   del mese successivo. */
+	scriviRegole: function (testo) {
+		let stile = document.getElementById("mmm-budget-regole");
+
+		if (!stile) {
+			stile = document.createElement("style");
+			stile.id = "mmm-budget-regole";
+			document.head.appendChild(stile);
+		}
+
+		stile.textContent = testo;
+	},
+
 	getDom: function () {
 		const radice = document.createElement("div");
 		radice.className = "budget-block";
@@ -335,22 +358,21 @@ Module.register("MMM-Budget", {
 		const c = this.conto();
 
 		/* Silenzio volontario: mese non presente nel foglio, oppure
-		   segnato come non visibile. Non e' un guasto. */
-		if (!c) return radice;
+		   segnato come non visibile. Non e' un guasto.
+		   Le regole si svuotano: altrimenti gli importi del mese
+		   scorso resterebbero nelle celle anche dopo aver tolto il
+		   budget, senza che nulla lo spieghi. */
+		if (!c) {
+			this.scriviRegole("");
+			return radice;
+		}
+
+		this.scriviRegole(this.regole(c));
 
 		radice.appendChild(this.riga("BUDGET DEL MESE: ", this.euro(c.budget), false));
 		radice.appendChild(
 			this.riga("BUDGET RESIDUO: ", this.euro(c.residuoMese), c.residuoMese < 0)
 		);
-
-		/* Le regole per le celle viaggiano dentro il DOM di questo
-		   modulo: un foglio di stile vale per tutto il documento
-		   anche se sta annidato qui dentro, e cosi' viene rifatto
-		   da solo a ogni ridisegno senza doverlo inseguire a mano
-		   nell'intestazione della pagina. */
-		const stile = document.createElement("style");
-		stile.textContent = this.regole(c);
-		radice.appendChild(stile);
 
 		return radice;
 	}
